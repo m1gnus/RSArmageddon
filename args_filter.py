@@ -13,7 +13,7 @@ def int_filter(string: str, base) -> int:
             elif string[0] == '0':
                 return int(string[1:], 8)
             else:
-                return int(string[2:], 10)
+                return int(string, 10)
         else:
             return int(string, base)
     except ValueError as e:
