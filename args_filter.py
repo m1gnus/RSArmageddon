@@ -3,9 +3,9 @@ Takes two parameters: string,base and return the integer value wich is represent
 If base is None, the string will be converted to int by following the standards representations of
 numbers in base 16,2,8,10.
 """
-def int_filter(string: str, base: int) -> int:
+def int_filter(string: str, base = 0: int) -> int:
     try:
-        if not base:
+        if base <= 0:
             if string[:2] == '0x':
                 return int(string[2:], 16)
             elif string[:2] == '0b':
@@ -19,5 +19,5 @@ def int_filter(string: str, base: int) -> int:
                 raise ValueError("cannot use base > 9")
             return int(string, base)
     except ValueError as e:
-        print("args_filter.py:int_filter",e)
+        print("args_filter.py:int_filter ->",e)
 
