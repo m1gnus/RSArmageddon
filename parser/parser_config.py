@@ -77,7 +77,7 @@ pem_parser.add_argument('--createpub', action = 'store_const', dest = 'cpub', co
 pem_parser.add_argument('--createpriv', action = 'store_const', dest = 'cpriv', const = True, default = False, help = 'Create a private key file in PEM format from numeric values')
 
 """
-Global options
+General options
 """
 parser.add_argument('--factor', action = 'store', dest = 'tofactor', default = None, help = 'Integer to factorize')
 parser.add_argument('--ecm', action = 'store', dest = 'tofactorwecm', default = None, help = 'Integer to factorize with ecm')
