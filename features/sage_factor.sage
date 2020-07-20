@@ -5,7 +5,6 @@ general purpose factorization
 """
 
 from sys import argv
-from subprocess import check_output
 
 from sage.all import factor, Integer
 

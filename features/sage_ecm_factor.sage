@@ -5,7 +5,6 @@ general purpose factorization with ecm
 """
 
 from sys import argv
-from subprocess import check_output
 
 from sage.all import ecm, Integer
 
