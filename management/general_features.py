@@ -20,3 +20,6 @@ def general_features_manager(args: object) -> None:
         int_input = wrap_int_filter(args.tofactorwqsieve)
         system("features/sage_qsieve_factor.sage " + str(int_input))
         sys.exit(0)
+    if args.checkprime: # --isprime <int>
+        int_input = wrap_int_filter(args.checkprime)
+        system("features/sage_isprime.sage " + str(int_input))
