@@ -1,3 +1,5 @@
+import sys
+
 """
 Takes two parameters: string,base and return the integer value wich is represented by the string.
 If base is None, the string will be converted to int by following the standards representations of
@@ -21,6 +23,7 @@ def int_filter(string: str, base = '0') -> int:
             return int(string, base) # valid base
     except ValueError as e:
         print("args_filter.py:int_filter ->",e)
+        sys.exit(1)
 
 """
 Takes a string in the format string[:base] and return the corresponding integer
