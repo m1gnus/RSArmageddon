@@ -1,6 +1,6 @@
 #!/usr/local/bin/sage --python
 
-"""t
+"""
 general purpose factorization with ecm
 """
 
