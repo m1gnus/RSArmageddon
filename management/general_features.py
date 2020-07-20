@@ -2,9 +2,10 @@
 management of general purpose features
 """
 import sys
-
-from parser.args_filter import *
 from os import system
+
+from banner import *
+from parser.args_filter import *
 
 def general_features_manager(args: object) -> None:
 
@@ -23,3 +24,13 @@ def general_features_manager(args: object) -> None:
     if args.checkprime: # --isprime <int>
         int_input = wrap_int_filter(args.checkprime)
         system("features/sage_isprime.sage " + str(int_input))
+        sys.exit(0)
+    if args.showversion:
+        version()
+        sys.exit(0)
+    if args.showcredits: # --credits
+        credits()
+        sys.exit(0)
+    if args.showattacks: # --show-attacks
+        show_attacks()
+        sys.exit(0)

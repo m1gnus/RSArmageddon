@@ -83,8 +83,10 @@ parser.add_argument('--factor', action = 'store', dest = 'tofactor', default = N
 parser.add_argument('--ecm', action = 'store', dest = 'tofactorwecm', default = None, help = 'Integer to factorize with ecm')
 parser.add_argument('--qsieve', action = 'store', dest = 'tofactorwqsieve', default = None, help = 'Integer to factorize with quadratic sieve method')
 parser.add_argument('--isprime', action = 'store', dest = 'checkprime', default = None, help = 'Check if the given integer is prime')
-parser.add_argument('--show-attacks', action = 'store_const', dest = 'showattacks', const = True, default = False, help = 'Integer to factorize')
+parser.add_argument('--show-attacks', action = 'store_const', dest = 'showattacks', const = True, default = False, help = 'show implemented attacks')
 parser.add_argument('--credits', action = 'store_const', dest = 'showcredits', const = True,  default = False, help = 'show credits')
+parser.add_argument('--version', action = 'store_const', dest = 'showversion', const = True,  default = False, help = 'show version')
+
 
 """
 Initialize parser
