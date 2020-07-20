@@ -14,7 +14,7 @@ def factorize_qsieve(n: int) -> None:
         if len(str(n)) < 40:
             raise ValueError("In order to perform qsieve factorization the integer must have at least 40 digits")
     except ValueError as e:
-        print("sage_qsieve_factor.sage:factorize_qsieve",e)
+        print("sage_qsieve_factor.sage:factorize_qsieve ->",e)
         exit(1)
         
     results = list(qsieve(n)[0])
