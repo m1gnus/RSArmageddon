@@ -21,7 +21,7 @@ def dump_values_from_pem(path: str) -> list:
     res = []
 
     print("[*] n: ", key.n)
-    print("[*] e:", key.e)
+    print("[*] e: ", key.e)
 
     res += [key.n, key.e]
 
