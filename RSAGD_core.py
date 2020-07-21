@@ -14,6 +14,6 @@ if __name__ == "__main__":
     if not args.subp:
         general_features_manager(args)
     elif args.subb == 'pem':
-        pem_manipulation_manager(args) 
+        pem_manipulation_manager(args)
 
 

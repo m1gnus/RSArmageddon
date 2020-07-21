@@ -16,7 +16,7 @@ def dump_values_from_pem(path: str) -> list:
         key = RSA.importKey(keyfile.read())
     except Exception as e:
         print("certs_manipulation.py:dump_values_from_pem ->", e)
-    print("[+] Key imported")
+    print("[+] Key imported\n")
 
     res = []
 
