@@ -62,8 +62,7 @@ PEM manipulation
 """
 pem_parser = subparser.add_parser('pem', add_help = True)
 
-pem_parser.add_argument('--publickey', action = 'store', dest = 'pubkey_path', type = str, default = None, help = 'Path to a public key in PEM format')
-pem_parser.add_argument('--privatekey', action = 'store', dest = 'privkey_path', type = str, default = None, help = 'Path to a private key in PEM format')
+pem_parser.add_argument('--key', action = 'store', dest = 'key_path', type = str, default = None, help = 'Path to a key in PEM format')
 pem_parser.add_argument('-n', action = 'store', dest = 'n', type = str, default = None)
 pem_parser.add_argument('-p', action = 'store', dest = 'p', type = str, default = None)
 pem_parser.add_argument('-q', action = 'store', dest = 'q', type = str, default = None)
