@@ -21,6 +21,8 @@ def dump_values_from_key(path: str) -> list:
         key = RSA.importKey(keyfile.read())
     except Exception as e:
         print("certs_manipulation.py:dump_values_from_key ->", e)
+        sys.exit(1)
+
     print("[+] Key imported\n")
 
     res = []
@@ -72,7 +74,7 @@ def create_pubkey(n: int, e: int, path: str) -> None:
         open(path, "wb").write(key)
     else:
         print("[-] no path specified, the key will be prompted to stdout\n")
-        print(key.decode()) if file_format != 'DER' else print(key)
+        print(key.decode() + "\n") if file_format != 'DER' else print(key, "\n")
 
 """
 Takes n,e,d,p and q in order to create the corresponding private key file formatted in the specified format
@@ -101,4 +103,28 @@ def create_privkey(n: int, e: int, d: int, p: int, q: int, path: str) -> None:
         open(path, "wb").write(key)
     else:
         print("[-] no path specified, the key will be prompted to stdout\n")
-        print(key.decode()) if file_format != 'DER' else print(key)
+        print(key.decode() + "\n") if file_format != 'DER' else print(key, "\n")
+
+"""
+Generate a new keypair
+"""
+def generate_keypair(e: int, pubpath: str, privpath: str) -> None:
+    
+    key = RSA.generate(2048, e=e)
+
+    privkey = key.exportKey()
+    pubkey = key.publickey().exportKey()
+
+    if pubpath:
+        print("[+] writing public key in", pubpath)
+        open(pubpath, "wb").write(pubkey)
+    else:
+        print("[-] no path specified, the public key will be prompted to stdout\n")
+        print(pubkey.decode() + "\n")
+
+    if privpath:
+        print("[+] writing private key in", privpath)
+        open(privpath, "wb").write(privkey)
+    else:
+        print("[-] no path specified, the private key will be prompted to stdout\n")
+        print(privkey.decode() + "\n")
