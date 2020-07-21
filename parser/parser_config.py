@@ -74,6 +74,7 @@ pem_parser.add_argument('--output-pub', action = 'store', dest = 'opub', type = 
 pem_parser.add_argument('--dumpvalues', action = 'store_const', dest = 'dumpvalues', const = True, default = False, help = 'Dump numeric values from a key in PEM format')
 pem_parser.add_argument('--createpub', action = 'store_const', dest = 'cpub', const = True, default = False, help = 'Create a public key file in PEM format from numeric values')
 pem_parser.add_argument('--createpriv', action = 'store_const', dest = 'cpriv', const = True, default = False, help = 'Create a private key file in PEM format from numeric values')
+pem_parser.add_argument('--generate', action = 'store_const', dest = 'generatekeypair', const = True, default = False, help = 'Create a new key pair')
 
 """
 General options
