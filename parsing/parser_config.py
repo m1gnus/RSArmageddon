@@ -68,7 +68,6 @@ pem_parser.add_argument('-p', action = 'store', dest = 'p', type = str, default 
 pem_parser.add_argument('-q', action = 'store', dest = 'q', type = str, default = None)
 pem_parser.add_argument('-e', action = 'store', dest = 'e', type = str, default = None)
 pem_parser.add_argument('-d', action = 'store', dest = 'd', type = str, default = None)
-pem_parser.add_argument('--phi', action = 'store', dest = 'phi', type = str, default = None)
 pem_parser.add_argument('--output-private', action = 'store', dest = 'opriv', type = str, default = None)
 pem_parser.add_argument('--output-pub', action = 'store', dest = 'opub', type = str, default = None)
 pem_parser.add_argument('--dumpvalues', action = 'store_const', dest = 'dumpvalues', const = True, default = False, help = 'Dump numeric values from a key in PEM format')
