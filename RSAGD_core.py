@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     if not args.subp:
         general_features_manager(args)
-    elif args.subb == 'pem':
+    elif args.subp == 'pem':
         pem_manipulation_manager(args)
 
 
