@@ -34,3 +34,15 @@ def wrap_int_filter(string: str) -> int:
         return int_filter(parameters[0], parameters[1])
     else:
         return int_filter(parameters[0])
+
+"""
+Takes an arbitrary number of args, if at least one of this args is None, then the function raise a ValueError exception
+"""
+def check_required(*nargs) -> None:
+    try:
+        for arg in nargs:
+            if not arg:
+                raise ValueError("One of the required arguments is not properly setted: " + ' '.join(list(nargs)))
+    except ValueError as e:
+        print("args_filter.py:check_required", e)
+        sys.exit(1)
