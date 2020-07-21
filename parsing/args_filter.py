@@ -87,6 +87,10 @@ recover all the needed arguments to create a private key from the given ones
 """
 def fill_privkey_args(n: int, e: int, d: int, p: int, q: int) -> tuple:
 
+    """
+    check that the required arguments is setted
+    """
+
     if not n and ((not p) or (not q)):
         print("[-] you have to provide n or both p and q")
         sys.exit(1)
@@ -98,6 +102,20 @@ def fill_privkey_args(n: int, e: int, d: int, p: int, q: int) -> tuple:
         print("[-] you have to provide e or d")
         sys.exit(1)
     
+    """
+    convert arguments from string to integer
+    """
+    if n:
+        n = wrap_int_filter(n)
+    if e:
+        e = wrap_int_filter(e)
+    if d:
+        d = wrap_int_filter(d)
+    if p:
+        p = wrap_int_filter(p)
+    if q:
+        q = wrap_int_filter(q)
+
     if not n:
         n = p*q
     elif not p:
@@ -109,11 +127,11 @@ def fill_privkey_args(n: int, e: int, d: int, p: int, q: int) -> tuple:
         print("[-] N is not p*q!")
         sys.exit(1)
 
-    phi = (p-1)(q-1)
+    phi = (p-1)*(q-1)
 
     if not e:
-        e = invert(d, phi)
+        e = int(invert(d, phi))
     elif not d:
-        d = invert(e, phi)
+        d = int(invert(e, phi))
     
     return n, e, d, p, q
