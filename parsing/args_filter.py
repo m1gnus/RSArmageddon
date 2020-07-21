@@ -1,4 +1,7 @@
 import sys
+import subprocess
+
+from os import system
 
 """
 Takes two parameters: string,base and return the integer value wich is represented by the string.
@@ -46,3 +49,28 @@ def check_required(*nargs) -> None:
     except ValueError as e:
         print("args_filter.py:check_required", e)
         sys.exit(1)
+
+"""
+Takes a modulous and check its consistency
+"""
+def validate_modulous(n: int) -> bool:
+    res = [True, "[-]"]
+    
+    if n%2 == 0:
+        res[0] = False
+        res[1] += " modulous is not odd|"
+    if n<2:
+        res[0] = False
+        res[1] += " modulous has to be >= 2|"
+    
+    if res[1] != "[-]":
+        print(res[1])
+    return res[0]
+
+"""
+Takes a number and check if its prime or not
+"""
+def check_prime(p: int) -> bool:
+    if system("features/sage_isprime.sage " + str(p) + " 1>/dev/null") == 0:
+        return False
+    return True
