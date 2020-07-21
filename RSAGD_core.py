@@ -2,7 +2,7 @@
 
 from banner import banner
 
-from parser.parser_config import *
+from parsing.parser_config import *
 
 from management.general_features import *
 from management.pem_manipulation import *

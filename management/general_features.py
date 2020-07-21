@@ -5,7 +5,7 @@ import sys
 from os import system
 
 from banner import *
-from parser.args_filter import *
+from parsing.args_filter import *
 
 def general_features_manager(args: object) -> None:
 
