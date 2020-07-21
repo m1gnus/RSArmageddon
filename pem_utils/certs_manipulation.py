@@ -51,7 +51,7 @@ def dump_values_from_key(path: str) -> list:
     return res
 
 """
-Takes n and e in order to create the corresponding formatted public key file in the specified format
+Takes n and e in order to create the corresponding public key file formatted in the specified format
 """
 def create_pubkey(n: int, e: int, path: str) -> None:
 
@@ -59,7 +59,8 @@ def create_pubkey(n: int, e: int, path: str) -> None:
         sys.exit(1)
     
     file_format = input("file format? (PEM, DER, OpenSSH. Default: PEM) -> ")
-    
+    print()
+
     if file_format != 'PEM' and file_format != 'DER' and file_format != 'OpenSSH':
         print("[-] Unknown format... the key will be formatted in PEM format")
         file_format = 'PEM'
@@ -68,6 +69,35 @@ def create_pubkey(n: int, e: int, path: str) -> None:
 
     if path:
         print("[+] writing public key in", path)
+        open(path, "wb").write(key)
+    else:
+        print("[-] no path specified, the key will be prompted to stdout\n")
+        print(key.decode()) if file_format != 'DER' else print(key)
+
+"""
+Takes n,e,d,p and q in order to create the corresponding private key file formatted in the specified format
+"""
+def create_privkey(n: int, e: int, d: int, p: int, q: int, path: str) -> None:
+
+    """
+    recover all the arguments from the given ones.
+
+    fill_privkey_args() will check if the the given arguments are sufficient in order to create a private key
+    and if the provided arguments are consistent
+    """
+    n, e, d, p, q = fill_privkey_args(n, e, d, p, q)
+    
+    file_format = input("file format? (PEM, DER, OpenSSH. Default: PEM) -> ")
+    print()
+    
+    if file_format != 'PEM' and file_format != 'DER' and file_format != 'OpenSSH':
+        print("[-] Unknown format... the key will be formatted in PEM format")
+        file_format = 'PEM'
+    
+    key = RSA.construct((n, e, d, p, q)).exportKey(format = file_format)
+
+    if path:
+        print("[+] writing private key in", path)
         open(path, "wb").write(key)
     else:
         print("[-] no path specified, the key will be prompted to stdout\n")

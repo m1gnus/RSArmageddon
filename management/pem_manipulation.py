@@ -13,4 +13,6 @@ def pem_manipulation_manager(args: object) -> None:
     if args.cpub:
         check_required(args.n, args.e)
         create_pubkey(wrap_int_filter(args.n), wrap_int_filter(args.e), args.opub)
+    if args.cpriv:
+        create_privkey(args.n, args.e, args.d, args.p, args.q, args.opriv)
     
