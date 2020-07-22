@@ -55,11 +55,11 @@ def plaintext_filter(string: str) -> int:
         if len(parameters) > 1: # there is a type
             type_ = parameters[1]
         else:
-            type_ = "string"
+            type_ = "str"
         
         plaintext = parameters[0]
     
-        if type_ == "string":
+        if type_ == "str":
             plaintext = int_filter("0x" + binascii.hexlify(plaintext.encode()).decode())
         elif type_ == "dec":
             plaintext = int_filter(plaintext, 10)
