@@ -45,7 +45,7 @@ cipher_parser.add_argument('-n', action = 'store', dest = 'n', type = str, defau
 cipher_parser.add_argument('-e', action = 'store', dest = 'e', type = str, default = None)
 cipher_parser.add_argument('--plaintext', action = 'store', dest = 'plaintext', type = str, default = None)
 cipher_parser.add_argument('--plaintext-file', action = 'store', dest = 'plaintext_file', type = str, default = None, help = "Path to a file to encrypt")
-cipher_parser.add_argument('--output-file', action = 'store', dest = 'output-file', type = str, default = "./encrypted.enc", help = 'Path to encrypted file')
+cipher_parser.add_argument('--output-file', action = 'store', dest = 'output_file', type = str, default = "./encrypted.enc", help = 'Path to encrypted file')
 
 uncipher_parser.add_argument('--key', action = 'store', dest = 'key', type = str, default = None, help = 'Path to a private key in PEM format')
 uncipher_parser.add_argument('-n', action = 'store', dest = 'n', type = str, default = None)
