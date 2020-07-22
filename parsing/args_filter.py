@@ -77,7 +77,14 @@ def plaintext_filter(string: str) -> int:
         print("args_filter.py:plaintext_filter ->", e)
         sys.exit(1)
     
+"""
+Takes a list of arguments divided by comma (,) example1,example2,......
+"""
+def list_filter(string: str) -> list:
+    
+    parameters = string.split(",")
 
+    return parameters
 
 """
 Takes an arbitrary number of args, if at least one of this args is None, then the function raise a ValueError exception
