@@ -82,7 +82,7 @@ Takes a list of arguments divided by comma (,) example1,example2,......
 """
 def list_filter(string: str) -> list:
     
-    parameters = string.split(",")
+    parameters = [x for x in string.split(",") if x] if string else None
 
     return parameters
 
