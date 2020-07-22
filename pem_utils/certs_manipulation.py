@@ -50,6 +50,8 @@ def dump_values_from_key(path: str) -> list:
 
         res += [key.p, key.q, key.d, dp, dq, pinv, qinv]
     
+    print()
+    
     return res
 
 """

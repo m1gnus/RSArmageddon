@@ -16,8 +16,8 @@ def rsa_cipher_string(m: int, n: int, e: int) -> tuple:
     
     print("[+] Encrypting plaintext string\n")
     c = pow(m, e, n)
-    hexc = hex(c)
-    rawc = binascii.unhexlify(hex(c)[2:].encode())
+    hexc = hex(c) if (len(hex(c)) % 2) == 0 else ("0x0" + hex(c)[2:])
+    rawc = binascii.unhexlify(hexc[2:].encode())
     print("[+] ciphertext (dec):", c)
     print("[+] ciphertext (hex):", hexc)
     print("[+] ciphertext (raw):", rawc)

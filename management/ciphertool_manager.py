@@ -5,7 +5,7 @@ import sys
 
 from parsing.args_filter import *
 
-from pem_utils.certs_manipulation import dump_values_from_pem, create_pubkey
+from pem_utils.certs_manipulation import dump_values_from_key, create_pubkey
 
 from cipher_tools.cipher import *
 from cipher_tools.uncipher import *
@@ -15,18 +15,19 @@ def cipher_manager(args: object) -> None:
     if args.plaintext:
 
         if args.key:
-            n, e = dump_values_from_key(args.key)
+            ne = dump_values_from_key(args.key)
+            n, e = ne[0], ne[1]
         else:
             check_required(args.n, args.e)
             n, e = wrap_int_filter(args.n), wrap_int_filter(args.e)
-        rsa_cipher_string(plaintext_filter(args.plaintext))
+        rsa_cipher_string(plaintext_filter(args.plaintext), n ,e)
 
     if args.plaintext_file:
 
         if not args.key:
             check_required(args.n, args.e)
             args.key = "/tmp/tmppubkey_RSArmageddon.pub"
-            create_pubkey(wrap_int_filter(args.n), wrap_int_filter(args.e), "/tmp/pub.pem")
+            create_pubkey(wrap_int_filter(args.n), wrap_int_filter(args.e), "/tmp/tmppubkey_RSArmageddon.pub")
         
         files = list_filter(args.plaintext_file)
         outnames = list_filter(args.output_file)

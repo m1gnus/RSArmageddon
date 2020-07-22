@@ -6,6 +6,7 @@ from parsing.parser_config import *
 
 from management.general_features import *
 from management.pem_manipulation import *
+from management.ciphertool_manager import *
 
 if __name__ == "__main__":
 
@@ -15,3 +16,5 @@ if __name__ == "__main__":
         general_features_manager(args)
     elif args.subp == 'pem':
         pem_manipulation_manager(args)
+    elif args.subp == 'ciphertool':
+        ciphertool_manager(args)
