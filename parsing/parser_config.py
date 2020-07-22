@@ -56,7 +56,7 @@ uncipher_parser.add_argument('-d', action = 'store', dest = 'd', type = str, def
 uncipher_parser.add_argument('--phi', action = 'store', dest = 'phi', type = str, default = None)
 uncipher_parser.add_argument('--ciphertext', action = 'store', dest = 'ciphertext', type = str, default = None)
 uncipher_parser.add_argument('--ciphertext-file', action = 'store', dest = 'ciphertext_file', type = str, default = None, help = "Path to a file to decrypt")
-uncipher_parser.add_argument('--output-file', action = 'store', dest = 'output-file', type = str, default = "./decrypted.dec", help = 'Path to decrypted file')
+uncipher_parser.add_argument('--output-file', action = 'store', dest = 'output-file', type = str, default = None, help = 'Path to decrypted file')
 
 """
 PEM manipulation
