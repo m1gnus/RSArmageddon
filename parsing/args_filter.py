@@ -1,5 +1,6 @@
 import sys
 import subprocess
+import binascii
 
 from os import system
 
@@ -24,7 +25,7 @@ def int_filter(string: str, base = '0') -> int:
             else:
                 return int(string, 10) # decimal
         else:
-            if base > 9: # invalid base
+            if base > 10: # invalid base
                 raise ValueError("cannot use base > 9")
             return int(string, base) # valid base
     except ValueError as e:
@@ -37,10 +38,46 @@ Takes a string in the format string[:base] and return the corresponding integer
 def wrap_int_filter(string: str) -> int:
 
     parameters = [x for x in string.split(":") if x]
+    
     if len(parameters) > 1: # there is a base
         return int_filter(parameters[0], parameters[1])
     else:
         return int_filter(parameters[0])
+
+"""
+Takes a string in the format string:type and return the corresponding plaintext int
+"""
+def plaintext_filter(string: str) -> int:
+    
+    try:
+        parameters = [x for x in string.split(":") if x]
+        
+        if len(parameters) > 1: # there is a type
+            type_ = parameters[1]
+        else:
+            type_ = "string"
+        
+        plaintext = parameters[0]
+    
+        if type_ == "string":
+            plaintext = int_filter("0x" + binascii.hexlify(plaintext.encode()).decode())
+        elif type_ == "dec":
+            plaintext = int_filter(plaintext, 10)
+        elif type_ == "hex":
+            plaintext = int_filter(plaintext) if len(plaintext) > 1 and plaintext[:2] == "0x" else int_filter("0x" + plaintext)
+        elif type_ == "oct":
+            plaintext = int_filter(plaintext, 8)
+        elif type_ == "bin":
+            plaintext = int_filter(plaintext) if len(plaintext) > 1 and plaintext[:2] == "0b" else int_filter(plaintext, 2)
+        else:
+            raise ValueError("Unknown type: " + type_)
+        
+        return plaintext
+    except ValueError as e:
+        print("args_filter.py:plaintext_filter ->", e)
+        sys.exit(1)
+    
+
 
 """
 Takes an arbitrary number of args, if at least one of this args is None, then the function raise a ValueError exception
