@@ -53,7 +53,6 @@ uncipher_parser.add_argument('-p', action = 'store', dest = 'p', type = str, def
 uncipher_parser.add_argument('-q', action = 'store', dest = 'q', type = str, default = None)
 uncipher_parser.add_argument('-e', action = 'store', dest = 'e', type = str, default = None)
 uncipher_parser.add_argument('-d', action = 'store', dest = 'd', type = str, default = None)
-uncipher_parser.add_argument('--phi', action = 'store', dest = 'phi', type = str, default = None)
 uncipher_parser.add_argument('--ciphertext', action = 'store', dest = 'ciphertext', type = str, default = None)
 uncipher_parser.add_argument('--ciphertext-file', action = 'store', dest = 'ciphertext_file', type = str, default = None, help = "Path to a file to decrypt")
 uncipher_parser.add_argument('--output-file', action = 'store', dest = 'output_file', type = str, default = None, help = 'Path to decrypted file')
