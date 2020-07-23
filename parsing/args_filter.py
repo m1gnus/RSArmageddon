@@ -5,6 +5,7 @@ import binascii
 from os import system
 
 from gmpy2 import invert
+from Crypto.PublicKey import RSA
 
 """
 Takes two parameters: string,base and return the integer value wich is represented by the string.
@@ -116,6 +117,18 @@ def validate_modulous(n: int) -> bool:
     if res[1] != "[-]":
         print(res[1])
     return res[0]
+
+"""
+Takes a path and check if the key is a public key
+"""
+def validate_pubkey(path: str) -> None:
+    
+    try:
+        if RSA.importKey(open(path, "rb").read()).has_private():
+            raise Exception("The inserted key is a private key")
+    except Exception as e:
+        print("args_filter.py:validate_pubkey ->", e)
+        sys.exit(1)
 
 """
 Takes a number and check if its prime or not
