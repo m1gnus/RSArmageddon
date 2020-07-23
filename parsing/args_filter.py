@@ -77,7 +77,38 @@ def plaintext_filter(string: str) -> int:
     except ValueError as e:
         print("args_filter.py:plaintext_filter ->", e)
         sys.exit(1)
+
+"""
+Takes a string in the format string:type and return the corresponding plaintext int
+"""
+def ciphertext_filter(string: str) -> int:
     
+    try:
+        parameters = [x for x in string.split(":") if x]
+        
+        if len(parameters) > 1: # there is a type
+            type_ = parameters[1]
+        else:
+            type_ = "dec"
+        
+        plaintext = parameters[0]
+    
+        elif type_ == "dec":
+            plaintext = int_filter(plaintext, 10)
+        elif type_ == "hex":
+            plaintext = int_filter(plaintext) if len(plaintext) > 1 and plaintext[:2] == "0x" else int_filter("0x" + plaintext)
+        elif type_ == "oct":
+            plaintext = int_filter(plaintext, 8)
+        elif type_ == "bin":
+            plaintext = int_filter(plaintext) if len(plaintext) > 1 and plaintext[:2] == "0b" else int_filter(plaintext, 2)
+        else:
+            raise ValueError("Unknown type: " + type_)
+        
+        return plaintext
+    except ValueError as e:
+        print("args_filter.py:ciphertext_filter ->", e)
+        sys.exit(1)
+
 """
 Takes a list of arguments divided by comma (,) example1,example2,......
 """
