@@ -131,6 +131,18 @@ def validate_pubkey(path: str) -> None:
         sys.exit(1)
 
 """
+Takes a path and check if the key is a private key
+"""
+def validate_privkey(path: str) -> None:
+    
+    try:
+        if not RSA.importKey(open(path, "rb").read()).has_private():
+            raise Exception("The inserted key is a public key")
+    except Exception as e:
+        print("args_filter.py:validate_privkey ->", e)
+        sys.exit(1)
+
+"""
 Takes a number and check if its prime or not
 """
 def check_prime(p: int) -> bool:
