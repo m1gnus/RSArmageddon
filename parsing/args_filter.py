@@ -93,7 +93,7 @@ def ciphertext_filter(string: str) -> int:
         
         plaintext = parameters[0]
     
-        elif type_ == "dec":
+        if type_ == "dec":
             plaintext = int_filter(plaintext, 10)
         elif type_ == "hex":
             plaintext = int_filter(plaintext) if len(plaintext) > 1 and plaintext[:2] == "0x" else int_filter("0x" + plaintext)
