@@ -118,6 +118,28 @@ def list_filter(string: str) -> list:
 
     return parameters
 
+def recover_pubkey_value_from_file(path: str) -> list:
+
+    try:
+        parameters = [x.strip() for x in open(path, "r").readlines() if x]
+    except OSError as e:
+        print("args_filter.py:recover_pubkey_value_form_file ->", e)
+        sys.exit(1)
+
+    n = []
+    e = []
+
+    for line in parameters:
+        parts = [x for x in line.split(":") if x]
+
+        if len(parts) < 2:
+            parts.append('65537')
+
+        n.append(wrap_int_filter(parts[0]))
+        e.append(wrap_int_filter(parts[1]))
+    
+    return n, e
+
 """
 Takes an arbitrary number of args, if at least one of this args is None, then the function raise a ValueError exception
 """
