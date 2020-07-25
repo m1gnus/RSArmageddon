@@ -118,6 +118,9 @@ def list_filter(string: str) -> list:
 
     return parameters
 
+"""
+Takes a path to a file containing lines in the form n:e and extract n and e values
+"""
 def recover_pubkey_value_from_file(path: str) -> list:
 
     try:
