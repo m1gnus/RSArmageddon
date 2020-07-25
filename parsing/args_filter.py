@@ -144,6 +144,36 @@ def recover_pubkey_value_from_file(path: str) -> list:
     return n, e
 
 """
+Takes a list of folders which contain public keys and extract values
+"""
+def recover_pubkey_value_from_folder(path: str, ext: str) -> list:
+
+    n = []
+    e = []
+
+    if path[-1] != '/':
+        path += '/'
+
+    if ext[0] = '.':
+        ext = '.' + ext
+
+    files = [x for x in subprocess.check_output(['ls', '-al', path]).decode().split('\n') if x]
+    files = [[y for y in y.split(" ") if y][8]] if len(files) > 3
+
+    # Find public keys in folder
+    files = [x.strip() for x in files if (len(x) > len(ext) and x[-(len(ext)):] == ext)]
+
+    print("Importing Public Keys:")
+    print('\n'.join(files))
+
+    for file_ in files:
+        vals = dump_values_from_key(file_)
+        n.append(wrap_int_filter(vals[0]))
+        e.append(wrap_int_filter(vals[1]))
+    
+    return n, e
+
+"""
 Takes an arbitrary number of args, if at least one of this args is None, then the function raise a ValueError exception
 """
 def check_required(*nargs) -> None:
