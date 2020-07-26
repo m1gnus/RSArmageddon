@@ -154,11 +154,11 @@ def recover_pubkey_value_from_folder(path: str, ext: str) -> list:
     if path[-1] != '/':
         path += '/'
 
-    if ext[0] = '.':
+    if ext[0] == '.':
         ext = '.' + ext
 
     files = [x for x in subprocess.check_output(['ls', '-al', path]).decode().split('\n') if x]
-    files = [[y for y in y.split(" ") if y][8]] if len(files) > 3
+    files = [x for x in [y for y in y.split(" ") if y][8] if len(x) > 3]
 
     # Find public keys in folder
     files = [x.strip() for x in files if (len(x) > len(ext) and x[-(len(ext)):] == ext)]
@@ -219,7 +219,7 @@ Takes a string and check if its a valid argument for filepadding
 """
 def validate_padding_for_file(arg: str) ->str:
 
-    if arg == 'pkcs' or arg == 'oaep' pr arg == 'raw' or arg == 'ssl':
+    if arg == 'pkcs' or arg == 'oaep' or arg == 'raw' or arg == 'ssl':
         return arg
     else:
         return 'pkcs'
