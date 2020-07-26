@@ -205,6 +205,26 @@ def validate_modulous(n: int) -> bool:
     return res[0]
 
 """
+Takes a string and check if its a valid argument for padding
+"""
+def validate_padding(arg: str) -> str:
+    
+    if arg == 'pkcs7' or arg == 'iso7816' or args == 'x923':
+        return arg
+    else:
+        return 'pkcs7' 
+
+"""
+Takes a string and check if its a valid argument for filepadding
+"""
+def validate_padding_for_file(arg: str) ->str:
+
+    if arg == 'pkcs' or arg == 'oaep' pr arg == 'raw' or arg == 'ssl':
+        return arg
+    else:
+        return 'pkcs'
+
+"""
 Takes a path and check if the key is a public key
 """
 def validate_pubkey(path: str) -> None:
