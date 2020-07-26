@@ -21,7 +21,10 @@ def cipher_manager(args: object) -> None:
             check_required(args.n, args.e)
             n, e = wrap_int_filter(args.n), wrap_int_filter(args.e)
         
-        rsa_cipher_string(plaintext_filter(args.plaintext), n ,e)
+        if args.padding:
+            args.padding = validate_padding(args.padding)
+
+        rsa_cipher_string(plaintext_filter(args.plaintext), n ,e, args.padding)
 
     if args.plaintext_file:
 
@@ -35,10 +38,12 @@ def cipher_manager(args: object) -> None:
         files = list_filter(args.plaintext_file)
         outnames = list_filter(args.output_file)
 
+        args.filepadding = validate_padding_for_file(args.filepadding)
+
         while files:
             file_ = files.pop(0)
             outname = outnames.pop(0) if outnames else (file_ + ".enc")
-            rsa_cipher_file(file_, outname, args.key)
+            rsa_cipher_file(file_, outname, args.key, args.filepadding)
 
         if args.key == "/tmp/tmppubkey_RSArmageddon.pub":
             system("rm -rf /tmp/tmppubkey_RSArmageddon.pub")
@@ -54,7 +59,10 @@ def uncipher_manager(args: object) -> None:
         else:
             n, e, d, p, q = fill_privkey_args(wrap_int_filter(args.n), wrap_int_filter(args.e), wrap_int_filter(args.d), wrap_int_filter(args.p), wrap_int_filter(args.q))
         
-        rsa_uncipher_string(ciphertext_filter(args.ciphertext), n, d)
+        if args.padding:
+            args.padding = validate_padding(args.padding)
+
+        rsa_uncipher_string(ciphertext_filter(args.ciphertext), n, d, args.padding)
 
     if args.ciphertext_file:
 
@@ -68,10 +76,12 @@ def uncipher_manager(args: object) -> None:
         files = list_filter(args.ciphertext_file)
         outnames = list_filter(args.output_file)
 
+        args.filepadding = validate_padding_for_file(args.filepadding)
+
         while files:
             file_ = files.pop(0)
             outname = outnames.pop(0) if outnames else (file_ + ".dec")
-            rsa_uncipher_file(file_, outname, args.key)
+            rsa_uncipher_file(file_, outname, args.key, args.filepadding)
 
         if args.key == "/tmp/tmpprivkey_RSArmageddon.pub":
             system("rm -rf /tmp/tmpprivkey_RSArmageddon.pub")
