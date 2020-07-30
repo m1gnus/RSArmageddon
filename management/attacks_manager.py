@@ -85,7 +85,7 @@ def attack_manager(args: object) -> None:
         selected_attacks = list(attacks.keys())
 
     for attack in selected_attacks:
-        if attack is not in attacks.keys():
+        if attack not in attacks.keys():
             print("[Warning]: Invalid attack selected ->", attack)
             selected_attacks.remove(attack)
             continue
