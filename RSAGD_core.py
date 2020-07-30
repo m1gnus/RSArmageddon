@@ -7,6 +7,9 @@ from parsing.parser_config import *
 from management.general_features import *
 from management.pem_manipulation import *
 from management.ciphertool_manager import *
+from management.attacks_manager import *
+
+from misc.signal_handler import *
 
 if __name__ == "__main__":
 

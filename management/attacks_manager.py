@@ -9,14 +9,52 @@ from pem_utils.certs_manipulation import *
 from misc.signal_handler import *
 
 import time
-import multiprocessing
+import subprocess
+
+attack_pid = 0
+
+def terminate_attack(signalNumber: int, frame: str) -> None:
+
+    global attack_pid
+
+    if attack_pid != 0:
+        os.kill(attack_pid, signal_)
+
+signal.signal(signal.SIGALRM, terminate_attack) # signal.alarm(time: seconds)
 
 def attack_manager(args: object) -> None:
+
+    global attack_pid
+
+    attacks = {
+        'fermat': {
+            'pkey': 'single',
+            'scriptname': 'fermat.sage'
+        },
+        'wiener': {
+            'pkey': 'single',
+            'scriptname': 'wiener.sage'
+        },
+        'p_1': {
+            'pkey': 'single'
+            'scriptname': 'pollard_p_1.sage'
+        },
+        'factordb': {
+            'pkey': 'single'
+            'scriptname': 'factordb.py'
+        },
+        'common_factor': {
+            'pkey': 'multi'
+            'scriptname': 'common_factor.sage'
+        }
+    }
 
     n = []
     e = []
 
     check_required(args.attacks)
+
+    selected_attacks = list_filter(args.attacks)
 
     if args.n:
         n += [wrap_int_filter(x) for x in list_filter(args.n)]
@@ -40,4 +78,32 @@ def attack_manager(args: object) -> None:
         vals = recover_pubkey_value_from_file(args.n_e_file)
         n += vals[0]
         e += vals[1]
-    
+
+    timer = validate_timer(args.timeout)
+
+    if 'all' in selected_attacks:
+        selected_attacks = list(attacks.keys())
+
+    for attack in selected_attacks:
+        if attack is not in attacks.keys():
+            print("[Warning]: Invalid attack selected ->", attack)
+            selected_attacks.remove(attack)
+            continue
+        else:
+            attributes = attacks[attack]
+
+        args_list = []
+
+        if attributes['pkey'] == 'single':
+            args_list.append(n[0])
+            args_list.append(e[0])
+        elif attributes['pkey'] == 'multi':
+            args_list += [':'.join(n)] + [':'.join(e)]
+
+        signal.alarm(timer)
+
+        p = subprocess.Popen(["attacks/" + attributes['scriptname']] + args_list + [str(args.private)])
+        attack_pid = p.pid
+        p.wait()
+
+        signal.alarm(0)
