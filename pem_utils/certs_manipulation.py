@@ -57,14 +57,11 @@ def dump_values_from_key(path: str) -> list:
 """
 Takes n and e in order to create the corresponding public key file formatted in the specified format
 """
-def create_pubkey(n: int, e: int, path: str) -> None:
+def create_pubkey(n: int, e: int, path: str, file_format: str) -> None:
 
     if not validate_modulous(n):
         sys.exit(1)
     
-    file_format = input("file format? (PEM, DER, OpenSSH. Default: PEM) -> ")
-    print()
-
     if file_format != 'PEM' and file_format != 'DER' and file_format != 'OpenSSH':
         print("[-] Unknown format... the key will be formatted in PEM format")
         file_format = 'PEM'
@@ -81,7 +78,7 @@ def create_pubkey(n: int, e: int, path: str) -> None:
 """
 Takes n,e,d,p and q in order to create the corresponding private key file formatted in the specified format
 """
-def create_privkey(n: int, e: int, d: int, p: int, q: int, path: str) -> None:
+def create_privkey(n: int, e: int, d: int, p: int, q: int, path: str, file_format: str) -> None:
 
     """
     recover all the arguments from the given ones.
@@ -90,9 +87,6 @@ def create_privkey(n: int, e: int, d: int, p: int, q: int, path: str) -> None:
     and if the provided arguments are consistent
     """
     n, e, d, p, q = fill_privkey_args(n, e, d, p, q)
-    
-    file_format = input("file format? (PEM, DER, OpenSSH. Default: PEM) -> ")
-    print()
     
     if file_format != 'PEM' and file_format != 'DER' and file_format != 'OpenSSH':
         print("[-] Unknown format... the key will be formatted in PEM format")
