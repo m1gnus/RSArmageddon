@@ -6,6 +6,8 @@ import sys
 from parsing.args_filter import *
 from pem_utils.certs_manipulation import *
 
+from misc.signal_handler import *
+
 def pem_manipulation_manager(args: object) -> None:
     if args.dumpvalues:
         check_required(args.key_path)

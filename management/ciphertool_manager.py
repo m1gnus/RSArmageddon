@@ -10,6 +10,8 @@ from pem_utils.certs_manipulation import dump_values_from_key, create_pubkey
 from cipher_tools.cipher import *
 from cipher_tools.uncipher import *
 
+from misc.signal_handler import *
+
 def cipher_manager(args: object) -> None:
 
     if args.plaintext:

@@ -6,6 +6,11 @@ import sys
 from parsing.args_filter import *
 from pem_utils.certs_manipulation import *
 
+from misc.signal_handler import *
+
+import time
+import multiprocessing
+
 def attack_manager(args: object) -> None:
 
     n = []
@@ -35,3 +40,4 @@ def attack_manager(args: object) -> None:
         vals = recover_pubkey_value_from_file(args.n_e_file)
         n += vals[0]
         e += vals[1]
+    

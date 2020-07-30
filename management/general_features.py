@@ -2,28 +2,41 @@
 management of general purpose features
 """
 import sys
-from os import system
+import subprocess
+import os
 
-from banner import *
-from parsing.args_filter import *
+from banner import credits, show_attacks, version
+from parsing.args_filter import wrap_int_filter
+
+from misc.signal_handler import *
 
 def general_features_manager(args: object) -> None:
+    
+    global pids
 
     if args.tofactor: # --factor <int>
         int_input = wrap_int_filter(args.tofactor)
-        system("features/sage_factor.sage " + str(int_input))
+        p = subprocess.Popen(["features/sage_factor.sage", str(int_input)])
+        pids.append(p.pid)
+        p.wait()
         sys.exit(0)
     if args.tofactorwecm: # --ecm <int>
         int_input = wrap_int_filter(args.tofactorwecm)
-        system("features/sage_ecm_factor.sage " + str(int_input))
+        p = subprocess.Popen(["features/sage_ecm_factor.sage", str(int_input)])
+        pids.append(p.pid)
+        p.wait()
         sys.exit(0)
     if args.tofactorwqsieve: # --qsieve <int>
         int_input = wrap_int_filter(args.tofactorwqsieve)
-        system("features/sage_qsieve_factor.sage " + str(int_input))
+        p = subprocess.Popen(["features/sage_qsieve_factor.sage", str(int_input)])
+        pids.append(p.pid)
+        p.wait()
         sys.exit(0)
     if args.checkprime: # --isprime <int>
         int_input = wrap_int_filter(args.checkprime)
-        system("features/sage_isprime.sage " + str(int_input))
+        p = subprocess.Popen(["features/sage_isprime.sage", str(int_input)])
+        pids.append(p.pid)
+        p.wait()
         sys.exit(0)
     if args.showversion:
         version()
