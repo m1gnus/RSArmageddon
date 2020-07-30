@@ -225,6 +225,18 @@ def validate_padding_for_file(arg: str) ->str:
         return 'pkcs'
 
 """
+Takes string which represent an integer and check if its valid for being a timer
+"""
+def validate_timer(time: str) -> int:
+    if not time:
+        tmp = 0
+    else:
+        tmp = wrap_int_filter(time)
+        if tmp < 0:
+            tmp = 0
+    return tmp
+
+"""
 Takes a path and check if the key is a public key
 """
 def validate_pubkey(path: str) -> None:
