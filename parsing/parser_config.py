@@ -26,6 +26,7 @@ attacks_parser.add_argument('--uncipher-file', action = 'store', dest = 'ciphert
 attacks_parser.add_argument('--output-private', action = 'store', dest = 'output-private', type = str, default = None, help = 'Path to private key file')
 attacks_parser.add_argument('--output-file', action = 'store', dest = 'output-file', type = str, default = "./decrypted.dec", help = 'Path to decrypted file')
 attacks_parser.add_argument('--output-dir', action = 'store', dest = 'output-dir', type = str, default = ".", help = 'Path to decrypted files folder')
+attacks_parser.add_argument('--timeout', action = 'store', dest = 'timeout', type = str, default = None, help = "max elaboration time for attacks")
 
 """
 Cipher tools
