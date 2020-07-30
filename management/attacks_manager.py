@@ -36,15 +36,15 @@ def attack_manager(args: object) -> None:
             'scriptname': 'wiener.sage'
         },
         'p_1': {
-            'pkey': 'single'
+            'pkey': 'single',
             'scriptname': 'pollard_p_1.sage'
         },
         'factordb': {
-            'pkey': 'single'
+            'pkey': 'single',
             'scriptname': 'factordb.py'
         },
         'common_factor': {
-            'pkey': 'multi'
+            'pkey': 'multi',
             'scriptname': 'common_factor.sage'
         }
     }
