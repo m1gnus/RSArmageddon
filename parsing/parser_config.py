@@ -23,9 +23,9 @@ attacks_parser.add_argument('--ext', action = 'store', dest = 'ext', type = str,
 attacks_parser.add_argument('--private', action = 'store_const', dest = 'private', const = False, default = True, help = "Dump private key im PEM format if recovered")
 attacks_parser.add_argument('--uncipher', action = 'store', dest = 'ciphertext', type = str, default = None, help = "Ciphertext to decrypt")
 attacks_parser.add_argument('--uncipher-file', action = 'store', dest = 'ciphertext_file', type = str, default = None, help = 'Uncipher this file if attack succeded')
-attacks_parser.add_argument('--output-private', action = 'store', dest = 'output-private', type = str, default = None, help = 'Path to private key file')
-attacks_parser.add_argument('--output-file', action = 'store', dest = 'output-file', type = str, default = "./decrypted.dec", help = 'Path to decrypted file')
-attacks_parser.add_argument('--output-dir', action = 'store', dest = 'output-dir', type = str, default = ".", help = 'Path to decrypted files folder')
+attacks_parser.add_argument('--output-private', action = 'store', dest = 'output_private', type = str, default = None, help = 'Path to private key file')
+attacks_parser.add_argument('--output-file', action = 'store', dest = 'output_file', type = str, default = "./decrypted.dec", help = 'Path to decrypted file')
+attacks_parser.add_argument('--output-dir', action = 'store', dest = 'output_dir', type = str, default = ".", help = 'Path to decrypted files folder')
 attacks_parser.add_argument('--timeout', action = 'store', dest = 'timeout', type = str, default = None, help = "max elaboration time for attacks")
 
 """
