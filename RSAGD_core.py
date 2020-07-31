@@ -21,3 +21,5 @@ if __name__ == "__main__":
         pem_manipulation_manager(args)
     elif args.subp == 'ciphertool':
         ciphertool_manager(args)
+    elif args.subp == 'attack':
+        attack_manager(args)
