@@ -116,6 +116,9 @@ def attack_manager(args: object) -> None:
 
         p = subprocess.Popen([SOFTWARE_PATH + "/attacks/" + attributes['scriptname']] + args_list)
         attack_pid = p.pid
-        p.wait()
+        res = p.wait()
 
         signal.alarm(0)
+
+        if res == 0:
+            break
