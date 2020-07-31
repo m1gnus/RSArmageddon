@@ -20,7 +20,7 @@ attacks_parser.add_argument('-n', action = 'store', dest = 'n', type = str, defa
 attacks_parser.add_argument('-e', action = 'store', dest = 'e', type = str, default = None)
 attacks_parser.add_argument('--n_e_file', action = 'store', dest = 'n_e_file', type = str, default = None, help = 'Path to a file containing modulusses and public exponents')
 attacks_parser.add_argument('--ext', action = 'store', dest = 'ext', type = str, default="pem", help = 'Extension of public keys in folder')
-attacks_parser.add_argument('--private', action = 'store_const', dest = 'private', const = False, default = True, help = "Dump private key im PEM format if recovered")
+attacks_parser.add_argument('--private', action = 'store_const', dest = 'private', const = True, default = False, help = "Dump private key im PEM format if recovered")
 attacks_parser.add_argument('--uncipher', action = 'store', dest = 'ciphertext', type = str, default = None, help = "Ciphertext to decrypt")
 attacks_parser.add_argument('--uncipher-file', action = 'store', dest = 'ciphertext_file', type = str, default = None, help = 'Uncipher this file if attack succeded')
 attacks_parser.add_argument('--output-private', action = 'store', dest = 'output_private', type = str, default = None, help = 'Path to private key file')

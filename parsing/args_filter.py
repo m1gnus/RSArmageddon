@@ -291,20 +291,6 @@ def fill_privkey_args(n: int, e: int, d: int, p: int, q: int) -> tuple:
     if not e and not d:
         print("[-] you have to provide e or d")
         sys.exit(1)
-    
-    """
-    convert arguments from string to integer
-    """
-    if n:
-        n = wrap_int_filter(n)
-    if e:
-        e = wrap_int_filter(e)
-    if d:
-        d = wrap_int_filter(d)
-    if p:
-        p = wrap_int_filter(p)
-    if q:
-        q = wrap_int_filter(q)
 
     if not n:
         n = p*q
