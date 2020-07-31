@@ -59,8 +59,8 @@ def attack_manager(args: object) -> None:
 
     if args.n:
         n += [wrap_int_filter(x) for x in list_filter(args.n)]
-        e_list = [wrap_int_filter(x) for x in list_filter(args.e)]
-        e_list += [65537] * (len(n) - len(e_list))
+        e = [wrap_int_filter(x) for x in list_filter(args.e)] if args.e else []
+        e += [65537] * (len(n) - len(e))
        
     if args.publickey:
         vals = dump_values_from_key(args.publickey)
@@ -101,9 +101,20 @@ def attack_manager(args: object) -> None:
         elif attributes['pkey'] == 'multi':
             args_list += [':'.join(n)] + [':'.join(e)]
 
+        args_list += [str(args.private)]
+
+        ciphertext = (ciphertext_filter(args.ciphertext) if args.ciphertext else None)
+
+        if attributes['pkey'] == 'single':
+            args_list += [args.output_private, args.ciphertext_file, args.output_file, ciphertext]
+        elif attributes['pkey'] == 'multi':
+            args_list += [args.output_dir]
+            
+        args_list = [str(x) for x in args_list]
+
         signal.alarm(timer)
 
-        p = subprocess.Popen([SOFTWARE_PATH + "/attacks/" + attributes['scriptname']] + args_list + [str(args.private)])
+        p = subprocess.Popen([SOFTWARE_PATH + "/attacks/" + attributes['scriptname']] + args_list)
         attack_pid = p.pid
         p.wait()
 
