@@ -10,6 +10,7 @@ from gmpy2 import invert
 from Crypto.Util.Padding import unpad
 
 from misc.hash_sum import *
+from misc.software_path import *
 
 """
 Decrypt a ciphertext string using RSA
@@ -39,7 +40,7 @@ def rsa_uncipher_file(path_ciphertext: str, path_outfile: str, path_privkey: str
     
     print("[+] Decrypting ciphertext file\n")
 
-    system("cipherfile-rsarmageddon " + "decrypt " + path_ciphertext + " " + path_outfile + " " + path_privkey + " " + padding)
+    system(SOFTWARE_PATH + "/cipher_tools/openssl_cipherfile.sh " + "decrypt " + path_ciphertext + " " + path_outfile + " " + path_privkey + " " + padding)
 
     print("[+] original_file :", path_ciphertext, "-- sha256:", sha256_file_checksum(path_ciphertext))
     print("[+] decrypted_file:", path_outfile, "-- sha256:", sha256_file_checksum(path_outfile))

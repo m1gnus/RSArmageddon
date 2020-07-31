@@ -7,6 +7,7 @@ from parsing.args_filter import *
 from pem_utils.certs_manipulation import *
 
 from misc.signal_handler import *
+from misc.software_path import *
 
 import time
 import subprocess
@@ -102,7 +103,7 @@ def attack_manager(args: object) -> None:
 
         signal.alarm(timer)
 
-        p = subprocess.Popen(["attacks/" + attributes['scriptname']] + args_list + [str(args.private)])
+        p = subprocess.Popen([SOFTWARE_PATH + "/attacks/" + attributes['scriptname']] + args_list + [str(args.private)])
         attack_pid = p.pid
         p.wait()
 
