@@ -35,10 +35,9 @@ def rsa_cipher_string(m: int, n: int, e: int, padding: str) -> tuple:
 Encrypt a plaintext file using RSA
 """
 def rsa_cipher_file(path_plaintext: str, path_outfile: str, path_pubkey: str, padding: str) -> None:
-    
     print("[+] Encryptping plaintext file\n")
 
-    system("cipher_tools/openssl_cipherfile.sh " + "encrypt " + path_plaintext + " " + path_outfile + " " + path_pubkey + " " + padding)
+    system("cipherfile-rsarmageddon " + "encrypt " + path_plaintext + " " + path_outfile + " " + path_pubkey + " " + padding)
 
     print("[+] original_file :", path_plaintext, "-- sha256:", sha256_file_checksum(path_plaintext))
     print("[+] encrypted_file:", path_outfile, "-- sha256:", sha256_file_checksum(path_outfile))
