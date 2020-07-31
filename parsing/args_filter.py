@@ -40,6 +40,8 @@ def wrap_int_filter(string: str) -> int:
 
     if not string:
         return None
+    if isinstance(string, int):
+        return string
 
     parameters = [x for x in string.split(":") if x]
     
