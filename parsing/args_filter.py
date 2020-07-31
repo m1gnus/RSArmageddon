@@ -38,6 +38,9 @@ Takes a string in the format string[:base] and return the corresponding integer
 """
 def wrap_int_filter(string: str) -> int:
 
+    if not string:
+        return None
+
     parameters = [x for x in string.split(":") if x]
     
     if len(parameters) > 1: # there is a base
