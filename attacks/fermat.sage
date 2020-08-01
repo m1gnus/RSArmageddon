@@ -11,8 +11,11 @@ import sys
 import os
 import signal
 
+"""
+fermat's factorization custom signal handler
+"""
 def fermat_handler(sigNum: int, frame: str) -> None:
-    sys.exit(1)
+    sys.exit(1) # exit (failure)
 
 signal.signal(signal.SIGHUP, fermat_handler)
 signal.signal(signal.SIGINT, fermat_handler)
@@ -45,29 +48,44 @@ def fermat_factorization(n: int, e: int, private: bool, output_private: str, cip
 
     if n != (p*q):
         print("[-] Fermat factorization failed: n != p * q\n")
-        sys.exit(1)
+        sys.exit(1) # exit (failure)
 
     print("[+] Fermat factorization complete\n")
     print("[*] p:", p)
     print("[*] q:", q, "\n")
 
+    """
+    move PWD in the parent path
+    """
     pathname = os.path.dirname(sys.argv[0])
     abspath = os.path.abspath(pathname)
     os.chdir(abspath + "/../")
 
-    if private:
+    """
+    create private key file
+    """
+    if private: # --private
         os.system("sage --python -c 'from misc.software_path import *; import sys; sys.path.append(SOFTWARE_PATH); from pem_utils.certs_manipulation import *; create_privkey(" + str(n) + ", " + str(e) +", None, " + str(p) + ", " + str(q) + ", " + "\"" + str(output_private) + "\"" + ", \"PEM\")'")
-        
-    if ciphertext_file:
+
+    """
+    uncipher a specified ciphertext file
+    """  
+    if ciphertext_file: # --uncipher-file
         os.system("sage --python -c 'from misc.software_path import *; import sys; sys.path.append(SOFTWARE_PATH); from pem_utils.certs_manipulation import *; from parsing.args_filter import *; from cipher_tools.uncipher import *;n, e, d, p, q = fill_privkey_args(" + str(n) + ", " + str(e) + ", None," + str(p) + ", " + str(q) + "); create_privkey(" + str(n) + ", " + str(e) +", None, " + str(p) + ", " + str(q) + ", " + "\"/tmp/tmpprivkey_RSArmageddon.pem\"" + ", \"PEM\"); rsa_uncipher_file(" + "\"" + ciphertext_file + "\"" + ", " + "\"" + output_file + "\"" + ", \"/tmp/tmpprivkey_RSArmageddon.pem\", \"pkcs\"); print(\"[+] Removing temporary private key\")'; rm /tmp/tmpprivkey_RSArmageddon.pem")
 
-    if ciphertext:
+    """
+    uncipher a specified ciphertext
+    """
+    if ciphertext: # --uncipher
         os.system("sage --python -c 'from parsing.args_filter import *; from cipher_tools.uncipher import *; n, e, d, p, q = fill_privkey_args(" + str(n) + ", " + str(e) + ", None," + str(p) + ", " + str(q) + "); rsa_uncipher_string(" + "int(\"" + str(ciphertext) + "\")" + ", " + str(n) +", " + "d" + ", None)'")
 
-    sys.exit(0)
+    sys.exit(0) # exit (success)
 
 if __name__ == '__main__':
 
+    """
+    parse the arguments correctly
+    """
     n = int(sys.argv[1])
     e = int(sys.argv[2])
     private = (sys.argv[3] == "True")

@@ -16,6 +16,10 @@ the values will also be returned in a list: [n, e[, p, q, d, dp, dq, pinv, qinv]
 def dump_values_from_key(path: str) -> list:
 
     print("[+] Importing Key")
+
+    """
+    obtain a RsaKey object from the key file: https://pycryptodome.readthedocs.io/en/latest/src/public_key/rsa.html 
+    """
     try:
         keyfile = open(path, 'rb')
         key = RSA.importKey(keyfile.read())
@@ -32,6 +36,9 @@ def dump_values_from_key(path: str) -> list:
 
     res += [key.n, key.e]
 
+    """
+    If the key is a private key dump the private key values
+    """
     if key.has_private():
         print("[*] p: ", key.p)
         print("[*] q: ", key.q)
@@ -61,11 +68,18 @@ def create_pubkey(n: int, e: int, path: str, file_format: str) -> None:
 
     if not validate_modulous(n):
         sys.exit(1)
-    
-    if file_format != 'PEM' and file_format != 'DER' and file_format != 'OpenSSH':
+
+    """
+    make sure that file_format is a valid format
+    """
+    valid_format = ['PEM', 'DER', 'OpenSSH']
+    if file_format not in valid_format:
         print("[-] Unknown format... the key will be formatted in PEM format")
         file_format = 'PEM'
 
+    """
+    build the key in the specified format
+    """
     key = RSA.construct((n, e)).exportKey(format = file_format)
 
     if path:
@@ -88,10 +102,17 @@ def create_privkey(n: int, e: int, d: int, p: int, q: int, path: str, file_forma
     """
     n, e, d, p, q = fill_privkey_args(n, e, d, p, q)
     
-    if file_format != 'PEM' and file_format != 'DER' and file_format != 'OpenSSH':
+    """
+    make sure that file_format is a valid format
+    """
+    valid_format = ['PEM', 'DER', 'OpenSSH']
+    if file_format not in valid_format:
         print("[-] Unknown format... the key will be formatted in PEM format")
         file_format = 'PEM'
     
+    """
+    build the key in the specified format
+    """
     key = RSA.construct((n, e, d, p, q)).exportKey(format = file_format)
 
     if path:
@@ -106,8 +127,14 @@ Generate a new keypair
 """
 def generate_keypair(e: int, pubpath: str, privpath: str) -> None:
     
+    """
+    generate the key
+    """
     key = RSA.generate(2048, e=e)
 
+    """
+    obtain public and private key
+    """
     privkey = key.exportKey()
     pubkey = key.publickey().exportKey()
 

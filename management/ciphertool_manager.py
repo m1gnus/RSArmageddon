@@ -14,8 +14,11 @@ from misc.signal_handler import *
 
 def cipher_manager(args: object) -> None:
 
-    if args.plaintext:
+    if args.plaintext: # --plaintext <plaintext>
 
+        """
+        if a key is provided, then the values will be taken from the keys, else the values will be taken from -n and -e
+        """
         if args.key:
             vals = dump_values_from_key(args.key)
             n, e = vals[:2]
@@ -28,14 +31,17 @@ def cipher_manager(args: object) -> None:
 
         rsa_cipher_string(plaintext_filter(args.plaintext), n ,e, args.padding)
 
-    if args.plaintext_file:
+    if args.plaintext_file: # --plaintext-file <str>
 
+        """
+        openssl (which require a key file) is used, so if a key is not specified, we will create a temporary key (that will be deleted at the end of operation)
+        """
         if not args.key:
             check_required(args.n, args.e)
             args.key = "/tmp/tmppubkey_RSArmageddon.pub"
             create_pubkey(wrap_int_filter(args.n), wrap_int_filter(args.e), "/tmp/tmppubkey_RSArmageddon.pub")
         else:
-            validate_pubkey(args.key)
+            validate_pubkey(args.key) # check that the key is a public key
 
         files = list_filter(args.plaintext_file)
         outnames = list_filter(args.output_file)
@@ -53,9 +59,9 @@ def cipher_manager(args: object) -> None:
 
 def uncipher_manager(args: object) -> None:
 
-    if args.ciphertext:
+    if args.ciphertext: # --ciphertext <ciphertext>
         if args.key:
-            validate_privkey(args.key)
+            validate_privkey(args.key) # check that the key is a private key
             vals = dump_values_from_key(args.key)
             n, e, p, q, d = vals[:5]
         else:
@@ -66,7 +72,7 @@ def uncipher_manager(args: object) -> None:
 
         rsa_uncipher_string(ciphertext_filter(args.ciphertext), n, d, args.padding)
 
-    if args.ciphertext_file:
+    if args.ciphertext_file: # --ciphertext-file <str>
 
         if not args.key:
             n, e, d, p, q = fill_privkey_args(wrap_int_filter(args.n), wrap_int_filter(args.e), wrap_int_filter(args.d), wrap_int_filter(args.p), wrap_int_filter(args.q))

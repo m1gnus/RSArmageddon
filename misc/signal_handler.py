@@ -2,7 +2,14 @@ import signal
 import sys
 import os
 
+"""
+This will contain the PID of the processes that will be terminated
+"""
 pids = []
+
+"""
+signal to send to the processes which pids is specified in "pids"
+"""
 signal_ = signal.SIGTERM
 
 def signal_name(signalNumber: int) -> str:
@@ -17,6 +24,9 @@ def kill_processes(signalNumber: int, frame: str) -> None:
         os.kill(pid, signal_)
     sys.exit(0)
 
+"""
+signal to catch, if you don't want to catch one of this signals comment the relative line
+"""
 signal.signal(signal.SIGHUP, kill_processes)
 signal.signal(signal.SIGINT, kill_processes)
 signal.signal(signal.SIGQUIT, kill_processes)

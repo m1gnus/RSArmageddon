@@ -17,19 +17,32 @@ Encrypt a plaintext string using RSA
 """
 def rsa_cipher_string(m: int, n: int, e: int, padding: str) -> tuple:
     
-    if padding:
+    """
+    apply the specified padding
+    """
+    if padding: # --padding <str>
         print("[+] Pad plaintext with", padding)
         m_bytes = binascii.unhexlify(hex(m)[2:])
         m = int.from_bytes(pad(m_bytes, len(m_bytes), style = padding), "big")
 
     print("[+] Encrypting plaintext string\n")
+
+    """
+    calculate ciphertext in dec format
+    """
     c = pow(m, e, n)
+    
+    """
+    calculate ciphertext in hex and raw format
+    """
     hexc = hex(c) if (len(hex(c)) % 2) == 0 else ("0x0" + hex(c)[2:])
     rawc = binascii.unhexlify(hexc[2:].encode())
+    
     print("[+] ciphertext (dec):", c)
     print("[+] ciphertext (hex):", hexc)
     print("[+] ciphertext (raw):", rawc)
     print()
+    
     return (c, hexc, rawc)
 
 """

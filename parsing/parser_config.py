@@ -78,7 +78,7 @@ pem_parser.add_argument('--createpriv', action = 'store_const', dest = 'cpriv', 
 pem_parser.add_argument('--generate', action = 'store_const', dest = 'generatekeypair', const = True, default = False, help = 'Create a new key pair')
 
 """
-General options
+General features
 """
 parser.add_argument('--factor', action = 'store', dest = 'tofactor', default = None, help = 'Integer to factorize')
 parser.add_argument('--ecm', action = 'store', dest = 'tofactorwecm', default = None, help = 'Integer to factorize with ecm')
