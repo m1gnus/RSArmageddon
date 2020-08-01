@@ -192,19 +192,19 @@ def check_required(*nargs) -> None:
         sys.exit(1)
 
 """
-Takes a modulous and check its consistency: this is the only "validate" function that has a return value,
+Takes a modulus and check its consistency: this is the only "validate" function that has a return value,
 because of its nature the management of the result is left to the programmer
 """
-def validate_modulous(n: int) -> bool:
+def validate_modulus(n: int) -> bool:
 
     res = [True, "[-]"]
     
     if n%2 == 0:
         res[0] = False
-        res[1] += "--modulous is not odd--"
+        res[1] += "--modulus is not odd--"
     if n<2:
         res[0] = False
-        res[1] += "--modulous has to be >= 2--"
+        res[1] += "--modulus has to be >= 2--"
     
     if res[1] != "[-]":
         print(res[1])
