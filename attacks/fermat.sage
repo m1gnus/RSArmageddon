@@ -34,6 +34,8 @@ signal.signal(signal.SIGALRM, fermat_handler)
 
 def fermat_factorization(n: int, e: int, private: bool, output_private: str, ciphertext_file: str, output_file: str, ciphertext: int) -> None:
     
+    print("[+] Fermat factorization started")
+
     a = isqrt(n)
     b2 = a*a - n
     b = a
