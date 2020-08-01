@@ -100,6 +100,10 @@ def attack_manager(args: object) -> None:
 
     timer = validate_timer(args.timeout)
 
+    if not n:
+        print("[-] you have to insert at least one value for n")
+        sys.exit(1)
+
     if 'all' in selected_attacks:
         selected_attacks = list(attacks.keys())
 
