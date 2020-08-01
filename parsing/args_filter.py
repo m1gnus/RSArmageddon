@@ -12,16 +12,16 @@ Takes two parameters: string,base and return the integer value wich is represent
 If base is None, the string will be converted to int by following the standards representations of
 numbers in base 16,2,8,10.
 """
-def int_filter(string: str, base = '0') -> int:
+def int_filter(string: str, base = "0") -> int:
 
     try:
         base = int(base)
         if base <= 0:
-            if string[:2] == '0x': # hexadecimal
+            if string[:2] == "0x": # hexadecimal
                 return int(string[2:], 16)
-            elif string[:2] == '0b': # binary
+            elif string[:2] == "0b": # binary
                 return int(string[2:], 2)
-            elif string[0] == '0': # octal
+            elif string[0] == "0": # octal
                 return int(string[1:], 8)
             else:
                 return int(string, 10) # decimal
@@ -141,7 +141,7 @@ def recover_pubkey_value_from_file(path: str) -> list:
         parts = [x for x in line.split(":") if x]
 
         if len(parts) < 2:
-            parts.append('65537')
+            parts.append("65537")
 
         n.append(wrap_int_filter(parts[0]))
         e.append(wrap_int_filter(parts[1]))
@@ -156,20 +156,20 @@ def recover_pubkey_value_from_folder(path: str, ext: str) -> list:
     n = []
     e = []
 
-    if path[-1] != '/':
-        path += '/'
+    if path[-1] != "/":
+        path += "/"
 
-    if ext[0] == '.':
-        ext = '.' + ext
+    if ext[0] == ".":
+        ext = "." + ext
 
-    files = [x for x in subprocess.check_output(['ls', '-al', path]).decode().split('\n') if x]
+    files = [x for x in subprocess.check_output(["ls", "-al", path]).decode().split("\n") if x]
     files = [x for x in [y for y in y.split(" ") if y][8] if len(x) > 3]
 
     # Find public keys in folder
     files = [x.strip() for x in files if (len(x) > len(ext) and x[-(len(ext)):] == ext)]
 
     print("Importing Public Keys:")
-    print('\n'.join(files))
+    print("\n".join(files))
 
     for file_ in files:
         vals = dump_values_from_key(file_)
@@ -186,7 +186,7 @@ def check_required(*nargs) -> None:
     try:
         for arg in nargs:
             if not arg:
-                raise ValueError("One of the required arguments is not setted: " + ' '.join(list(nargs)))
+                raise ValueError("One of the required arguments is not setted: " + " ".join(list(nargs)))
     except ValueError as e:
         print("args_filter.py:check_required", e)
         sys.exit(1)
@@ -215,20 +215,20 @@ Takes a string and check if its a valid argument for padding
 """
 def validate_padding(arg: str) -> str:
     
-    if arg == 'pkcs7' or arg == 'iso7816' or arg == 'x923':
+    if arg == "pkcs7" or arg == "iso7816" or arg == "x923":
         return arg
     else:
-        return '' 
+        return "" 
 
 """
 Takes a string and check if its a valid argument for filepadding
 """
 def validate_padding_for_file(arg: str) ->str:
 
-    if arg == 'pkcs' or arg == 'oaep' or arg == 'raw' or arg == 'ssl':
+    if arg == "pkcs" or arg == "oaep" or arg == "raw" or arg == "ssl":
         return arg
     else:
-        return 'pkcs'
+        return "pkcs"
 
 """
 Takes string which represent an integer and check if its valid for being a timer

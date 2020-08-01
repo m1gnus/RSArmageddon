@@ -47,5 +47,5 @@ factordb <n>
 def version():
     print("RSArmageddon v.1.0 --Athena--")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     banner()

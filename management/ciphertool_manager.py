@@ -77,7 +77,7 @@ def uncipher_manager(args: object) -> None:
         if not args.key:
             n, e, d, p, q = fill_privkey_args(wrap_int_filter(args.n), wrap_int_filter(args.e), wrap_int_filter(args.d), wrap_int_filter(args.p), wrap_int_filter(args.q))
             args.key = "/tmp/tmpprivkey_RSArmageddon.pub"
-            create_privkey(n, e, d, p, q, "/tmp/tmpprivkey_RSArmageddon.pub", 'PEM')
+            create_privkey(n, e, d, p, q, "/tmp/tmpprivkey_RSArmageddon.pub", "PEM")
         else:
             validate_privkey(args.key)
 
@@ -96,8 +96,8 @@ def uncipher_manager(args: object) -> None:
 
 def ciphertool_manager(args: object) -> None:
     
-    if args.csubp == 'cipher':
+    if args.csubp == "cipher":
         cipher_manager(args)
-    elif args.csubp == 'uncipher':
+    elif args.csubp == "uncipher":
         uncipher_manager(args)
 

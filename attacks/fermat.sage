@@ -83,7 +83,7 @@ def fermat_factorization(n: int, e: int, private: bool, output_private: str, cip
 
     sys.exit(0) # exit (success)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     """
     parse the arguments correctly

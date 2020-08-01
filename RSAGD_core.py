@@ -17,9 +17,9 @@ if __name__ == "__main__":
 
     if not args.subp:
         general_features_manager(args)
-    elif args.subp == 'pem':
+    elif args.subp == "pem":
         pem_manipulation_manager(args)
-    elif args.subp == 'ciphertool':
+    elif args.subp == "ciphertool":
         ciphertool_manager(args)
-    elif args.subp == 'attack':
+    elif args.subp == "attack":
         attack_manager(args)

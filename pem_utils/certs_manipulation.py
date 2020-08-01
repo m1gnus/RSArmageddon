@@ -21,7 +21,7 @@ def dump_values_from_key(path: str) -> list:
     obtain a RsaKey object from the key file: https://pycryptodome.readthedocs.io/en/latest/src/public_key/rsa.html 
     """
     try:
-        keyfile = open(path, 'rb')
+        keyfile = open(path, "rb")
         key = RSA.importKey(keyfile.read())
     except Exception as e:
         print("certs_manipulation.py:dump_values_from_key ->", e)
@@ -72,10 +72,10 @@ def create_pubkey(n: int, e: int, path: str, file_format: str) -> None:
     """
     make sure that file_format is a valid format
     """
-    valid_format = ['PEM', 'DER', 'OpenSSH']
+    valid_format = ["PEM", "DER", "OpenSSH"]
     if file_format not in valid_format:
         print("[-] Unknown format... the key will be formatted in PEM format")
-        file_format = 'PEM'
+        file_format = "PEM"
 
     """
     build the key in the specified format
@@ -87,7 +87,7 @@ def create_pubkey(n: int, e: int, path: str, file_format: str) -> None:
         open(path, "wb").write(key)
     else:
         print("[-] no path specified, the key will be prompted to stdout\n")
-        print(key.decode() + "\n") if file_format != 'DER' else print(key, "\n")
+        print(key.decode() + "\n") if file_format != "DER" else print(key, "\n")
 
 """
 Takes n,e,d,p and q in order to create the corresponding private key file formatted in the specified format
@@ -105,10 +105,10 @@ def create_privkey(n: int, e: int, d: int, p: int, q: int, path: str, file_forma
     """
     make sure that file_format is a valid format
     """
-    valid_format = ['PEM', 'DER', 'OpenSSH']
+    valid_format = ["PEM", "DER", "OpenSSH"]
     if file_format not in valid_format:
         print("[-] Unknown format... the key will be formatted in PEM format")
-        file_format = 'PEM'
+        file_format = "PEM"
     
     """
     build the key in the specified format
@@ -120,7 +120,7 @@ def create_privkey(n: int, e: int, d: int, p: int, q: int, path: str, file_forma
         open(path, "wb").write(key)
     else:
         print("[-] no path specified, the key will be prompted to stdout\n")
-        print(key.decode() + "\n") if file_format != 'DER' else print(key, "\n")
+        print(key.decode() + "\n") if file_format != "DER" else print(key, "\n")
 
 """
 Generate a new keypair

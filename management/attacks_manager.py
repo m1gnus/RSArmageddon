@@ -40,25 +40,25 @@ def attack_manager(args: object) -> None:
     list of implemented attacks
     """
     attacks = {
-        'fermat': {
-            'pkey': 'single', # single: requires only one couple of public key values, multi: requires more than one couple of public key values
-            'scriptname': 'fermat.sage'
+        "fermat": {
+            "pkey": "single", # single: requires only one couple of public key values, multi: requires more than one couple of public key values
+            "scriptname": "fermat.sage"
         },
-        'wiener': {
-            'pkey': 'single',
-            'scriptname': 'wiener.sage'
+        "wiener": {
+            "pkey": "single",
+            "scriptname": "wiener.sage"
         },
-        'p_1': {
-            'pkey': 'single',
-            'scriptname': 'pollard_p_1.sage'
+        "p_1": {
+            "pkey": "single",
+            "scriptname": "pollard_p_1.sage"
         },
-        'factordb': {
-            'pkey': 'single',
-            'scriptname': 'factordb.py'
+        "factordb": {
+            "pkey": "single",
+            "scriptname": "factordb.py"
         },
-        'common_factor': {
-            'pkey': 'multi',
-            'scriptname': 'common_factor.sage'
+        "common_factor": {
+            "pkey": "multi",
+            "scriptname": "common_factor.sage"
         }
     }
 
@@ -104,7 +104,7 @@ def attack_manager(args: object) -> None:
         print("[-] you have to insert at least one value for n")
         sys.exit(1)
 
-    if 'all' in selected_attacks:
+    if "all" in selected_attacks:
         selected_attacks = list(attacks.keys())
 
     for attack in selected_attacks:
@@ -117,19 +117,19 @@ def attack_manager(args: object) -> None:
 
         args_list = []
 
-        if attributes['pkey'] == 'single': # pass only the first couple of public key values to the attack script
+        if attributes["pkey"] == "single": # pass only the first couple of public key values to the attack script
             args_list.append(n[0])
             args_list.append(e[0])
-        elif attributes['pkey'] == 'multi': # pass the entire list of public key values to the attack script
-            args_list += [':'.join(n)] + [':'.join(e)]
+        elif attributes["pkey"] == "multi": # pass the entire list of public key values to the attack script
+            args_list += [":".join(n)] + [":".join(e)]
 
         args_list += [str(args.private)]
 
         ciphertext = (ciphertext_filter(args.ciphertext) if args.ciphertext else None)
 
-        if attributes['pkey'] == 'single':
+        if attributes["pkey"] == "single":
             args_list += [args.output_private, args.ciphertext_file, args.output_file, ciphertext]
-        elif attributes['pkey'] == 'multi':
+        elif attributes["pkey"] == "multi":
             args_list += [args.output_dir]
         
         """
@@ -142,7 +142,7 @@ def attack_manager(args: object) -> None:
         """
         signal.alarm(timer)
 
-        p = subprocess.Popen([SOFTWARE_PATH + "/attacks/" + attributes['scriptname']] + args_list)
+        p = subprocess.Popen([SOFTWARE_PATH + "/attacks/" + attributes["scriptname"]] + args_list)
         attack_pid = p.pid
         res = p.wait()
 
