@@ -14,6 +14,12 @@ def general_features_manager(args: object) -> None:
     
     global pids
 
+    if args.n_phi: # --factor <int>
+        int_input = wrap_int_filter(args.n_phi)
+        p = subprocess.Popen(["features/sage_euler_phi.sage", str(int_input)])
+        pids.append(p.pid)
+        p.wait()
+        sys.exit(0)
     if args.tofactor: # --factor <int>
         int_input = wrap_int_filter(args.tofactor)
         p = subprocess.Popen(["features/sage_factor.sage", str(int_input)])
