@@ -52,6 +52,7 @@ uncipher_parser.add_argument("-p", action = "store", dest = "p", type = str, def
 uncipher_parser.add_argument("-q", action = "store", dest = "q", type = str, default = None, help = "<int> which specify RSA second prime factor")
 uncipher_parser.add_argument("-e", action = "store", dest = "e", type = str, default = None, help = "<int> which specify RSA public exponent")
 uncipher_parser.add_argument("-d", action = "store", dest = "d", type = str, default = None, help = "<int> which specify RSA private exponent")
+uncipher_parser.add_argument("-phi", "--phi", action = "store", dest = "phi", type = str, default = None, help = "<int> which specify euler's phi of RSA public modulus")
 uncipher_parser.add_argument("--ciphertext", action = "store", dest = "ciphertext", type = str, default = None, help = "Takes an argument of <ciphertext> type which represent the ciphertext that will be decrypted with the given private key values")
 uncipher_parser.add_argument("--ciphertext-file", action = "store", dest = "ciphertext_file", type = str, default = None, help = "Path to a file wich represent the ciphertext file that will be decrypted with the given private key values")
 uncipher_parser.add_argument("--file-padding", action = "store", dest = "filepadding", type = str, default = "pkcs", help = "Padding that will be used in the process for the given file (--ciphertext-file), choose one of the follows: [raw, pkcs, ssl, oaep, x931] (default: pkcs)")

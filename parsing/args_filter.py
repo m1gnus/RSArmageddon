@@ -40,6 +40,7 @@ def wrap_int_filter(string: str) -> int:
 
     if not string:
         return None
+
     if isinstance(string, int):
         return string
 
@@ -94,7 +95,17 @@ def ciphertext_filter(string: str) -> int:
         if len(parameters) > 1: # there is a type
             type_ = parameters[1]
         else:
-            type_ = "dec"
+            if string[:2] == "0x":
+                string = string[2:]
+                type_ = "hex"
+            elif string[:2] == "0b":
+                string = string[2:]
+                type_ = "bin"
+            elif string[0] == "0":
+                string = string[1:]
+                type_ = "oct"
+            else:
+                type_ = "dec"
         
         plaintext = parameters[0]
     
@@ -274,6 +285,16 @@ def check_prime(p: int) -> bool:
     if system("features/sage_isprime.sage " + str(p) + " 1>/dev/null") == 0:
         return False
     return True
+
+"""
+See minimum arguments for privkey
+"""
+def get_private_exponent(n: int, e: int, phi: int):
+    if not n or not e or not phi:
+        return False
+    else:
+        return int(invert(e, phi))
+
 
 """
 recover all the needed arguments to create a private key from the given ones
