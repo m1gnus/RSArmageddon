@@ -26,7 +26,7 @@ attacks_parser.add_argument("--uncipher", action = "store", dest = "ciphertext",
 attacks_parser.add_argument("--uncipher-file", action = "store", dest = "ciphertext_file", type = str, default = None, help = "File to uncipher if the private key is recovered")
 attacks_parser.add_argument("--output-private", action = "store", dest = "output_private", type = str, default = None, help = "Specify where to save the private key file in PEM format if the private key is recovered and --private flag is setted")
 attacks_parser.add_argument("--output-file", action = "store", dest = "output_file", type = str, default = "./decrypted.dec", help = "Specify where to save the decrypted file specified inn --uncipher-file if the private key is recovered (default: \"./decrypted.dec\")")
-attacks_parser.add_argument("--output-dir", action = "store", dest = "output_dir", type = str, default = ".", help = "Specify where to save the private key files recovered from the public keys specified (for attacks which requires more than one public key couple of values (default: \".\")")
+attacks_parser.add_argument("--output-dir", action = "store", dest = "output_dir", type = str, default = None, help = "Specify where to save the private key files recovered from the public keys specified (for attacks which requires more than one public key couple of values (default: \".\")")
 
 """
 Cipher tools
