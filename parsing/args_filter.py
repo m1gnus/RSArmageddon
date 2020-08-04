@@ -7,6 +7,7 @@ from os import system
 from gmpy2 import invert
 from Crypto.PublicKey import RSA
 
+from pem_utils.certs_manipulation import *
 """
 Takes two parameters: string,base and return the integer value wich is represented by the string.
 If base is None, the string will be converted to int by following the standards representations of
@@ -170,11 +171,20 @@ def recover_pubkey_value_from_folder(path: str, ext: str) -> list:
     if path[-1] != "/":
         path += "/"
 
-    if ext[0] == ".":
+    if ext[0] != ".":
         ext = "." + ext
 
-    files = [x for x in subprocess.check_output(["ls", "-al", path]).decode().split("\n") if x]
-    files = [x for x in [y for y in y.split(" ") if y][8] if len(x) > 3]
+    print(path)
+
+    files = [x for x in subprocess.check_output(["ls", "-al", path]).decode().split("\n") if x and ("total ") not in x]
+    files = [x.split(" ") for x in files]
+
+    for x in range(len(files)):
+        files[x] = [y.strip() for y in files[x]]
+        files[x] = [y for y in files[x] if y]
+        
+    files = [x[8] for x in files]
+    files = [x for x in files if (x and len(x) >= len(ext) and (x != ".." and x != "."))]
 
     # Find public keys in folder
     files = [x.strip() for x in files if (len(x) > len(ext) and x[-(len(ext)):] == ext)]
@@ -183,7 +193,7 @@ def recover_pubkey_value_from_folder(path: str, ext: str) -> list:
     print("\n".join(files))
 
     for file_ in files:
-        vals = dump_values_from_key(file_)
+        vals = dump_values_from_key(path + file_)
         n.append(wrap_int_filter(vals[0]))
         e.append(wrap_int_filter(vals[1]))
     
