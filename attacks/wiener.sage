@@ -92,7 +92,10 @@ def wiener_factorization(n: int, e: int, private: bool, output_private: str, cip
                 """
                 if t != -1 and (s + t) % 2 == 0:
                     x = var('x')
-                    roots = solve(x**2 - s*x + n, x)
+                    try:
+                        roots = solve(x**2 - s*x + n, x)
+                    except RuntimeError:
+                        wiener_handler(2, "")
                     p_ = roots[0].rhs()
                     q_ = roots[1].rhs()
                     if p_ < 0 or q_ < 0:
