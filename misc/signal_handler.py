@@ -22,7 +22,7 @@ def kill_processes(signalNumber: int, frame: str) -> None:
     global pids
     time.sleep(0.5)
     print("\n[.] received a signal ->", signal_name(signalNumber))
-    print("sending", signal_name(signal_), "to the following processes:", pids)
+    print("sending", signal_name(signal_), "to the following processes:", pids, "if still active")
     for pid in pids:
         if psutil.pid_exists(pid):
             os.kill(pid, signal_)
