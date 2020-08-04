@@ -35,6 +35,7 @@ signal.signal(signal.SIGALRM, terminate_attack)
 def attack_manager(args: object) -> None:
 
     global attack_pid
+    global pids
 
     """
     list of implemented attacks
@@ -144,8 +145,9 @@ def attack_manager(args: object) -> None:
 
         p = subprocess.Popen([SOFTWARE_PATH + "/attacks/" + attributes["scriptname"]] + args_list)
         attack_pid = p.pid
+        pids.append(attack_pid)
         res = p.wait()
-
+        pids.remove(attack_pid)
         """
         reset the timer
         """
