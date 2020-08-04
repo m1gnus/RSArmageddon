@@ -43,6 +43,8 @@ URL = "http://factordb.com/index.php"
 
 def factor_db(n: int, e: int, private: bool, output_private: str, ciphertext_file: str, output_file: str, ciphertext: int) -> tuple:
     
+    print("[+] factordb factorization started")
+
     """
     build the payload correctly
     """
