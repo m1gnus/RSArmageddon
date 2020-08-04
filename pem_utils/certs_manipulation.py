@@ -115,7 +115,7 @@ def create_privkey(n: int, e: int, d: int, p: int, q: int, path: str, file_forma
     """
     key = RSA.construct((n, e, d, p, q)).exportKey(format = file_format)
 
-    if path:
+    if path and path != "None":
         print("[+] writing private key in", path)
         open(path, "wb").write(key)
     else:
