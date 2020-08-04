@@ -14,6 +14,7 @@ import signal
 """
 wiener attack's custom signal handler
 """
+
 def wiener_handler(sigNum: int, frame: str) -> None:
     print("[-] Wiener attack failed\n")
     sys.exit(1) # exit (failure)

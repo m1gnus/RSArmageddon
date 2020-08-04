@@ -14,9 +14,16 @@ import signal
 """
 fermat's factorization custom signal handler
 """
+
+seg = 0
+
 def fermat_handler(sigNum: int, frame: str) -> None:
-    print("[-] Fermat factorization failed: n != p * q\n")
-    sys.exit(1) # exit (failure)
+    global seg
+    if seg > 0:
+        print("[-] Fermat factorization failed\n")
+        sys.exit(1) # exit (failure)
+    else:
+        seg += 1
 
 signal.signal(signal.SIGHUP, fermat_handler)
 signal.signal(signal.SIGINT, fermat_handler)
