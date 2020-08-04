@@ -16,7 +16,7 @@ wiener attack's custom signal handler
 """
 
 def wiener_handler(sigNum: int, frame: str) -> None:
-    print("[-] Wiener attack failed\n")
+    print("\n[-] Wiener attack failed\n")
     sys.exit(1) # exit (failure)
 
 signal.signal(signal.SIGHUP, wiener_handler)
@@ -72,6 +72,7 @@ def wiener_factorization(n: int, e: int, private: bool, output_private: str, cip
 
     p = None
     q = None
+
 
     for el in cf_convergents:
         k = Integer(el.numerator())

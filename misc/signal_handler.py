@@ -1,6 +1,8 @@
 import signal
 import sys
 import os
+import psutil
+import time
 
 """
 This will contain the PID of the processes that will be terminated
@@ -18,10 +20,12 @@ def signal_name(signalNumber: int) -> str:
 
 def kill_processes(signalNumber: int, frame: str) -> None:
     global pids
+    time.sleep(0.5)
     print("\n[.] received a signal ->", signal_name(signalNumber))
     print("sending", signal_name(signal_), "to the following processes:", pids)
     for pid in pids:
-        os.kill(pid, signal_)
+        if psutil.pid_exists(pid):
+            os.kill(pid, signal_)
     sys.exit(0)
 
 """

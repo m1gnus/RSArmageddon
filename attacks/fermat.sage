@@ -15,15 +15,9 @@ import signal
 fermat's factorization custom signal handler
 """
 
-seg = 0
-
 def fermat_handler(sigNum: int, frame: str) -> None:
-    global seg
-    if seg > 0:
-        print("[-] Fermat factorization failed\n")
-        sys.exit(1) # exit (failure)
-    else:
-        seg += 1
+    print("\n[-] Fermat factorization failed\n")
+    sys.exit(1) # exit (failure)
 
 signal.signal(signal.SIGHUP, fermat_handler)
 signal.signal(signal.SIGINT, fermat_handler)

@@ -16,15 +16,9 @@ import time
 p_1 factorization's custom signal handler
 """
 
-seg = 0
-
 def p_1_handler(sigNum: int, frame: str) -> None:
-    global seg
-    if seg > 0:
-        print("[-] pollard p-1 factorization failed\n")
-        sys.exit(1) # exit (failure)
-    else:
-        seg += 1
+    print("\n[-] pollard p-1 factorization failed\n")
+    sys.exit(1) # exit (failure)
 
 signal.signal(signal.SIGHUP, p_1_handler)
 signal.signal(signal.SIGINT, p_1_handler)
