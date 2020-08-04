@@ -5,7 +5,7 @@
 #   https://en.wikipedia.org/wiki/Fermat's_factorization_method
 ##
 
-from sage.all import isqrt
+from sage.all import isqrt, Integer
 
 import sys
 import os
@@ -88,8 +88,8 @@ if __name__ == "__main__":
     """
     parse the arguments correctly
     """
-    n = int(sys.argv[1])
-    e = int(sys.argv[2])
+    n = Integer(sys.argv[1])
+    e = Integer(sys.argv[2])
     private = (sys.argv[3] == "True")
     output_private = (None if sys.argv[4] == "None" else sys.argv[4])
     ciphertext_file = (None if sys.argv[5] == "None" else sys.argv[5])
