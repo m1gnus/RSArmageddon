@@ -197,7 +197,7 @@ def check_required(*nargs) -> None:
     try:
         for arg in nargs:
             if not arg:
-                raise ValueError("One of the required arguments is not setted: " + " ".join(list(nargs)))
+                raise ValueError("One of the required arguments is not setted")
     except ValueError as e:
         print("args_filter.py:check_required", e)
         sys.exit(1)
