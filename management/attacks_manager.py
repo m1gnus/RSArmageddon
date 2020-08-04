@@ -122,6 +122,8 @@ def attack_manager(args: object) -> None:
             args_list.append(n[0])
             args_list.append(e[0])
         elif attributes["pkey"] == "multi": # pass the entire list of public key values to the attack script
+            n = [str(x) for x in n]
+            e = [str(x) for x in e]
             args_list += [":".join(n)] + [":".join(e)]
 
         args_list += [str(args.private)]
@@ -142,7 +144,6 @@ def attack_manager(args: object) -> None:
         start the timer
         """
         signal.alarm(timer)
-
         p = subprocess.Popen([SOFTWARE_PATH + "/attacks/" + attributes["scriptname"]] + args_list)
         attack_pid = p.pid
         pids.append(attack_pid)
