@@ -174,15 +174,13 @@ def recover_pubkey_value_from_folder(path: str, ext: str) -> list:
     if ext[0] != ".":
         ext = "." + ext
 
-    print(path)
-
     files = [x for x in subprocess.check_output(["ls", "-al", path]).decode().split("\n") if x and ("total ") not in x]
     files = [x.split(" ") for x in files]
 
     for x in range(len(files)):
         files[x] = [y.strip() for y in files[x]]
         files[x] = [y for y in files[x] if y]
-        
+
     files = [x[8] for x in files]
     files = [x for x in files if (x and len(x) >= len(ext) and (x != ".." and x != "."))]
 
@@ -190,7 +188,7 @@ def recover_pubkey_value_from_folder(path: str, ext: str) -> list:
     files = [x.strip() for x in files if (len(x) > len(ext) and x[-(len(ext)):] == ext)]
 
     print("Importing Public Keys:")
-    print("\n".join(files))
+    print("\n".join(files) + "\n")
 
     for file_ in files:
         vals = dump_values_from_key(path + file_)
