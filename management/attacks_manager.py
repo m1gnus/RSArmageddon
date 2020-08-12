@@ -41,6 +41,10 @@ def attack_manager(args: object) -> None:
     list of implemented attacks
     """
     attacks = {
+        "factordb": {
+            "pkey": "single",
+            "scriptname": "factordb.py"
+        },
         "fermat": {
             "pkey": "single", # single: requires only one couple of public key values, multi: requires more than one couple of public key values
             "scriptname": "fermat.sage"
@@ -52,10 +56,6 @@ def attack_manager(args: object) -> None:
         "p_1": {
             "pkey": "single",
             "scriptname": "pollard_p_1.sage"
-        },
-        "factordb": {
-            "pkey": "single",
-            "scriptname": "factordb.py"
         },
         "common_factor": {
             "pkey": "multi",
