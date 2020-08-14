@@ -81,7 +81,7 @@ then
         then
             echo "[-] In order to continue the setup sage must be installed on your system"
             exit 1
-        elif [[ $AND == 'Y' || $ANS == "y" ]]
+        elif [[ $ANS == 'Y' || $ANS == "y" ]]
         then
             echo
             wget http://www-ftp.lip6.fr/pub/math/sagemath/linux/64bit/sage-9.1-Debian_GNU_Linux_10-x86_64.tar.bz2 -o Sage.tar.bz2
