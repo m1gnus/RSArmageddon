@@ -83,9 +83,10 @@ then
             exit 1
         elif [[ $ANS == 'Y' || $ANS == "y" ]]
         then
-            echo
+            echo "[+] Downloading Sage..."
             wget http://www-ftp.lip6.fr/pub/math/sagemath/linux/64bit/sage-9.1-Debian_GNU_Linux_10-x86_64.tar.bz2 -O Sage.tar.bz2
-            tar -xvf Sage.tar.bz2
+            echo "[+] Installing Sage..."
+	    tar -xvf Sage.tar.bz2
             sudo mv ./SageMath/ /opt/SageMath
             rm -rf Sage.tar.bz2
 
