@@ -28,7 +28,7 @@ def rsa_uncipher_string(c: int, n: int, d: int, padding: str) -> tuple:
     remove the specified padding
     """
     if padding: # --padding <str>
-        print("[+] Unpad ciphertext with", padding, "\n")
+        print("[+] Unpad plaintext with", padding, "\n")
         m_bytes = binascii.unhexlify(hex(m)[2:])
         m = int.from_bytes(unpad(m_bytes, len(m_bytes), style = padding), "big")
 
@@ -38,9 +38,9 @@ def rsa_uncipher_string(c: int, n: int, d: int, padding: str) -> tuple:
     hexm = hex(m) if (len(hex(m)) % 2) == 0 else ("0x0" + hex(m)[2:])
     rawm = binascii.unhexlify(hexm[2:].encode())
 
-    print("[+] ciphertext (dec):", m)
-    print("[+] ciphertext (hex):", hexm)
-    print("[+] ciphertext (raw):", rawm)
+    print("[+] plaintext (dec):", m)
+    print("[+] plaintext (hex):", hexm)
+    print("[+] plaintext (raw):", rawm)
     print()
 
     return (m, hexm, rawm)
