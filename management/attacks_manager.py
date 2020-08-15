@@ -60,6 +60,10 @@ def attack_manager(args: object) -> None:
         "common_factor": {
             "pkey": "multi",
             "scriptname": "common_factor.sage"
+        },
+        "boneh_durfee": {
+            "pkey": "single",
+            "scriptname": "boneh_durfee.sage"
         }
     }
 
