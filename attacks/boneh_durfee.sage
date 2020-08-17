@@ -245,7 +245,6 @@ def boneh_durfee(pol, modulus, mm, tt, XX, YY):
             if rr.is_zero() or rr.monomials() == [1]:
                 continue
             else:
-                print("found them, using vectors", pol1_idx, "and", pol2_idx)
                 found_polynomials = True
                 break
         if found_polynomials:
