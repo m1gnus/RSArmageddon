@@ -22,7 +22,7 @@ echo -e '$$$$$$$$$$$$$$$$$$$$$$$$$$'
 echo -e '$$$ RSArmageddon Setup $$$'
 echo -e '$$$$$$$$$$$$$$$$$$$$$$$$$$\n'
 
-echo -e "[*] Now the following dependencies will be installed: gcc, m4, pkg-config, libpng-dev, libssl-dev"
+echo -e "[*] Now the following dependencies will be installed: gcc, cmake, m4, pkg-config, libpng-dev, libssl-dev"
 
 while [[ $ANS != "N" && $ANS != "n" && $ANS != "Y" && $ANS != "y" ]]
 do
@@ -42,8 +42,8 @@ done
 # install needed dependencies
 echo "[+] Installing dependencies:"
 sudo apt-get update -y
-sudo apt-get install -y cmake
 sudo apt-get install -y gcc
+sudo apt-get install -y cmake
 sudo apt-get install -y m4
 sudo apt-get install -y pkg-config
 sudo apt-get install -y libpng-dev
