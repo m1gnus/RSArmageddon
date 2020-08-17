@@ -41,6 +41,7 @@ done
 
 # install needed dependencies
 echo "[+] Installing dependencies:"
+sudo apt-get update -y
 sudo apt-get install -y gcc
 sudo apt-get install -y m4
 sudo apt-get install -y pkg-config
