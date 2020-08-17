@@ -62,9 +62,6 @@ Takes n and e in order to create the corresponding public key file formatted in 
 """
 def create_pubkey(n: int, e: int, path: str, file_format: str) -> None:
 
-    if not validate_modulus(n):
-        sys.exit(1)
-
     """
     make sure that file_format is a valid format
     """
