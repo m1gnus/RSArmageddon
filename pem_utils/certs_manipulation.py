@@ -1,7 +1,3 @@
-"""
-Implement --dumpvalues --createpriv --createpub --generate
-"""
-
 import sys
 
 from gmpy2 import invert 
