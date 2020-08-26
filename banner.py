@@ -32,7 +32,7 @@ https://pgiatasti.it/ -- -- Visit our site to discover more about us
 def show_attacks():
     print("""
 ===== Implemented Attacks =====
-===            6            ===
+===            7            ===
 ===============================
 
 Attack <requirements: required, [alternative1 | alternative2]>
@@ -43,6 +43,7 @@ common_factor <n-multi>
 p_1 <n>
 factordb <n>
 boneh_durfee <n,e>
+common_modulus <n, e-multi>
 """)
 
 def version():

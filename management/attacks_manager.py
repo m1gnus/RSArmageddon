@@ -64,6 +64,10 @@ def attack_manager(args: object) -> None:
         "boneh_durfee": {
             "pkey": "single",
             "scriptname": "boneh_durfee.sage"
+        },
+        "common_modulus": {
+            "pkey": "multi",
+            "scriptname": "common_modulus.sage"
         }
     }
 
