@@ -68,6 +68,10 @@ def attack_manager(args: object) -> None:
         "common_modulus": {
             "pkey": "multi",
             "scriptname": "common_modulus.sage"
+        },
+        "londahl": {
+            "pkey": "single",
+            "scriptname": "londahl.sage"
         }
     }
 
