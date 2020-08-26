@@ -8,6 +8,30 @@ import time
 import os
 import sys
 import binascii
+import signal
+
+"""
+boneh_durfee's custom signal handler
+"""
+
+def boneh_durfee_handler(sigNum: int, frame: str) -> None:
+    print("\n[-] common factor attack failed\n")
+    sys.exit(1) # exit (failure)
+
+signal.signal(signal.SIGHUP, boneh_durfee_handler)
+signal.signal(signal.SIGINT, boneh_durfee_handler)
+signal.signal(signal.SIGQUIT, boneh_durfee_handler)
+signal.signal(signal.SIGILL, boneh_durfee_handler)
+signal.signal(signal.SIGTRAP, boneh_durfee_handler)
+signal.signal(signal.SIGABRT, boneh_durfee_handler)
+signal.signal(signal.SIGBUS, boneh_durfee_handler)
+signal.signal(signal.SIGFPE, boneh_durfee_handler)
+signal.signal(signal.SIGUSR1, boneh_durfee_handler)
+signal.signal(signal.SIGSEGV, boneh_durfee_handler)
+signal.signal(signal.SIGUSR2, boneh_durfee_handler)
+signal.signal(signal.SIGPIPE, boneh_durfee_handler)
+signal.signal(signal.SIGTERM, boneh_durfee_handler)
+signal.signal(signal.SIGALRM, boneh_durfee_handler)
 
 ############################################
 # Config

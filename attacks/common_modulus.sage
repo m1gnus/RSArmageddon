@@ -5,7 +5,33 @@
 ##
 
 from sage.all import xgcd, Integer
-import os, sys
+
+import os
+import sys
+import signal
+
+"""
+common modulus custom signal handler
+"""
+
+def cm_handler(sigNum: int, frame: str) -> None:
+    print("\n[-] common factor attack failed\n")
+    sys.exit(1) # exit (failure)
+
+signal.signal(signal.SIGHUP, cm_handler)
+signal.signal(signal.SIGINT, cm_handler)
+signal.signal(signal.SIGQUIT, cm_handler)
+signal.signal(signal.SIGILL, cm_handler)
+signal.signal(signal.SIGTRAP, cm_handler)
+signal.signal(signal.SIGABRT, cm_handler)
+signal.signal(signal.SIGBUS, cm_handler)
+signal.signal(signal.SIGFPE, cm_handler)
+signal.signal(signal.SIGUSR1, cm_handler)
+signal.signal(signal.SIGSEGV, cm_handler)
+signal.signal(signal.SIGUSR2, cm_handler)
+signal.signal(signal.SIGPIPE, cm_handler)
+signal.signal(signal.SIGTERM, cm_handler)
+signal.signal(signal.SIGALRM, cm_handler)
 
 def common_modulus(n: int, e1: int, e2: int, c1: int, c2: int) -> None:
     print("\n[+] Common modulus attack started")
