@@ -60,7 +60,6 @@ def factor_db(n: int, e: int, private: bool, output_private: str, ciphertext_fil
     http://factordb.com/status.html
     """
     if soup.find_all("table")[1].find_all("td")[4].text != 'FF':
-        print(soup.find_all("table")[1].find_all("td")[4].text)
         p, q = None, None
         print("factordb factorization failed\n")
         sys.exit(1) # exit (failure)

@@ -1,7 +1,3 @@
-"""
-Implement --dumpvalues --createpriv --createpub --generate
-"""
-
 import sys
 
 from gmpy2 import invert 
@@ -65,9 +61,6 @@ def dump_values_from_key(path: str) -> list:
 Takes n and e in order to create the corresponding public key file formatted in the specified format
 """
 def create_pubkey(n: int, e: int, path: str, file_format: str) -> None:
-
-    if not validate_modulus(n):
-        sys.exit(1)
 
     """
     make sure that file_format is a valid format

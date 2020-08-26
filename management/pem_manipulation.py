@@ -18,7 +18,10 @@ def pem_manipulation_manager(args: object) -> None:
         sys.exit(0)
     if args.cpub: # --createpub
         check_required(args.n, args.e)
-        create_pubkey(wrap_int_filter(args.n), wrap_int_filter(args.e), args.opub, args.format)
+        n = wrap_int_filter(args.n)
+        if not validate_modulus(n):
+            sys.exit(1)
+        create_pubkey(n, wrap_int_filter(args.e), args.opub, args.format)
     if args.cpriv: # --createpriv
         create_privkey(wrap_int_filter(args.n), wrap_int_filter(args.e), wrap_int_filter(args.d), wrap_int_filter(args.p), wrap_int_filter(args.q), args.opriv, args.format)
     
