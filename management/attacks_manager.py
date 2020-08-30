@@ -65,13 +65,17 @@ def attack_manager(args: object) -> None:
             "pkey": "single",
             "scriptname": "boneh_durfee.sage"
         },
+        "londahl": {
+            "pkey": "single",
+            "scriptname": "londahl.sage"
+        },
         "common_modulus": {
             "pkey": "multi",
             "scriptname": "common_modulus.sage"
         },
-        "londahl": {
-            "pkey": "single",
-            "scriptname": "londahl.sage"
+        "hastad": {
+            "pkey": "multi",
+            "scriptname": "hastad.sage"
         }
     }
 
