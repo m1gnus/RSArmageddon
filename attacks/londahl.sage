@@ -8,6 +8,7 @@ from sage.all import inverse_mod, isqrt, Integer
 
 import os
 import sys
+import signal
 
 """
 londahl custom signal handler

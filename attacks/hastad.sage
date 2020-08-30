@@ -7,6 +7,30 @@
 import sys
 import os
 import binascii
+import signal
+
+"""
+hastad custom signal handler
+"""
+
+def hastad_handler(sigNum: int, frame: str) -> None:
+    print("\n[-] hastad attack failed\n")
+    sys.exit(1) # exit (failure)
+
+signal.signal(signal.SIGHUP, hastad_handler)
+signal.signal(signal.SIGINT, hastad_handler)
+signal.signal(signal.SIGQUIT, hastad_handler)
+signal.signal(signal.SIGILL, hastad_handler)
+signal.signal(signal.SIGTRAP, hastad_handler)
+signal.signal(signal.SIGABRT, hastad_handler)
+signal.signal(signal.SIGBUS, hastad_handler)
+signal.signal(signal.SIGFPE, hastad_handler)
+signal.signal(signal.SIGUSR1, hastad_handler)
+signal.signal(signal.SIGSEGV, hastad_handler)
+signal.signal(signal.SIGUSR2, hastad_handler)
+signal.signal(signal.SIGPIPE, hastad_handler)
+signal.signal(signal.SIGTERM, hastad_handler)
+signal.signal(signal.SIGALRM, hastad_handler)
 
 def hastad(n1: int, n2: int, n3: int, e: int, c1: int, c2: int, c3: int) -> None:
 
