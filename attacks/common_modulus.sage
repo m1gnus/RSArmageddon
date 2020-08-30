@@ -48,7 +48,7 @@ def common_modulus(n: int, e1: int, e2: int, c1: int, c2: int) -> None:
 
     print("[+] m (dec):", m)
     print("[+] m (hex):", hexm)
-    print("[+] m (raw):", binascii.unhexlify(hexm), "\n")
+    print("[+] m (raw):", binascii.unhexlify(hexm[2:]), "\n")
 
     sys.exit(1)
 
