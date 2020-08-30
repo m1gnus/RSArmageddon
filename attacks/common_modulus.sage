@@ -9,6 +9,7 @@ from sage.all import xgcd, Integer
 import os
 import sys
 import signal
+import binascii
 
 """
 common modulus custom signal handler
@@ -43,8 +44,11 @@ def common_modulus(n: int, e1: int, e2: int, c1: int, c2: int) -> None:
     _, u, v = xgcd(e1, e2)
 
     m = pow(c1, u, n) * pow(c2, v, n)
+    hexm = hex(m)
 
-    print("[+] m:", m, "\n")
+    print("[+] m (dec):", m)
+    print("[+] m (hex):", hexm)
+    print("[+] m (raw):", binascii.unhexlify(hexm), "\n")
 
     sys.exit(1)
 
