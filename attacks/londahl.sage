@@ -9,6 +9,29 @@ from sage.all import inverse_mod, isqrt, Integer
 import os
 import sys
 
+"""
+londahl custom signal handler
+"""
+
+def londahl_handler(sigNum: int, frame: str) -> None:
+    print("\n[-] londahl attack failed\n")
+    sys.exit(1) # exit (failure)
+
+signal.signal(signal.SIGHUP, londahl_handler)
+signal.signal(signal.SIGINT, londahl_handler)
+signal.signal(signal.SIGQUIT, londahl_handler)
+signal.signal(signal.SIGILL, londahl_handler)
+signal.signal(signal.SIGTRAP, londahl_handler)
+signal.signal(signal.SIGABRT, londahl_handler)
+signal.signal(signal.SIGBUS, londahl_handler)
+signal.signal(signal.SIGFPE, londahl_handler)
+signal.signal(signal.SIGUSR1, londahl_handler)
+signal.signal(signal.SIGSEGV, londahl_handler)
+signal.signal(signal.SIGUSR2, londahl_handler)
+signal.signal(signal.SIGPIPE, londahl_handler)
+signal.signal(signal.SIGTERM, londahl_handler)
+signal.signal(signal.SIGALRM, londahl_handler)
+
 def londahl(n: int, e: int, private: bool, output_private: str, ciphertext_file: str, output_file: str, ciphertext: int) -> None:
 
     n = Integer(n)
