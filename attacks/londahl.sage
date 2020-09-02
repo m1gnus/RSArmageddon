@@ -35,14 +35,11 @@ signal.signal(signal.SIGALRM, londahl_handler)
 
 def londahl(n: int, e: int, private: bool, output_private: str, ciphertext_file: str, output_file: str, ciphertext: int) -> None:
 
-    n = Integer(n)
-
     print("\n[+] Londahl attack started\n")
 
-    # the hypothesis on the private exponent (the theoretical maximum is 0.292)
     b = input("[+] Insert londahl bound (Integer value) (default 10000000): ")
     try: 
-        b = int(b) # this means that d < N^delta
+        b = int(b)
         print()
     except ValueError:
         print("[-] Invalid Value, default is setted\n")
