@@ -46,7 +46,7 @@ def smallfactor(n: int, e: int, private: bool, output_private: str, ciphertext_f
     p, q = None, None
 
     for i in range(2, ubound + 1):
-        if gcd(n, i) != 1 and gcd(n, i) != n:
+        if n%i == 0:
             p = i
             q = n//i
     
