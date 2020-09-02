@@ -69,6 +69,10 @@ def attack_manager(args: object) -> None:
             "pkey": "single",
             "scriptname": "boneh_durfee.sage"
         },
+        "novelty": {
+            "pkey": "single",
+            "scriptname": "novelty_primes.py"
+        },
         "londahl": {
             "pkey": "single",
             "scriptname": "londahl.sage"
