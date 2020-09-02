@@ -74,8 +74,6 @@ def londahl(n: int, e: int, private: bool, output_private: str, ciphertext_file:
     
     p, q = Integer(roots[0]), Integer(roots[1])
 
-    print(p,q)
-
     print("[+] Londahl attack complete\n")
     print("[*] p:", p)
     print("[*] q:", q, "\n")
