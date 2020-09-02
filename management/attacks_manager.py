@@ -69,6 +69,14 @@ def attack_manager(args: object) -> None:
             "pkey": "single",
             "scriptname": "londahl.sage"
         },
+        "smallfactor": {
+            "pkey": "single",
+            "scriptname" = "small_factor.sage"
+        },
+        "smallfraction" : {
+            "pkey": "single",
+            "scriptname": "small_fraction.sage"
+        },
         "common_modulus": {
             "pkey": "multi",
             "scriptname": "common_modulus.sage"
