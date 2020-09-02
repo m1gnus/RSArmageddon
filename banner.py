@@ -32,11 +32,12 @@ https://pgiatasti.it/ -- -- Visit our site to discover more about us
 def show_attacks():
     print("""
 ======    Implemented     ======
-===            10            ===
+===            11            ===
 ================================
 
 Attack <requirements: required, [alternative1 | alternative2]>
 
+mersenne <n>
 fermat <n>
 wiener <n,e>
 common_factor <n-multi>
