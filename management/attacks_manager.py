@@ -71,7 +71,7 @@ def attack_manager(args: object) -> None:
         },
         "smallfactor": {
             "pkey": "single",
-            "scriptname" = "small_factor.sage"
+            "scriptname": "small_factor.sage"
         },
         "smallfraction" : {
             "pkey": "single",

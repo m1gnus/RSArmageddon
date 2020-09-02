@@ -31,9 +31,9 @@ https://pgiatasti.it/ -- -- Visit our site to discover more about us
 
 def show_attacks():
     print("""
-===== Implemented Attacks =====
-===            8            ===
-===============================
+======    Implemented     ======
+===            10            ===
+================================
 
 Attack <requirements: required, [alternative1 | alternative2]>
 
@@ -45,6 +45,8 @@ factordb <n>
 boneh_durfee <n,e>
 common_modulus <n, e-multi>
 londahl <n>
+smallfraction <n>
+smallfactor <n>
 """)
 
 def version():
