@@ -53,6 +53,10 @@ def attack_manager(args: object) -> None:
             "pkey": "single", # single: requires only one couple of public key values, multi: requires more than one couple of public key values
             "scriptname": "fermat.sage"
         },
+        "qicheng": {
+            "pkey": "single",
+            "scriptname": "qicheng_eca.sage"
+        },
         "wiener": {
             "pkey": "single",
             "scriptname": "wiener.sage"

@@ -32,13 +32,14 @@ https://pgiatasti.it/ -- -- Visit our site to discover more about us
 def show_attacks():
     print("""
 ======    Implemented     ======
-===            12            ===
+===            13            ===
 ================================
 
 Attack <requirements: required, [alternative1 | alternative2]>
 
 mersenne <n>
 fermat <n>
+qicheng <n>
 wiener <n,e>
 common_factor <n-multi>
 p_1 <n>
