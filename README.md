@@ -1,6 +1,6 @@
 # RSArmageddon
-<p style="color: red;">Sistemi Testati:</p>
-<ul style="color: blue;">
+<p>Sistemi Testati:</p>
+<ul>
     <li>Debian 10 (setup.sh)
     <li>Kali linux 2020.2 (setup.sh)
     <li>Arch linux
@@ -45,3 +45,11 @@ ______  _____  ___                                      _     _
 Written by M1gnus && Lotus -- PGIATASTI
                                                                             
 ```
+
+## See implemented attacks
+
+```
+$ rsarmageddon --show-attacks
+```
+
+<font size=10>Please read the <a href="https://github.com/m1gnus/RSArmageddon/blob/master/RSArmageddon.pdf">User manual</a>.</font>
