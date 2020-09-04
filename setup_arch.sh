@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# tested on the following OS:
-# - kali 2020.1
-
 ANS="Z"
 
 function ask {
@@ -48,13 +45,13 @@ ask "[*] Proceed? [Y/N]: "
 
 # install needed dependencies
 echo "[+] Installing dependencies:"
-sudo apt-get update -y
-sudo apt-get install -y gcc
-sudo apt-get install -y cmake
-sudo apt-get install -y m4
-sudo apt-get install -y pkg-config
-sudo apt-get install -y libpng-dev
-sudo apt-get install -y libssl-dev
+sudo pacman -S gcc
+sudo pacman -S cmake
+sudo pacman -S m4
+sudo pacman -S pkg-config
+sudo pacman -S libpng-dev
+sudo pacman -S libssl-dev
+sudo pacman -S sagemath
 
 # if /usr/local/bin is not in PATH, add it to PATH
 A=0
@@ -78,41 +75,14 @@ then
     read
 fi
 
-# if sage is not installed, download and install it
-if [[ $(which sage) == '' ]]
-then
-    ask "Sage not found on your system, do you want to install it? [Y/N]: "
-
-    echo -n "Sage not found on your system, do you want to install it? [Y/N]: "
-    read ANS
-    echo "[+] Downloading Sage..."
-    wget http://www-ftp.lip6.fr/pub/math/sagemath/linux/64bit/sage-9.1-Debian_GNU_Linux_10-x86_64.tar.bz2 -O Sage.tar.bz2
-    echo "[+] Installing Sage..."
-    tar -xvf Sage.tar.bz2
-    sudo mv ./SageMath/ /opt/SageMath
-    rm -rf Sage.tar.bz2
-
-    _PWD="$PWD"
-    PWD="/opt/SageMath"
-
-    make
-    break
-fi
-
-if [[ ! -z $_PWD ]]
-then
-    PWD="$_PWD"
-fi
-
 echo -e "\n[+] Creating absolute path reference for RSArmageddon modules\n"
 echo "SOFTWARE_PATH = \"$PWD\"" > misc/software_path.py
 
 echo -e "\n[+] Creating symlink in /usr/local/bin\n"
 # be sure that the executable files have execution permission
-chmod +x /opt/SageMath/sage
 chmod +x "$PWD"/RSAGD_core.py
 chmod +x "$PWD"/cipher_tools/openssl_cipherfile.sh
-sudo ln -s /opt/SageMath/sage /usr/local/bin/sage
+sudo ln -s /usr/bin/sage /usr/local/bin/sage
 sudo ln -s "$PWD"/RSAGD_core.py /usr/local/bin/rsarmageddon
 sudo ln -s "$PWD"/cipher_tools/openssl_cipherfile.sh /usr/local/bin/cipherfile-rsarmageddon
 
