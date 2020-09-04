@@ -1,12 +1,12 @@
 # RSArmageddon
-<p>Sistemi Testati:</p>
+<p>Tested OS:</p>
 <ul>
     <li>Debian 10
     <li>Kali linux 2020.2
     <li>Arch linux
 </ul>
 
-<p>siamo al lavoro per rendere il software funzionante anche su sistemi Windows</p>
+<p>work in progress for Windows</p>
 
 ## How to install (Kali linux, Debian)
 
