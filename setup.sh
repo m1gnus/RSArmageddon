@@ -3,6 +3,26 @@
 # tested on the following OS:
 # - kali 2020.1
 
+ANS="Z"
+
+function ask {
+    while [[ $ANS != "N" && $ANS != "n" && $ANS != "Y" && $ANS != "y" ]]
+    do
+        echo -n $1
+        read ANS
+        if [[ $ANS == 'N' || $ANS == "n" ]]
+        then
+            echo "[+] Exiting with exit code 0"
+            exit 0
+        elif [[ $ANS == 'Y' || $ANS == "y" || $ANS == $(echo) ]]
+        then
+            echo
+            break
+            ANS="Z"
+        fi
+    done
+}
+
 # check that setup is running in the correct directory
 if [[ ! -e "./RSAGD_core.py" ]]
 then
@@ -24,20 +44,7 @@ echo -e '$$$$$$$$$$$$$$$$$$$$$$$$$$\n'
 
 echo -e "[*] Now the following dependencies will be installed: gcc, cmake, m4, pkg-config, libpng-dev, libssl-dev"
 
-while [[ $ANS != "N" && $ANS != "n" && $ANS != "Y" && $ANS != "y" ]]
-do
-    echo -n "[*] Proceed? [Y/N]: "
-    read ANS
-    if [[ $ANS == 'N' || $ANS == "n" ]]
-    then
-        echo "[+] Exiting with exit code 0"
-        exit 0
-    elif [[ $AND == 'Y' || $ANS == "y" ]]
-    then
-        echo
-        break
-    fi
-done
+ask "[*] Proceed? [Y/N]: "
 
 # install needed dependencies
 echo "[+] Installing dependencies:"
@@ -72,33 +79,24 @@ then
 fi
 
 # if sage is not installed, download and install it
-ANS="Z"
 if [[ $(which sage) == '' ]]
 then
-    while [[ $ANS != "N" && $ANS != "n" && $ANS != "Y" && $ANS != "y" ]]
-    do
-        echo -n "Sage not found on your system, do you want to install it? [Y/N]: "
-        read ANS
-        if [[ $ANS == 'N' || $ANS == "n" ]]
-        then
-            echo "[-] In order to continue the setup sage must be installed on your system"
-            exit 1
-        elif [[ $ANS == 'Y' || $ANS == "y" ]]
-        then
-            echo "[+] Downloading Sage..."
-            wget http://www-ftp.lip6.fr/pub/math/sagemath/linux/64bit/sage-9.1-Debian_GNU_Linux_10-x86_64.tar.bz2 -O Sage.tar.bz2
-            echo "[+] Installing Sage..."
-	    tar -xvf Sage.tar.bz2
-            sudo mv ./SageMath/ /opt/SageMath
-            rm -rf Sage.tar.bz2
+    ask "Sage not found on your system, do you want to install it? [Y/N]: "
 
-            _PWD="$PWD"
-            PWD="/opt/SageMath"
+    echo -n "Sage not found on your system, do you want to install it? [Y/N]: "
+    read ANS
+    echo "[+] Downloading Sage..."
+    wget http://www-ftp.lip6.fr/pub/math/sagemath/linux/64bit/sage-9.1-Debian_GNU_Linux_10-x86_64.tar.bz2 -O Sage.tar.bz2
+    echo "[+] Installing Sage..."
+    tar -xvf Sage.tar.bz2
+    sudo mv ./SageMath/ /opt/SageMath
+    rm -rf Sage.tar.bz2
 
-            make
-            break
-        fi
-    done
+    _PWD="$PWD"
+    PWD="/opt/SageMath"
+
+    make
+    break
 fi
 
 if [[ ! -z $_PWD ]]
