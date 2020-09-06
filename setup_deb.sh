@@ -84,8 +84,6 @@ if [[ $(which sage) == '' ]]
 then
     ask "Sage not found on your system, do you want to install it? [Y/N]: "
 
-    echo -n "Sage not found on your system, do you want to install it? [Y/N]: "
-    read ANS
     echo "[+] Downloading Sage..."
     wget http://www-ftp.lip6.fr/pub/math/sagemath/linux/64bit/sage-9.1-Debian_GNU_Linux_10-x86_64.tar.bz2 -O Sage.tar.bz2
     echo "[+] Installing Sage..."
