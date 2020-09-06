@@ -32,11 +32,12 @@ https://pgiatasti.it/ -- -- Visit our site to discover more about us
 def show_attacks():
     print("""
 ======    Implemented     ======
-===            13            ===
+===            14            ===
 ================================
 
 Attack <requirements: required, [alternative1 | alternative2]>
 
+hastad <n-multi>
 mersenne <n>
 fermat <n>
 qicheng <n>
