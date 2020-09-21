@@ -1,4 +1,4 @@
-#!/usr/local/bin/sage
+#!/usr/bin/env sage
 
 ##
 # small fraction attack (p/q cloe to a small fraction) - from https://github.com/Ganapati/RsaCtfTool/blob/master/sage/smallfraction.sage

@@ -1,4 +1,4 @@
-#!/usr/local/bin/sage
+#!/usr/bin/env sage
 
 ##
 #   londahl factorization - https://grocid.net/2017/09/16/finding-close-prime-factorizations/  

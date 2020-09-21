@@ -1,4 +1,4 @@
-#!/usr/local/bin/sage
+#!/usr/bin/env sage
 
 ##
 # hastad broadcast attack - https://github.com/ashutosh1206/Crypton/tree/master/RSA-encryption/Attack-Hastad-Broadcast

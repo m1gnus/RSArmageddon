@@ -1,13 +1,7 @@
-#!/usr/local/bin/sage --python
+#!/usr/bin/env sage
 
 ##
-# Novelty Primes - Most numbers in the form 31(3*)7 are prime numbers
-##
-
-#!/usr/local/bin/sage
-
-##
-# small factor attack
+# mersenne primes attack
 ##
 
 import os
@@ -15,56 +9,46 @@ import sys
 import signal
 
 """
-novelty primes custom signal handler
+mersenne primes custom signal handler
 """
 
-def novelty_primes_handler(sigNum: int, frame: str) -> None:
-    print("\n[-] novelty_primes attack failed\n")
+def mersenne_handler(sigNum: int, frame: str) -> None:
+    print("\n[-] mersenne attack failed\n")
     sys.exit(1) # exit (failure)
 
-signal.signal(signal.SIGHUP, novelty_primes_handler)
-signal.signal(signal.SIGINT, novelty_primes_handler)
-signal.signal(signal.SIGQUIT, novelty_primes_handler)
-signal.signal(signal.SIGILL, novelty_primes_handler)
-signal.signal(signal.SIGTRAP, novelty_primes_handler)
-signal.signal(signal.SIGABRT, novelty_primes_handler)
-signal.signal(signal.SIGBUS, novelty_primes_handler)
-signal.signal(signal.SIGFPE, novelty_primes_handler)
-signal.signal(signal.SIGUSR1, novelty_primes_handler)
-signal.signal(signal.SIGSEGV, novelty_primes_handler)
-signal.signal(signal.SIGUSR2, novelty_primes_handler)
-signal.signal(signal.SIGPIPE, novelty_primes_handler)
-signal.signal(signal.SIGTERM, novelty_primes_handler)
-signal.signal(signal.SIGALRM, novelty_primes_handler)
+signal.signal(signal.SIGHUP, mersenne_handler)
+signal.signal(signal.SIGINT, mersenne_handler)
+signal.signal(signal.SIGQUIT, mersenne_handler)
+signal.signal(signal.SIGILL, mersenne_handler)
+signal.signal(signal.SIGTRAP, mersenne_handler)
+signal.signal(signal.SIGABRT, mersenne_handler)
+signal.signal(signal.SIGBUS, mersenne_handler)
+signal.signal(signal.SIGFPE, mersenne_handler)
+signal.signal(signal.SIGUSR1, mersenne_handler)
+signal.signal(signal.SIGSEGV, mersenne_handler)
+signal.signal(signal.SIGUSR2, mersenne_handler)
+signal.signal(signal.SIGPIPE, mersenne_handler)
+signal.signal(signal.SIGTERM, mersenne_handler)
+signal.signal(signal.SIGALRM, mersenne_handler)
 
-def novelty_primes(n: int, e: int, private: bool, output_private: str, ciphertext_file: str, output_file: str, ciphertext: int) -> None:
+def mersenne(n: int, e: int, private: bool, output_private: str, ciphertext_file: str, output_file: str, ciphertext: int) -> None:
 
-    print("[+] Start novelty_primes attack")
-
-    ubound = input("[+] Insert upper bound: max number of digits (Integer value) (default 25): ")
-    try: 
-        ubound = int(ubound)
-        print()
-    except ValueError:
-        print("[-] Invalid Value, default is setted\n")
-        ubound = 25
+    print("[+] Start mersenne attack")
 
     p, q = None, None
 
-    base = str(3137)
-    while len(base) <= ubound:
-        base = int("31" + "3" + base[2:])
-        if n%base == 0:
-            p = base
-            q = n//base
-            break
-        base = str(base)
+    primes = [2, 3, 5, 7, 13, 17, 19, 31, 61, 89, 107, 127, 521, 607, 1279, 2203, 2281, 3217, 4253, 4423, 9689, 9941, 11213, 19937, 21701, 23209, 44497, 86243, 110503, 132049, 216091, 756839, 859433, 1257787, 1398269, 2976221, 3021377, 6972593, 13466917, 20336011, 20996011, 24036583, 25964951, 30402457, 32582657, 37156667, 42643801, 43112609, 57885161, 74207281, 77232917, 82589933]
     
+    for prime in primes:
+        if n % prime == 0:
+            p = prime
+            q = n//prime
+
     if not p:
-        print("[-] novelty_primes attack failed\n")
+        print("[-] mersenne attack failed\n")
         sys.exit(1) # exit (failure)
     
-    print("[+] novelty_primes attack complete\n")
+    print("[+] mersenne attack complete\n")
     print("[*] p:", p)
     print("[*] q:", q, "\n")
 
@@ -108,4 +92,4 @@ if __name__ == "__main__":
     output_file = sys.argv[6]
     ciphertext = (None if sys.argv[7] == "None" else sys.argv[7])
 
-    novelty_primes(n, e, private, output_private, ciphertext_file, output_file, ciphertext)
+    mersenne(n, e, private, output_private, ciphertext_file, output_file, ciphertext)

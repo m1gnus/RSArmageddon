@@ -1,4 +1,4 @@
-#!/usr/local/bin/sage
+#!/usr/bin/env sage
 
 ##
 # Qicheng general purpose factorization algorithm - https://www.cs.ou.edu/~qcheng/paper/speint.pdf

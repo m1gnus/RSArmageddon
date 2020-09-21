@@ -1,4 +1,4 @@
-#!/usr/local/bin/sage --python
+#!/usr/bin/env sage
 
 """
 Sage's primality test

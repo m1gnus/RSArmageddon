@@ -1,4 +1,4 @@
-#!/usr/local/bin/sage
+#!/usr/bin/env sage
 
 ##
 # small factor attack

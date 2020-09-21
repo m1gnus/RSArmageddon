@@ -1,4 +1,4 @@
-#!/usr/local/bin/sage
+#!/usr/bin/env sage
 
 ##
 # Script taken from https://github.com/mimoo/RSA-and-LLL-attacks
