@@ -56,16 +56,16 @@ def get_args(*, min_nes=1):
     return ciphertext, nes_deduplicated
 
 
-HANDLED_SIGNALS = {
+DEFAULT_SIGNALS = (
     Signals.SIGABRT, Signals.SIGALRM, Signals.SIGBUS,
     Signals.SIGFPE,  Signals.SIGHUP,  Signals.SIGILL,
     Signals.SIGINT,  Signals.SIGPIPE, Signals.SIGQUIT,
     Signals.SIGSEGV, Signals.SIGTERM, Signals.SIGTRAP,
     Signals.SIGUSR1, Signals.SIGUSR2
-}
+)
 
 
-def fail_on_signals(signals=HANDLED_SIGNALS):
+def fail_on_signals(signals=DEFAULT_SIGNALS):
     def handler(sig, frame):
         print(file=sys.stderr)
         fail(f"Caught termination signal {sig.name}")
