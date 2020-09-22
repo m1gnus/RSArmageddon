@@ -4,17 +4,13 @@ from signal import Signals, signal
 from functools import wraps
 
 
-def get_args():
-    _, ciphertext, *nes = tuple(sys.argv)
-    nes = {(int(n), int(e)) for n, e in (ne.split(":") for ne in nes)}
-    return ciphertext, nes
-
-
 name = None
+
 
 def set_name(attack_name):
     global name
     name = attack_name
+    print(f"[+] {name} attack started", file=sys.stderr)
 
 
 def with_name_set(f):
@@ -27,9 +23,9 @@ def with_name_set(f):
 
 
 @with_name_set
-def success(*, cleartext=None, qs=None):
-    if qs is not None:
-        print(f"qs: {' '.join(map(str, qs))}")
+def success(*keys, cleartext=None):
+    for key in keys:
+        print(f"key: {','.join(str(x) if x is not None else '' for x in key)}")
     if cleartext is not None:
         print("cleartext:")
         sys.stdout.write(cleartext)
@@ -38,13 +34,26 @@ def success(*, cleartext=None, qs=None):
 
 
 @with_name_set
-def fail():
+def fail(s=None):
+    if s is not None:
+        print(f"[-] {s}", file=sys.stderr)
     print(f"[-] {name} attack failed", file=sys.stderr)
     sys.exit(1)
 
 
-def info(s):
-    print(f"[*] {s}" if s else "", file=sys.stderr)
+@with_name_set
+def info(s=None):
+    print(f"[*] {s}" if s not in (None, "") else "", file=sys.stderr)
+
+
+@with_name_set
+def get_args(*, min_nes=1):
+    _, ciphertext, *nes = tuple(sys.argv)
+    nes = ((int(n), int(e)) for n, e in (ne.split(",") for ne in nes))
+    nes_deduplicated = list(dict.fromkeys(nes))
+    if len(nes_deduplicated) < min_nes:
+        fail("Not enough N,E pairs")
+    return ciphertext, nes_deduplicated
 
 
 HANDLED_SIGNALS = {
@@ -59,7 +68,7 @@ HANDLED_SIGNALS = {
 def fail_on_signals(signals=HANDLED_SIGNALS):
     def handler(sig, frame):
         print(file=sys.stderr)
-        fail()
+        fail(f"Caught termination signal {sig.name}")
     for s in signals:
         signal(s, handler)
 
