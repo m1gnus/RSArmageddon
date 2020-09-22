@@ -7,9 +7,23 @@ from functools import wraps
 name = None
 
 
-def set_name(attack_name):
+SIGNALS = (
+    Signals.SIGABRT, Signals.SIGALRM, Signals.SIGBUS,
+    Signals.SIGFPE,  Signals.SIGHUP,  Signals.SIGILL,
+    Signals.SIGINT,  Signals.SIGPIPE, Signals.SIGQUIT,
+    Signals.SIGSEGV, Signals.SIGTERM, Signals.SIGTRAP,
+    Signals.SIGUSR1, Signals.SIGUSR2
+)
+
+
+def init(attack_name):
     global name
     name = attack_name
+    def handler(sig, frame):
+        print(file=sys.stderr)
+        fail(f"Caught termination signal {sig.name}")
+    for s in SIGNALS:
+        signal(s, handler)
     print(f"[+] {name} attack started", file=sys.stderr)
 
 
@@ -54,23 +68,6 @@ def get_args(*, min_nes=1):
     if len(nes_deduplicated) < min_nes:
         fail("Not enough N,E pairs")
     return ciphertext, nes_deduplicated
-
-
-DEFAULT_SIGNALS = (
-    Signals.SIGABRT, Signals.SIGALRM, Signals.SIGBUS,
-    Signals.SIGFPE,  Signals.SIGHUP,  Signals.SIGILL,
-    Signals.SIGINT,  Signals.SIGPIPE, Signals.SIGQUIT,
-    Signals.SIGSEGV, Signals.SIGTERM, Signals.SIGTRAP,
-    Signals.SIGUSR1, Signals.SIGUSR2
-)
-
-
-def fail_on_signals(signals=DEFAULT_SIGNALS):
-    def handler(sig, frame):
-        print(file=sys.stderr)
-        fail(f"Caught termination signal {sig.name}")
-    for s in signals:
-        signal(s, handler)
 
 
 _input = input

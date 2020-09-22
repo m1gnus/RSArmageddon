@@ -13,8 +13,7 @@ sys.setrecursionlimit(100000)
 
 import attack
 
-attack.set_name("Qi Cheng factorization")
-attack.fail_on_signals()
+attack.init("Qi Cheng factorization")
 
 ciphertext, nes = attack.get_args()
 n, e = nes[0]
