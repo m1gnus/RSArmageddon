@@ -16,7 +16,7 @@ import attack
 attack.init("Qi Cheng factorization")
 
 ciphertext, nes = attack.get_args()
-n, e = nes[0]
+(n, e), *_ = nes
 
 ATTEMPTS = 20
 

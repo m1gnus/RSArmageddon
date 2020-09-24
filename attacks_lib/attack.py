@@ -66,7 +66,7 @@ def get_args(*, min_nes=1):
     nes = ((int(n), int(e)) for n, e in (ne.split(",") for ne in nes))
     nes_deduplicated = list(dict.fromkeys(nes))
     if len(nes_deduplicated) < min_nes:
-        fail("Not enough N,E pairs")
+        fail("{name} attack needs at least {min_nes} distinct (n, e) pairs")
     return ciphertext, nes_deduplicated
 
 
