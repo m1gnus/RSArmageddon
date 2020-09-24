@@ -2,11 +2,6 @@ import sys
 import binascii
 import subprocess
 
-from gmpy2 import invert
-from Crypto.PublicKey import RSA
-
-from pem_utils.certs_manipulation import *
-
 
 def parse_unsigned(s: str, base=0) -> int:
     """Convert to int raising ValueError on negative values
@@ -46,25 +41,49 @@ def parse_list(s: str) -> list:
     return [x if x else None for x in s.split(",")] if s else []
 
 
+def parse_int_list(s: str) -> list:
+    """Parse a comma separated list of ints (example1,example2,...) into a list
+
+    Arguments:
+    s -- comma separated string
+    """
+    return [int(x) if x is not None else None for x in parse_list(s)]
+
+
 def validate_padding(s: str) -> str:
     """Take a string and check if its a valid argument for padding
 
     Arguments:
     s -- padding
     """
-    if s in "pkcs7", "iso7816", "x923":
-        return s
+    cs = s.casefold()
+    if cs in {"pkcs7", "iso7816", "x923", None}:
+        return cs
     else:
-        raise ValueError("Invalid padding '{s}'")
+        raise ValueError(f"Invalid padding '{s}'")
 
 
-def validate_file_padding(s: str) ->str:
+def validate_file_padding(s: str) -> str:
     """Take a string and check if its a valid argument for file padding
 
     Arguments:
     s -- padding
     """
-    if s in "pkcs", "oaep", "raw", "ssl":
-        return s
+    cs = s.casefold()
+    if cs in {"pkcs", "oaep", "raw", "ssl"}:
+        return cs
     else:
-        raise ValueError("Invalid file padding '{s}'")
+        raise ValueError(f"Invalid file padding '{s}'")
+
+
+def validate_file_format(s: str) -> str:
+    """Take a string and check if its a valid argument for file format
+
+    Arguments:
+    s -- file format
+    """
+    cs = s.casefold()
+    if cs.casefold() in {"pem", "der", "openssh"}:
+        return cs
+    else:
+        raise ValueError(f"Invalid file format {s}")
