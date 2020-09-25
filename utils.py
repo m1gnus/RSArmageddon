@@ -1,5 +1,31 @@
 from gmpy2 import invert
 
+
+DEFAULT_E = 65537
+
+
+def compute_extra_key_elements(d: int, p: int, q: int) -> tuple:
+    """Compute extra key elements
+
+    Arguments:
+    d -- RSA private exponent
+    p -- RSA first factor
+    q -- RSA second factor
+    """
+    if d is not None:
+        dp = d%(p-1)
+        dq = d%(q-1)
+    else:
+        dp, dq = None, None
+    if p is not None and q is not None:
+        pinv = int(invert(p, q))
+        qinv = int(invert(q, p))
+    else:
+        pinv, qinv = None, None
+
+    return dp, dq, pinv, qinv
+
+
 def compute_pubkey(n: int, e: int, d: int, p: int, q: int, phi=None) -> tuple:
     """Compute public key elements
 

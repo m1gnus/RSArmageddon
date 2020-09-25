@@ -2,13 +2,12 @@
 
 import sys
 
-import args
+from args import get_args
+
 import banner
 
-#from management.general_features import *
-#from management.pem_manipulation import *
-#from management.ciphertool_manager import *
-#from management.attacks_manager import *
+from commands import pem
+
 
 #from misc.signal_handler import *
 
@@ -24,19 +23,24 @@ def main():
 
     actions = {
         None: general_features_manager,
-        "pem": pem_manipulation_manager,
+        "pem": pem.run,
         "ciphertool": ciphertool_manager,
         "attack": attack_manager
     }
 
-    try:
-        args.parse()
-    except ValueError as e:
-        print(f"[-] {e}", file=sys.stderr)
-        sys.exit(1)
-
-    actions[args.args.subp]()
+    actions[get_args().subp]()
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (ValueError, OSError) as e:
+        print(f"[-] {e}", file=sys.stderr)
+    except KeyboardInterrupt:
+        print("[-] Interrupted")
+    #except Exception as e:
+    #    print(f"[E] Unhandled exception: {e}")
+    else:
+        sys.exit(0)
+
+    sys.exit(1)

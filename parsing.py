@@ -2,6 +2,8 @@ import sys
 import binascii
 import subprocess
 
+from pathlib import Path
+
 
 def parse_unsigned(s: str, base=0) -> int:
     """Convert to int raising ValueError on negative values
@@ -24,7 +26,7 @@ def parse_int_arg(s: str) -> int:
     Arguments:
     s -- string to convert
     """
-    args = [x for x in string.split(":") if x]
+    args = [x for x in s.split(":") if x]
     if len(args) == 2:
         args[1] = int(args[1])
     if len(args) > 2:
@@ -82,8 +84,20 @@ def validate_file_format(s: str) -> str:
     Arguments:
     s -- file format
     """
-    cs = s.casefold()
-    if cs.casefold() in {"pem", "der", "openssh"}:
-        return cs
-    else:
+
+    formats = {
+        "pem": "PEM",
+        "der": "DER",
+        "openssh": "OpenSSH"
+    }
+
+    try:
+        return formats[s.casefold()]
+    except KeyError:
         raise ValueError(f"Invalid file format {s}")
+
+
+def path_or_stdout(s: str) -> Path:
+    if s == "-":
+        return True
+    return Path(s)
