@@ -28,9 +28,13 @@ def best_version(versions):
 
 
 def cyg_path(path, cyg_runtime):
+    path = Path(path)
     if cyg_runtime is None:
         return PurePosixPath(path)
-    p = subprocess.run([cyg_runtime/"bin"/"cygpath.exe", str(path)], stdout=PIPE, text=True) # TODO: is Unicode handled properly?
+    cyg_runtime = Path(cyg_runtime)
+    p = subprocess.run(
+            [cyg_runtime/"bin"/"cygpath.exe", str(path)],
+            stdout=PIPE, text=True) # TODO: is Unicode handled properly?
     return PurePosixPath(p.stdout[:-1])
 
 
@@ -38,13 +42,17 @@ def cyg_bash(cyg_runtime):
     if cyg_runtime is None:
         return []
     else:
+        cyg_runtime = Path(cyg_runtime)
         return [cyg_runtime/"bin"/"bash.exe", "--norc", "--login"]
 
 
 version_re = re.compile(r"(\d+)\.(\d+)", re.ASCII)
 
-def version(sage, cyg_runtime):
-    p = subprocess.run([*cyg_bash(cyg_runtime), sage, "--version"], stdout=PIPE, text=True)
+def version(sage, cyg_runtime=None):
+    sage = PurePosixPath(sage)
+    p = subprocess.run(
+            [*cyg_bash(cyg_runtime), sage, "--version"],
+            stdout=PIPE, text=True)
     if m := version_re.search(p.stdout):
         vmaj, vmin = m.group(1, 2)
         return int(vmaj), int(vmin)
@@ -83,7 +91,8 @@ def get_sage_nt_locations_appdata():
 def get_sage_nt():
     assert os.name == "nt"
     sages_by_ver = {}
-    for location, vmaj, vmin in chain(get_sage_nt_locations_registry(), get_sage_nt_locations_appdata()):
+    for location, vmaj, vmin in chain(
+            get_sage_nt_locations_registry(), get_sage_nt_locations_appdata()):
         cyg_runtime = location/"runtime"
         sage = PurePosixPath(f"/opt/sagemath-{vmaj}.{vmin}/local/bin/sage")
         try:
@@ -133,5 +142,7 @@ def get_sage():
 
 def run(script, *args, env=None, timeout=None):
     sage, cyg_runtime = get_sage()
-    p = subprocess.run([*cyg_bash(cyg_runtime), sage, cyg_path(script, cyg_runtime), *args], env=env, timeout=timeout, stdout=PIPE, text=True)
+    p = subprocess.run(
+            [*cyg_bash(cyg_runtime), sage, cyg_path(script, cyg_runtime), *args],
+            env=env, timeout=timeout, stdout=PIPE, text=True)
     return p.stdout
