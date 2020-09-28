@@ -82,7 +82,7 @@ def get_sage_nt_locations_appdata():
 
 def get_sage_nt():
     assert os.name == "nt"
-    sages_by_ver = {} #TODO: improve
+    sages_by_ver = {}
     for location, vmaj, vmin in chain(get_sage_nt_locations_registry(), get_sage_nt_locations_appdata()):
         cyg_runtime = location/"runtime"
         sage = PurePosixPath(f"/opt/sagemath-{vmaj}.{vmin}/local/bin/sage")
@@ -90,13 +90,13 @@ def get_sage_nt():
             ver = version(sage, cyg_runtime)
         except (RuntimeError, OSError):
             continue
-        sages_by_ver[ver] = (sage, cyg_runtime)
+        sages_by_ver.setdefault(ver, set()).add((sage, cyg_runtime))
 
     if not sages_by_ver:
         raise RuntimeError(INSTALL_SAGE_NT)
 
     best_ver = best_version(sages_by_ver.keys())
-    return best_ver, *sages_by_ver[best_ver]
+    return best_ver, *sages_by_ver[best_ver].pop()
 
 
 def get_sage_posix():
