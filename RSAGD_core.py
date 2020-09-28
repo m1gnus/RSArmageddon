@@ -1,25 +1,46 @@
 #!/usr/bin/env python3
 
-from banner import banner
+import sys
 
-from parsing.parser_config import *
+from args import get_args
 
-from management.general_features import *
-from management.pem_manipulation import *
-from management.ciphertool_manager import *
-from management.attacks_manager import *
+import banner
 
-from misc.signal_handler import *
+from commands import pem
+
+
+#from misc.signal_handler import *
+
+
+general_features_manager = lambda: None
+pem_manipulation_manager = lambda: None
+ciphertool_manager = lambda: None
+attack_manager = lambda: None
+
+
+def main():
+    banner.print()
+
+    actions = {
+        None: general_features_manager,
+        "pem": pem.run,
+        "ciphertool": ciphertool_manager,
+        "attack": attack_manager
+    }
+
+    actions[get_args().subp]()
+
 
 if __name__ == "__main__":
+    try:
+        main()
+    except (ValueError, OSError) as e:
+        print(f"[-] {e}", file=sys.stderr)
+    except KeyboardInterrupt:
+        print("[-] Interrupted")
+    #except Exception as e:
+    #    print(f"[E] Unhandled exception: {e}")
+    else:
+        sys.exit(0)
 
-    banner()
-
-    if not args.subp:
-        general_features_manager(args)
-    elif args.subp == "pem":
-        pem_manipulation_manager(args)
-    elif args.subp == "ciphertool":
-        ciphertool_manager(args)
-    elif args.subp == "attack":
-        attack_manager(args)
+    sys.exit(1)
