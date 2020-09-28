@@ -12,8 +12,10 @@ if os.name == "nt":
     from winreg import HKEY_CURRENT_USER, OpenKey, EnumKey, QueryValueEx
 
 
-INSTALL_SAGE_POSIX = "<Sage install instructions for *NIX systems>"
-INSTALL_SAGE_NT = "<Sage install instructions for Windows systems>"
+INSTALL_SAGE_POSIX = """We could not seem to find a functioning SageMath installation on your system.
+Please refer to these online instructions to fix this: <TODO: insert link to appropriate github readme paragraph>"""
+INSTALL_SAGE_POSIX = """We could not seem to find a functioning SageMath installation on your system.
+Please refer to these online instructions to fix this: <TODO: insert link to appropriate github readme paragraph>"""
 NO_JAVA = "This program will not run on Jython and other Java based execution environments"
 
 SUPPORTED_VMAJ = 9
