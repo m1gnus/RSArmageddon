@@ -3,6 +3,7 @@ import argparse
 import binascii
 
 from itertools import zip_longest
+from functools import partial
 from pathlib import Path
 
 from parsing import (
@@ -10,11 +11,10 @@ from parsing import (
         parse_list,
         parse_int_list,
         validate_padding,
-        validate_file_padding,
         validate_file_format,
         path_or_stdout)
 
-from utils import compute_d, complete_privkey, compute_pubkey, DEFAULT_E
+from utils import compute_d, complete_privkey, compute_pubkey, compute_n, DEFAULT_E
 from certs import load_key, generate_key, infer_format_priv, infer_format_pub
 
 
@@ -69,27 +69,14 @@ uncipher_parser = csubparser.add_parser("uncipher", add_help=True)
 cipher_parser.add_argument("--key", action="store", dest="key", type=Path, default=None, help="Path to a public key file")
 cipher_parser.add_argument("-n", action="store", dest="n", type=parse_int_arg, default=None, help="<int> which specify RSA public modulus")
 cipher_parser.add_argument("-e", action="store", dest="e", type=parse_int_arg, default=None, help="<int> which specify RSA public exponent")
-cipher_parser.add_argument("--plaintext", action="store", dest="plaintext", type=parse_int_arg, default=None, help="Takes an argument of <plaintext> type which represent the plaintext that will be encrypted with the given public key values")
-cipher_parser.add_argument("--plaintext-string", action="store", dest="plaintext_str", type=str, default=None, help="Takes a string which represent the plaintext that will be encrypted with the given public key values")
-cipher_parser.add_argument("--plaintext-file", action="store", dest="plaintext_file", type=Path, default=None, help="Path to a file wich represent the plaintext file that will be encrypted with the given public key values")
-cipher_parser.add_argument("--file-padding", action="store", dest="filepadding", type=validate_file_padding, default="pkcs", help="Padding that will be used in the process for the given file (--plaintext-file), choose one of the follows: [raw, pkcs, ssl, oaep, x931] (default: pkcs)")
-cipher_parser.add_argument("--padding", action="store", dest="padding", type=validate_padding, default=None, help="Padding that will be used in the process for the given plaintext (--plaintext), choose one from the follows: [pkcs7, iso7816, x923] (default: None)")
-cipher_parser.add_argument("--output-file", action="store", dest="output_file", type=Path, default=None, help='Specify where to save the encrypted file (default: "PLAINTEXT_FILE.enc")')
-
-
-def _finalize_cipher_args(args):
-    if args.key is not None and args.n is not None:
-        raise ValueError(f"--key and -n cannot be specified at the same time")
-    if args.key is None and args.n is None:
-        raise ValueError(f"Must specify either --key or -n")
-    if args.n is not None and args.e is None:
-        args.e = DEFAULT_E
-    if args.plaintext is not None and args.plaintext_str is not None:
-        raise ValueError(f"--plaintext and --plaintext_str cannot be specified at the same time")
-    if all(arg is None for arg in (args.plaintext, args.plaintext_str, args.plaintext_file)):
-        raise ValueError(f"Must specify at least one of --plaintext, --plaintext_str or --plaintext_file")
-    if args.plaintext_str is not None:
-        args.plaintext = int(binascii.hexlify(args.plaintext_str.encode()) or "0", 16)
+cipher_parser.add_argument("--plaintext", "--pt", action="store", dest="inputs", type=parse_int_list, default=[], help="Takes an argument of <plaintext> type which represent the plaintext that will be encrypted with the given public key values")
+cipher_parser.add_argument("--plaintext-output", "--po", action="append", dest="outputs", type=path_or_stdout, default=[], help='TODO')
+cipher_parser.add_argument("--plaintext-string", "--ps", action="append", dest="input_strs", type=str, default=[], help="Takes a string which represent the plaintext that will be encrypted with the given public key values")
+cipher_parser.add_argument("--plaintext-string-output", "--pso", action="append", dest="str_outputs", type=str, default=[], help="Takes a string which represent the plaintext that will be encrypted with the given public key values")
+cipher_parser.add_argument("--plaintext-file", "--pf", action="append", dest="input_files", type=Path, default=[], help="Path to a file wich represent the plaintext file that will be encrypted with the given public key values")
+cipher_parser.add_argument("--plaintext-file-output", "--pfo", action="append", dest="file_outputs", type=path_or_stdout, default=[], help='TODO')
+cipher_parser.add_argument("--standard", action="store", dest="padding", type=validate_padding, default="raw", help="Padding that will be used in the process for the given plaintext (--plaintext), choose one from the follows: [pkcs, oaep, raw] (default: raw)")
+cipher_parser.add_argument("--json", "-j", action="store_true", dest="json", help="Make stdout outputs JSON")
 
 
 uncipher_parser.add_argument("--key", action="store", dest="key", type=Path, default=None, help="Path to a private key file")
@@ -99,18 +86,67 @@ uncipher_parser.add_argument("-q", action="store", dest="q", type=parse_int_arg,
 uncipher_parser.add_argument("-e", action="store", dest="e", type=parse_int_arg, default=None, help="<int> which specify RSA public exponent")
 uncipher_parser.add_argument("-d", action="store", dest="d", type=parse_int_arg, default=None, help="<int> which specify RSA private exponent")
 uncipher_parser.add_argument("-phi", "--phi", action="store", dest="phi", type=parse_int_arg, default=None, help="<int> which specify euler's phi of RSA public modulus")
-uncipher_parser.add_argument("--ciphertext", action="store", dest="ciphertext", type=parse_int_arg, default=None, help="Takes an argument of <ciphertext> type which represent the ciphertext that will be decrypted with the given private key values")
-uncipher_parser.add_argument("--ciphertext-file", action="store", dest="ciphertext_file", type=Path, default=None, help="Path to a file wich represent the ciphertext file that will be decrypted with the given private key values")
-uncipher_parser.add_argument("--file-padding", action="store", dest="filepadding", type=validate_file_padding, default="pkcs", help="Padding that will be used in the process for the given file (--ciphertext-file), choose one of the follows: [raw, pkcs, ssl, oaep, x931] (default: pkcs)")
-uncipher_parser.add_argument("--padding", action="store", dest="padding", type=validate_padding, default=None, help="Padding that will be used in the process for the given ciphertext (--ciphertext), choose one from the follows: [pkcs7, iso7816, x923] (default: None)")
-uncipher_parser.add_argument("--output-file", action="store", dest="output_file", type=Path, default=None, help='Specify where to save the decrypted file (default: "PLAINTEXT_FILE.dec")')
+uncipher_parser.add_argument("--ciphertext", "--pt", action="store", dest="inputs", type=parse_int_list, default=[], help="Takes an argument of <ciphertext> type which represent the ciphertext that will be encrypted with the given public key values")
+uncipher_parser.add_argument("--ciphertext-output", "--po", action="append", dest="outputs", type=path_or_stdout, default=[], help='TODO')
+uncipher_parser.add_argument("--ciphertext-string", "--ps", action="append", dest="input_strs", type=str, default=[], help="Takes a string which represent the ciphertext that will be encrypted with the given public key values")
+uncipher_parser.add_argument("--ciphertext-string-output", "--pso", action="append", dest="str_outputs", type=str, default=[], help="Takes a string which represent the ciphertext that will be encrypted with the given public key values")
+uncipher_parser.add_argument("--ciphertext-file", "--pf", action="append", dest="input_files", type=Path, default=[], help="Path to a file wich represent the ciphertext file that will be encrypted with the given public key values")
+uncipher_parser.add_argument("--ciphertext-file-output", "--pfo", action="append", dest="file_outputs", type=path_or_stdout, default=[], help='TODO')
+uncipher_parser.add_argument("--standard", action="store", dest="padding", type=validate_padding, default="raw", help="Padding that will be used in the process for the given ciphertext (--ciphertext), choose one from the follows: [pkcs, oaep, raw] (default: raw)")
+uncipher_parser.add_argument("--json", "-j", action="store_true", dest="json", help="Make stdout outputs JSON")
 
 
-def _finalize_uncipher_args(args):
-    if args.ciphertext_file:
-        args.n, args.e, args.d, args.p, args.q = complete_privkey(args.n, args.e, args.d, args.p, args.q)
-    if args.ciphertext:
+def _finalize_ciphertool_args(args, cipher=False):
+    if cipher:
+        if args.n is None and args.key is None:
+            raise ValueError(f"Must specify either --key or -n")
+        args.d, args.p, args.q, args.phi = None, None, None, None
+
+    if args.key is not None and any(x is not None for x in (args.n, args.e, args.d, args.p, args.q, args.phi)):
+        raise ValueError(f"--key and -n, -e... etc. cannot be specified at the same time")
+
+    if args.key is not None:
+        args.n, args.e, args.d, args.p, args.q = load_key(args.key)
+
+    if not cipher:
         args.d = compute_d(args.n, args.e, args.d, args.p, args.q, args.phi)
+        args.n = compute_n(args.n, args.e, args.d, args.p, args.q, args.phi)
+        if args.n is None or args.d is None:
+            raise ValueError(f"Not enough key elements to attemp decryption")
+
+    if args.e is None:
+        args.e = DEFAULT_E
+
+    if not any((args.inputs, args.input_strs, args.input_files)):
+        if cipher:
+            raise ValueError(f"Must specify at least one of --plaintext, --plaintext-str or --plaintext-file")
+        else:
+            raise ValueError(f"Must specify at least one of --ciphertext, --ciphertext-str or --ciphertext-file")
+
+    inputs = []
+    for text in args.inputs:
+        if args.outputs:
+            inputs.append((text, args.outputs.pop(0)))
+        else:
+            inputs.append((text, True)) #stdout
+    for text in args.input_strs:
+        text = int.from_bytes(text.encode(), "big")
+        if args.str_outputs:
+            inputs.append((text, args.str_outputs.pop(0)))
+        else:
+            inputs.append((text, True)) #stdout
+    for filename in args.input_files:
+        with open(filename, "rb") as f:
+            text = int.from_bytes(f.read(), "big")
+        if args.file_outputs:
+            inputs.append((text, args.file_outputs.pop(0)))
+        else:
+            inputs.append((text, filename.resolve().parent/filename.stem/".enc"))
+
+    if any((args.outputs, args.str_outputs, args.file_outputs)):
+        raise ValueError(f"Too many output specifications")
+
+    args.inputs = inputs
 
 
 # PEM manipulation
@@ -128,6 +164,7 @@ pem_parser.add_argument("--createpub", action="store", dest="cpub", type=path_or
 pem_parser.add_argument("--createpriv", action="store", dest="cpriv", type=path_or_stdout, default=None, help="Create a private key file in the specified format (--file-format) from numeric values")
 pem_parser.add_argument("--generate", action="store_true", dest="generatekeypair", help="Generate a new key pair")
 pem_parser.add_argument("--file-format", action="store", dest="format", type=validate_file_format, default=None, help="Specify the key file format, choose one from the follows: [PEM, DER, OpenSSH] (default: PEM)")
+pem_parser.add_argument("--json", "-j", action="store_true", dest="json", help="Make --dumpvalues output JSON")
 
 
 def _finalize_pem_args(args):
@@ -138,7 +175,7 @@ def _finalize_pem_args(args):
     elif args.key_path is not None:
         if any(x is not None for x in (args.n, args.e, args.d, args.p, args.q)):
             print("[W] --key taking precedence over key element parameters when specified at the same time", file=sys.stderr)
-        args.n, args.e, args.d, args.p, args.q = load_key(args.key_path)   
+        args.n, args.e, args.d, args.p, args.q = load_key(args.key_path)
     else: # try to recover all the key elements
         try:
             args.n, args.e, args.d, args.p, args.q = complete_privkey(args.n, args.e, args.d, args.p, args.q)
@@ -155,7 +192,7 @@ def _finalize_pem_args(args):
         if any(x is None for x in (args.n, args.e)):
             raise ValueError(f"--createpub and require a valid public key")
         priv_fmt = infer_format_priv(args.cpriv)
-        
+
     if args.cpriv is not None:
         if any(x is None for x in (args.p, args.q, args.d)):
             raise ValueError(f"--createpriv and require a valid private key")
@@ -202,8 +239,8 @@ def get_args():
 
     finalize = {
         "attack": _finalize_attacks_args,
-        "cipher": _finalize_cipher_args,
-        "uncipher": _finalize_uncipher_args,
+        "cipher": partial(_finalize_ciphertool_args, cipher=True),
+        "uncipher": partial(_finalize_ciphertool_args, cipher=False),
         "pem": _finalize_pem_args,
         None: _finalize_general_args
     }

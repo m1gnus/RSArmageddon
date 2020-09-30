@@ -31,7 +31,7 @@ def parse_int_arg(s: str) -> int:
         args[1] = int(args[1])
     if len(args) > 2:
         raise ValueError(f"Too many ':' in '{s}'")
-    parse_unsigned(*args)
+    return parse_unsigned(*args)
 
 
 def parse_list(s: str) -> list:
@@ -49,30 +49,17 @@ def parse_int_list(s: str) -> list:
     Arguments:
     s -- comma separated string
     """
-    return [int(x) if x is not None else None for x in parse_list(s)]
+    return [parse_int_arg(x) if x is not None else None for x in parse_list(s)]
 
 
 def validate_padding(s: str) -> str:
-    """Take a string and check if its a valid argument for padding
-
-    Arguments:
-    s -- padding
-    """
-    cs = s.casefold()
-    if cs in {"pkcs7", "iso7816", "x923", None}:
-        return cs
-    else:
-        raise ValueError(f"Invalid padding '{s}'")
-
-
-def validate_file_padding(s: str) -> str:
     """Take a string and check if its a valid argument for file padding
 
     Arguments:
     s -- padding
     """
     cs = s.casefold()
-    if cs in {"pkcs", "oaep", "raw", "ssl"}:
+    if cs in {"pkcs", "oaep", "raw"}:
         return cs
     else:
         raise ValueError(f"Invalid file padding '{s}'")
