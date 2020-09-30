@@ -21,8 +21,8 @@ def run():
     for text, filename in args.inputs:
         output = f(text)
         output_raw = output.to_bytes(byte_length(output), "big")
-        if file is True:
-            output_hex = f"0x{hexlify(output)}"
+        if filename is True:
+            output_hex = f"0x{hexlify(output_raw).decode('ascii')}"
             if args.json:
                 json.dump({
                     "output": output,

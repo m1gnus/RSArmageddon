@@ -2,12 +2,13 @@ import sys
 import binascii
 
 
-from gmpy2 import invert, powmod
+from gmpy2 import invert
 
 from Crypto.Cipher import PKCS1_OAEP, PKCS1_v1_5
 from Crypto.PublicKey import RSA
 
 from pathlib import Path
+from functools import partial
 
 from utils import byte_length
 
@@ -36,10 +37,15 @@ def cipher(m: int, n: int, e: int, padding: str) -> int:
         raise ValueError(f"Modulus to small for the given plaintext: {e_mess}")
 
     if padding == "raw":
-        return powmod(m, e, n)
+        return pow(m, e, n)
 
     key = RSA.construct((n, e))
-    encryptor = standards[padding].new(key)
+    standard = standards[padding]
+
+    encryptor = standard.new(key)
+
+    if standard is PKCS1_v1_5:
+        encryptor.encrypt = partial(encryptor.encrypt, sentinel=None)
 
     return int.from_bytes(encryptor.encrypt(m.to_bytes(byte_length(m), "big")), "big")
     
@@ -56,9 +62,14 @@ def uncipher(c: int, n: int, e: int, d: int, padding: str) -> int:
     c %= n
 
     if padding == "raw":
-        return powmod(c, d, n)
+        return pow(c, d, n)
 
     key = RSA.construct((n, e, d))
-    decryptor = standards[padding].new(key)
+    standard = standards[padding]
+
+    decryptor = standard.new(key)
+
+    if standard is PKCS1_v1_5:
+        decryptor.decrypt = partial(decryptor.decrypt, sentinel=None)
 
     return int.from_bytes(decryptor.decrypt(c.to_bytes(byte_length(c), "big")), "big")

@@ -31,7 +31,7 @@ def infer_format_priv(p: Path) -> str:
     p -- path to key file
     """
     try:
-        return private_formats[p.suffix] if p is not None else None
+        return private_formats[p.suffix] if isinstance(p, Path) else None
     except KeyError:
         return None
 
@@ -43,7 +43,7 @@ def infer_format_pub(p: Path) -> str:
     p -- path to key file
     """
     try:
-        return public_formats[p.suffix] if p is not None else None
+        return public_formats[p.suffix] if isinstance(p, Path) else None
     except KeyError:
         return None
 

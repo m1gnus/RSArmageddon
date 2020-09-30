@@ -70,7 +70,7 @@ def compute_pubkey(n: int, e: int, d: int, p: int, q: int, phi=None) -> tuple:
     return pks.pop()
 
 
-def complete_privkey(n: int, e: int, d: int, p: int, q: int) -> tuple:
+def complete_privkey(n: int, e: int, d: int, p: int, q: int, phi=None) -> tuple:
     """Compute missing private key elements
 
     Arguments:
@@ -81,11 +81,7 @@ def complete_privkey(n: int, e: int, d: int, p: int, q: int) -> tuple:
     q -- RSA second factor
     """
 
-    """
-    check that the required arguments is setted
-    """
-
-    tup = (n, e, d, p, q)
+    tup = (n, e, d, p, q, phi)
 
     if n is None and (p is None or q is None):
         raise ValueError(f"You have to provide n or both p and q in tuple '{tup}'")
@@ -183,7 +179,7 @@ def compute_n(n: int, e: int, d: int, p: int, q: int, phi=None) -> int:
     if phi is not None and p is not None:
         ns.add((pow(p, 2) - p + p*phi) // (p-1))
 
-    if len(ds) != 1:
+    if len(ns) != 1:
         raise ValueError(f"Inconsistent parameters {tup}")
 
-    return ds.pop()
+    return ns.pop()

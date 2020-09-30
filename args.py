@@ -98,7 +98,7 @@ uncipher_parser.add_argument("--json", "-j", action="store_true", dest="json", h
 
 def _finalize_ciphertool_args(args, cipher=False):
     if cipher:
-        if args.n is None:
+        if args.n is None and args.key is None:
             raise ValueError(f"Must specify either --key or -n")
         args.d, args.p, args.q, args.phi = None, None, None, None
 
@@ -106,7 +106,7 @@ def _finalize_ciphertool_args(args, cipher=False):
         raise ValueError(f"--key and -n, -e... etc. cannot be specified at the same time")
 
     if args.key is not None:
-        args.n, args.e, args.d, args.p, args.q = load_key(args.key_path)
+        args.n, args.e, args.d, args.p, args.q = load_key(args.key)
 
     if not cipher:
         args.d = compute_d(args.n, args.e, args.d, args.p, args.q, args.phi)
@@ -117,7 +117,7 @@ def _finalize_ciphertool_args(args, cipher=False):
     if args.e is None:
         args.e = DEFAULT_E
 
-    if not any(args.input, args.input_str, args.input_file):
+    if not any((args.inputs, args.input_strs, args.input_files)):
         if cipher:
             raise ValueError(f"Must specify at least one of --plaintext, --plaintext-str or --plaintext-file")
         else:
@@ -134,16 +134,16 @@ def _finalize_ciphertool_args(args, cipher=False):
         if args.str_outputs:
             inputs.append((text, args.str_outputs.pop(0)))
         else:
-            inputs.append(text, True) #stdout
+            inputs.append((text, True)) #stdout
     for filename in args.input_files:
         with open(filename, "rb") as f:
             text = int.from_bytes(f.read(), "big")
         if args.file_outputs:
             inputs.append((text, args.file_outputs.pop(0)))
         else:
-            inputs.append(text, filename.resolve().parent/filename.stem/".enc")
+            inputs.append((text, filename.resolve().parent/filename.stem/".enc"))
 
-    if any(args.outputs, args.str_outputs, args.file_outputs):
+    if any((args.outputs, args.str_outputs, args.file_outputs)):
         raise ValueError(f"Too many output specifications")
 
     args.inputs = inputs

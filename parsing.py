@@ -31,7 +31,7 @@ def parse_int_arg(s: str) -> int:
         args[1] = int(args[1])
     if len(args) > 2:
         raise ValueError(f"Too many ':' in '{s}'")
-    parse_unsigned(*args)
+    return parse_unsigned(*args)
 
 
 def parse_list(s: str) -> list:

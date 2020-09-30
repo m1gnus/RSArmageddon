@@ -23,6 +23,7 @@ def run() -> None:
         key = encode_pubkey(n, e, args.format)
         if args.cpub is True:
             sys.stdout.buffer.write(key)
+            print()
         else:
             with open(args.cpub, "wb") as f:
                 f.write(key)
@@ -31,6 +32,7 @@ def run() -> None:
         key = encode_privkey(n, e, d, p, q, args.format)
         if args.cpriv is True:
             sys.stdout.buffer.write(key)
+            print()
         else:
             with open(args.cpriv, "wb") as f:
                 f.write(key)

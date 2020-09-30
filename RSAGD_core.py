@@ -6,15 +6,13 @@ from args import get_args
 
 import banner
 
-from commands import pem
+from commands import pem, ciphertool
 
 
 #from misc.signal_handler import *
 
 
 general_features_manager = lambda: None
-pem_manipulation_manager = lambda: None
-ciphertool_manager = lambda: None
 attack_manager = lambda: None
 
 
@@ -24,7 +22,7 @@ def main():
     actions = {
         None: general_features_manager,
         "pem": pem.run,
-        "ciphertool": ciphertool_manager,
+        "ciphertool": ciphertool.run,
         "attack": attack_manager
     }
 
