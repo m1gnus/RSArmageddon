@@ -1,7 +1,11 @@
-from gmpy2 import invert
+from gmpy2 import invert, isqrt
 
 
 DEFAULT_E = 65537
+
+
+def byte_length(n: int) -> int:
+    return -(n.bit_length() // -8)
 
 
 def compute_extra_key_elements(d: int, p: int, q: int) -> tuple:
@@ -85,10 +89,13 @@ def complete_privkey(n: int, e: int, d: int, p: int, q: int) -> tuple:
 
     if n is None and (p is None or q is None):
         raise ValueError(f"You have to provide n or both p and q in tuple '{tup}'")
-    elif n is not None and (p is None and q is None):
-        raise ValueError(f"If you provide n, you must provide also p or q in tuple '{tup}'")
+    elif n is not None and (p is None and q is None and phi is None):
+        raise ValueError(f"If you provide n, you must provide also p, q or phi in tuple '{tup}'")
     elif e is None and d is None:
         raise ValueError(f"You have to provide e or d in tuple '{tup}'")
+
+    if n is not None and p is None and q is None and phi is not None:
+        p = ((n + 1 - phi) - isqrt((n + 1 - phi)**2 - 4*n)) // 2
 
     if n is None:
         n = p*q
@@ -142,6 +149,39 @@ def compute_d(n: int, e: int, d: int, p: int, q: int, phi=None) -> int:
         if n is not None:
             q = n//p
             ds.add(invert(e, (p-1) * (q-1)))
+
+    if len(ds) != 1:
+        raise ValueError(f"Inconsistent parameters {tup}")
+
+    return ds.pop()
+
+
+def compute_n(n: int, e: int, d: int, p: int, q: int, phi=None) -> int:
+    """Compute d from available parameters
+
+    Arguments:
+    n -- RSA modulus
+    e -- RSA public exponent
+    d -- RSA private exponent
+    p -- RSA first factor
+    q -- RSA second factor
+    """
+
+    tup = (n, e, d, p, q, phi)
+
+    ns = set()
+
+    if n is not None:
+        ns.add(n)
+
+    if p is not None and q is not None:
+        ns.add(p*q)
+
+    if p is None:
+        p = q
+
+    if phi is not None and p is not None:
+        ns.add((pow(p, 2) - p + p*phi) // (p-1))
 
     if len(ds) != 1:
         raise ValueError(f"Inconsistent parameters {tup}")
