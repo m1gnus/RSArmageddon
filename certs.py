@@ -1,4 +1,5 @@
 import sys
+import json
 
 from contextlib import redirect_stdout
 from pathlib import Path
@@ -89,6 +90,13 @@ def print_key(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=Non
         print(f"[#] pinv: {pinv}")
         print(f"[#] qinv: {qinv}")
         print()
+
+
+def print_key_json(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=None, qinv=None, file=None) -> None:
+    d = locals().copy()
+    del d["file"]
+    json.dump(d, file, indent=4)
+    print(file=file)
 
 
 def load_key(path: Path) -> tuple:

@@ -76,6 +76,7 @@ cipher_parser.add_argument("--plaintext-string-output", "--pso", action="append"
 cipher_parser.add_argument("--plaintext-file", "--pf", action="append", dest="input_files", type=Path, default=[], help="Path to a file wich represent the plaintext file that will be encrypted with the given public key values")
 cipher_parser.add_argument("--plaintext-file-output", "--pfo", action="append", dest="file_outputs", type=path_or_stdout, default=[], help='TODO')
 cipher_parser.add_argument("--standard", action="store", dest="padding", type=validate_padding, default="raw", help="Padding that will be used in the process for the given plaintext (--plaintext), choose one from the follows: [pkcs, oaep, raw] (default: raw)")
+cipher_parser.add_argument("--json", "-j", action="store_true", dest="json", help="Make stdout outputs JSON")
 
 
 uncipher_parser.add_argument("--key", action="store", dest="key", type=Path, default=None, help="Path to a private key file")
@@ -92,6 +93,7 @@ uncipher_parser.add_argument("--ciphertext-string-output", "--pso", action="appe
 uncipher_parser.add_argument("--ciphertext-file", "--pf", action="append", dest="input_files", type=Path, default=[], help="Path to a file wich represent the ciphertext file that will be encrypted with the given public key values")
 uncipher_parser.add_argument("--ciphertext-file-output", "--pfo", action="append", dest="file_outputs", type=path_or_stdout, default=[], help='TODO')
 uncipher_parser.add_argument("--standard", action="store", dest="padding", type=validate_padding, default="raw", help="Padding that will be used in the process for the given ciphertext (--ciphertext), choose one from the follows: [pkcs, oaep, raw] (default: raw)")
+uncipher_parser.add_argument("--json", "-j", action="store_true", dest="json", help="Make stdout outputs JSON")
 
 
 def _finalize_ciphertool_args(args, cipher=False):
@@ -162,6 +164,7 @@ pem_parser.add_argument("--createpub", action="store", dest="cpub", type=path_or
 pem_parser.add_argument("--createpriv", action="store", dest="cpriv", type=path_or_stdout, default=None, help="Create a private key file in the specified format (--file-format) from numeric values")
 pem_parser.add_argument("--generate", action="store_true", dest="generatekeypair", help="Generate a new key pair")
 pem_parser.add_argument("--file-format", action="store", dest="format", type=validate_file_format, default=None, help="Specify the key file format, choose one from the follows: [PEM, DER, OpenSSH] (default: PEM)")
+pem_parser.add_argument("--json", "-j", action="store_true", dest="json", help="Make --dumpvalues output JSON")
 
 
 def _finalize_pem_args(args):
