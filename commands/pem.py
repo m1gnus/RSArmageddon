@@ -13,7 +13,7 @@ def run() -> None:
     n, e, d, p, q = args.n, args.e, args.d, args.p, args.q
 
     if args.dumpvalues:
-        print_key(n, e, d, p, q, *compute_extra_key_elements(d, p, q), file=sys.stdout)
+        print_key(n, e, d, p, q, *compute_extra_key_elements(d, p, q), file=sys.stderr)
 
     if args.cpub:
         key = encode_pubkey(n, e, args.format)
