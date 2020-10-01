@@ -1,29 +1,14 @@
 import sys
 
-from signal import Signals, signal
 from functools import wraps
 
 
 name = None
 
 
-SIGNALS = (
-    Signals.SIGABRT, Signals.SIGALRM, Signals.SIGBUS,
-    Signals.SIGFPE,  Signals.SIGHUP,  Signals.SIGILL,
-    Signals.SIGINT,  Signals.SIGPIPE, Signals.SIGQUIT,
-    Signals.SIGSEGV, Signals.SIGTERM, Signals.SIGTRAP,
-    Signals.SIGUSR1, Signals.SIGUSR2
-)
-
-
 def init(attack_name):
     global name
     name = attack_name
-    def handler(sig, frame):
-        print(file=sys.stderr)
-        fail(f"Caught termination signal {sig.name}")
-    for s in SIGNALS:
-        signal(s, handler)
     print(f"[+] {name} attack started", file=sys.stderr)
 
 
@@ -61,13 +46,18 @@ def info(s=None):
 
 
 @with_name_set
-def get_args(*, min_nes=1):
-    _, ciphertext, *nes = tuple(sys.argv)
-    nes = ((int(n), int(e)) for n, e in (ne.split(",") for ne in nes))
-    nes_deduplicated = list(dict.fromkeys(nes))
-    if len(nes_deduplicated) < min_nes:
-        fail("{name} attack needs at least {min_nes} distinct (n, e) pairs")
-    return ciphertext, nes_deduplicated
+def get_args(*, min_keys=1, deduplicate=False):
+    _, ciphertext, *keys = tuple(sys.argv)
+    keys = ((int(n), int(e)) for n, e in (ne.split(",") for ne in keys))
+    if deduplicate:
+        keys_deduplicated = list(dict.fromkeys(keys))
+        if len(keys_deduplicated) < min_keys:
+            fail("{name} attack needs at least {min_keys} distinct (n, e) pairs")
+        return ciphertext, keys_deduplicated
+    else:
+        if len(keys) < min_keys:
+            fail("{name} attack needs at least {min_keys} (n, e) pairs")
+        return ciphertext, keys
 
 
 _input = input
