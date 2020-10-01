@@ -5,6 +5,11 @@ DEFAULT_E = 65537
 
 
 def byte_length(n: int) -> int:
+    """Return byte length of the given integer
+
+    Arguments:
+    n -- int
+    """
     return -(n.bit_length() // -8)
 
 

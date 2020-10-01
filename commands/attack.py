@@ -1,6 +1,23 @@
+from args import get_args
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """
-attacks management
-"""
+
 import sys
 
 from parsing.args_filter import *
@@ -12,14 +29,10 @@ from misc.software_path import *
 import time
 import subprocess
 
-"""
-pid of the attack process
-"""
+
 attack_pid = 0
 
-"""
-kill the actual attack process
-"""
+
 def terminate_attack(signalNumber: int, frame: str) -> None:
 
     global attack_pid
@@ -27,9 +40,7 @@ def terminate_attack(signalNumber: int, frame: str) -> None:
     if attack_pid != 0:
         os.kill(attack_pid, signal_)
 
-"""
-set terminate_attack as handler for SIGALRM
-"""
+
 signal.signal(signal.SIGALRM, terminate_attack)
 
 def attack_manager(args: object) -> None:
@@ -37,9 +48,6 @@ def attack_manager(args: object) -> None:
     global attack_pid
     global pids
 
-    """
-    list of implemented attacks
-    """
     attacks = {
         "factordb": {
             "pkey": "single",
@@ -103,17 +111,11 @@ def attack_manager(args: object) -> None:
 
     selected_attacks = list_filter(args.attacks)
 
-    """
-    take public key values from arguments
-    """
     n = []
     e = []
 
     if args.n:
         n += [wrap_int_filter(x) for x in list_filter(args.n)]
-        """
-        if len(n) > len(e) then the missing e will be set to 65537 by default
-        """
         e = [wrap_int_filter(x) for x in list_filter(args.e)] if args.e else []
         e += [65537] * (len(n) - len(e))
        
@@ -171,24 +173,18 @@ def attack_manager(args: object) -> None:
         elif attributes["pkey"] == "multi":
             args_list += [args.output_dir]
         
-        """
-        Transform None in "None"
-        """
         args_list = [str(x) for x in args_list]
 
-        """
-        start the timer
-        """
+
         signal.alarm(timer)
         p = subprocess.Popen([SOFTWARE_PATH + "/attacks/" + attributes["scriptname"]] + args_list)
         attack_pid = p.pid
         pids.append(attack_pid)
         res = p.wait()
         pids.remove(attack_pid)
-        """
-        reset the timer
-        """
+
         signal.alarm(0)
 
         if res == 0: # success, private key recovered
             break
+"""

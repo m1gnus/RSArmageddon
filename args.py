@@ -213,7 +213,6 @@ def _finalize_pem_args(args):
 # General features
 parser.add_argument("--factor", action="store", dest="tofactor", type=parse_int_arg, default=None, help="<int> to factorize with pari's factor")
 parser.add_argument("--ecm", action="store", dest="tofactorwecm", type=parse_int_arg, default=None, help="<int> to factorize with ecm factorization")
-parser.add_argument("--qs", action="store", dest="tofactorwqsieve", type=parse_int_arg, default=None, help="<int> to factorize with quadratic sieve method")
 parser.add_argument("--isprime", action="store", dest="checkprime", type=parse_int_arg, default=None, help="Check if the given <int> is prime")
 parser.add_argument("--eulerphi", action="store", dest="n_phi", type=parse_int_arg, default=None, help="<int> of which calc euler phi")
 parser.add_argument("--show-attacks", action="store_true", dest="showattacks", help="Show implemented attacks")
