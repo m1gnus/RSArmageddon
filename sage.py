@@ -6,7 +6,7 @@ import subprocess
 
 from pathlib import Path, PurePosixPath
 from itertools import count, chain
-from subprocess import PIPE
+from subprocess import PIPE, TimeoutExpired
 
 if os.name == "nt":
     from winreg import HKEY_CURRENT_USER, OpenKey, EnumKey, QueryValueEx
@@ -144,7 +144,11 @@ def get_sage():
 
 def run(script, *args, env=None, timeout=None):
     sage, cyg_runtime = get_sage()
-    p = subprocess.run(
-            [*cyg_bash(cyg_runtime), sage, cyg_path(script, cyg_runtime), *args],
-            env=env, timeout=timeout, stdout=PIPE, text=True)
-    return p.stdout
+    try:
+        p = subprocess.run(
+                [*cyg_bash(cyg_runtime), sage, cyg_path(script, cyg_runtime), *args],
+                env=env, timeout=timeout, stdout=PIPE, text=True)
+    except TimeoutExpired as e:
+        p.kill()
+        raise e
+    return p

@@ -9,7 +9,7 @@ name = None
 def init(attack_name):
     global name
     name = attack_name
-    print(f"[+] {name} attack started", file=sys.stderr)
+    print("[+] {} attack started".format(name), file=sys.stderr)
 
 
 def with_name_set(f):
@@ -22,27 +22,26 @@ def with_name_set(f):
 
 
 @with_name_set
-def success(*keys, cleartext=None):
+def success(keys=(), cleartexts=()):
     for key in keys:
-        print(f"key: {','.join(str(x) if x is not None else '' for x in key)}")
-    if cleartext is not None:
-        print("cleartext:")
-        sys.stdout.write(cleartext)
-    print(f"[+] {name} attack succeeded", file=sys.stderr)
+        print("key: {}".format(",".join(str(x) if x is not None else "" for x in key)))
+    for cleartext in cleartexts:
+        print("cleartext: {}".format(cleartext))
+    print("[+] {} attack succeeded".format(name), file=sys.stderr)
     sys.exit(0)
 
 
 @with_name_set
 def fail(s=None):
     if s is not None:
-        print(f"[-] {s}", file=sys.stderr)
-    print(f"[-] {name} attack failed", file=sys.stderr)
+        print("[-] {}".format(s), file=sys.stderr)
+    print("[-] {} attack failed".format(name), file=sys.stderr)
     sys.exit(1)
 
 
 @with_name_set
 def info(s=None):
-    print(f"[*] {s}" if s not in (None, "") else "", file=sys.stderr)
+    print("[*] {}".format(s) if s not in (None, "") else "", file=sys.stderr)
 
 
 @with_name_set
@@ -52,11 +51,11 @@ def get_args(*, min_keys=1, deduplicate=False):
     if deduplicate:
         keys_deduplicated = list(dict.fromkeys(keys))
         if len(keys_deduplicated) < min_keys:
-            fail("{name} attack needs at least {min_keys} distinct (n, e) pairs")
+            fail("{} attack needs at least {} distinct (n, e) pairs".format(name, min_keys))
         return ciphertext, keys_deduplicated
     else:
         if len(keys) < min_keys:
-            fail("{name} attack needs at least {min_keys} (n, e) pairs")
+            fail("{} attack needs at least {} (n, e) pairs".format(name, min_keys))
         return ciphertext, keys
 
 
@@ -64,7 +63,8 @@ _input = input
 @with_name_set
 def input(prompt=None, *, default=None, validator=None):
     if prompt is not None:
-        prompt = f"[+] {prompt}{f' [{default}]' if default is not None else ''}: "
+        prompt_default = ' [{}]'.format(default) if default is not None else ''
+        prompt = "[+] {}{}: ".format(prompt, prompt_default)
     else:
         prompt = ""
 
@@ -83,12 +83,12 @@ def input(prompt=None, *, default=None, validator=None):
             if default is not None:
                 return default
             else:
-                print(f"[*] Must enter a value", file=sys.stderr)
+                print("[*] Must enter a value", file=sys.stderr)
                 continue
 
         try:
             inp = validator(inp)
         except ValueError as e:
-            print(f"[*] Invalid input ({e})", file=sys.stderr)
+            print("[*] Invalid input ({})".format(e), file=sys.stderr)
         else:
             return inp
