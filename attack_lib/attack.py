@@ -1,6 +1,7 @@
 import sys
 
 from functools import wraps
+from itertools import islice
 
 
 name = None
@@ -24,8 +25,16 @@ def with_name_set(f):
 @with_name_set
 def success(keys=(), cleartexts=()):
     for key in keys:
+        if not isinstance(key, (tuple, list)) or len(key) not in (5, 6):
+            raise ValueError("Bad key '{}'".format(key))
+        if len(key) == 5:
+            if len(keys) > 1:
+                raise ValueError("Name is not optional for multiple keys")
+            key = *key, None
         print("key: {}".format(",".join(str(x) if x is not None else "" for x in key)))
     for cleartext in cleartexts:
+        if not isinstance(cleartext, int):
+            raise ValueError("Bad cleartext '{}'".format(cleartext))
         print("cleartext: {}".format(cleartext))
     print("[+] {} attack succeeded".format(name), file=sys.stderr)
     sys.exit(0)
@@ -46,17 +55,22 @@ def info(s=None):
 
 @with_name_set
 def get_args(*, min_keys=1, deduplicate=False):
-    _, ciphertext, *keys = tuple(sys.argv)
-    keys = ((int(n), int(e)) for n, e in (ne.split(",") for ne in keys))
+    ciphertexts = []
+    keys = []
+    for arg in islice(sys.argv, 1, None):
+        lhs, sep, rhs = arg.partition(":")
+        if sep:
+            keys.append((int(lhs), int(rhs)))
+        else:
+            ciphertexts.append(int(lhs))
     if deduplicate:
-        keys_deduplicated = list(dict.fromkeys(keys))
-        if len(keys_deduplicated) < min_keys:
-            fail("{} attack needs at least {} distinct (n, e) pairs".format(name, min_keys))
-        return ciphertext, keys_deduplicated
+        keys = list(dict.fromkeys(keys))
+        if len(keys) < min_keys:
+            fail("This attack needs at least {} distinct keys".format(min_keys))
     else:
         if len(keys) < min_keys:
-            fail("{} attack needs at least {} (n, e) pairs".format(name, min_keys))
-        return ciphertext, keys
+            fail("This attack needs at least {} keys".format(min_keys))
+    return ciphertexts, keys
 
 
 _input = input

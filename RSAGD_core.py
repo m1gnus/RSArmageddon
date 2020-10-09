@@ -1,39 +1,34 @@
 #!/usr/bin/env python3
 
+
 import sys
 
-from args import get_args
-
 import banner
-
-from commands import pem, ciphertool
-
-
-#from misc.signal_handler import *
-
-
-general_features_manager = lambda: None
-attack_manager = lambda: None
+from args import get_args
+from commands import pem, ciphertool, attack, default
 
 
 def main():
     banner.print()
 
     actions = {
-        None: general_features_manager,
+        None: default.run,
         "pem": pem.run,
         "ciphertool": ciphertool.run,
-        "attack": attack_manager
+        "attack": attack.run
     }
 
-    actions[get_args().subp]()
+    try:
+        args = get_args()
+    except (ValueError, OSError) as e:
+        print(f"[-] {e}", file=sys.stderr)
+
+    actions[args.subp]()
 
 
 if __name__ == "__main__":
     try:
         main()
-    except (ValueError, OSError) as e:
-        print(f"[-] {e}", file=sys.stderr)
     except KeyboardInterrupt:
         print("[-] Interrupted")
     #except Exception as e:

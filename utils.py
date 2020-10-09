@@ -13,6 +13,15 @@ def byte_length(n: int) -> int:
     return -(n.bit_length() // -8)
 
 
+def to_bytes_auto(n: int) -> bytes:
+    """Convert int to shortest possible bytes object, big endian
+
+    Arguments:
+    n -- int
+    """
+    return n.to_bytes(byte_length(n), "big")
+
+
 def compute_extra_key_elements(d: int, p: int, q: int) -> tuple:
     """Compute extra key elements
 

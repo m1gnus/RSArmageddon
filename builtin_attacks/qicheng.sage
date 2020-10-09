@@ -15,8 +15,8 @@ import attack
 
 attack.init("Qi Cheng factorization")
 
-ciphertext, nes = attack.get_args()
-(n, e), *_ = nes
+_, keys = attack.get_args()
+n, e = keys[0]
 
 ATTEMPTS = 20
 
@@ -42,6 +42,6 @@ for j in js * ATTEMPTS:
         q = Integer(n)//p
         attack.info(f"p: {p}")
         attack.info(f"q: {q}")
-        attack.success(keys=((n, e, None, p, q)))
+        attack.success(keys=[(n, e, None, p, q)])
 
 attack.fail()
