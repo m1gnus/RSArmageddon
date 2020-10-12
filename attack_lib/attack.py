@@ -55,8 +55,11 @@ def fail(s=None):
 
 
 @with_name_set
-def info(s=None):
-    print("[*] {}".format(s) if s not in (None, "") else "", file=sys.stderr)
+def info(*s):
+    if s:
+        print("[*]", *s, file=sys.stderr)
+    else:
+        print(file=sys.stderr)
 
 
 @with_name_set

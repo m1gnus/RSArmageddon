@@ -44,8 +44,8 @@ for el in cf_convergents:
         continue
 
     if p * q == n:
-        attack.info(f"p: {p}")
-        attack.info(f"q: {q}")
+        attack.info(f"p:", p)
+        attack.info(f"q:", q)
         attack.success(keys=[(n, e, None, p, q)])
 
 attack.fail()

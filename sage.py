@@ -55,7 +55,8 @@ def version(sage, cyg_runtime=None):
     p = subprocess.run(
             [*cyg_bash(cyg_runtime), sage, "--version"],
             stdout=PIPE, text=True)
-    if m := version_re.search(p.stdout):
+    m = version_re.search(p.stdout)
+    if m:
         vmaj, vmin = m.group(1, 2)
         return int(vmaj), int(vmin)
     else:
@@ -69,7 +70,8 @@ def get_sage_nt_locations_registry():
         try:
             for i in count():
                 subkey_name = EnumKey(root_key, i)
-                if m := sage_key_re.search(subkey_name):
+                m = sage_key_re.search(subkey_name)
+                if m:
                     vmaj, vmin = m.group(1, 2)
                     with OpenKey(root_key, subkey_name) as subkey:
                         location, _ = QueryValueEx(subkey, "InstallLocation")
@@ -85,7 +87,8 @@ def get_sage_nt_locations_appdata():
     except KeyError:
         raise RuntimeError("Cannot find the AppData folder! Is this a sane Windows site?")
     for subdir in appdata.glob("sagemath*"):
-        if m := version_re.search(subdir.name):
+        m = version_re.search(subdir.name)
+        if m:
             vmaj, vmin = m.group(1, 2)
             yield subdir.resolve(), vmaj, vmin
 
