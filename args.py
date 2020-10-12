@@ -41,8 +41,10 @@ attacks_parser.add_argument("--uncipher", "-u", action="append", dest="ciphertex
 attacks_parser.add_argument("--uncipher-output", "--uo", action="append", dest="ciphertext_outputs", type=path_or_stdout, default=[], help="Ciphertext to decrypt if the private key is recovered")
 attacks_parser.add_argument("--uncipher-file", "--uf", action="append", dest="ciphertext_files", type=Path, default=[], help="File to uncipher if the private key is recovered")
 attacks_parser.add_argument("--uncipher-file-output", "--ufo", action="append", dest="ciphertext_file_outputs", type=path_or_stdout, default=[], help="File to uncipher if the private key is recovered")
-attacks_parser.add_argument("--output-private", "--op", action="store", dest="output_private", type=Path, default=None, help="Specify where to save the private key file in PEM format if the private key is recovered and --private flag is setted")
+attacks_parser.add_argument("--output-private", "--op", action="store", dest="output_private", type=path_or_stdout, default=None, help="Specify where to save the private key file in PEM format if the private key is recovered and --private flag is setted")
 attacks_parser.add_argument("--output-dir", "--od", action="store", dest="output_dir", type=Path, default=None, help='Specify where to save the private key files recovered from the public keys specified (for attacks which requires more than one public key couple of values (default: ".")')
+attacks_parser.add_argument("--standard", action="store", dest="padding", type=validate_padding, default="raw", help="Padding that will be used in the process for the given ciphertext (--ciphertext), choose one from the follows: [pkcs, oaep, raw] (default: raw)")
+attacks_parser.add_argument("--json", "-j", action="store_true", dest="json", help="Make stdout outputs JSON")
 attacks_parser.add_argument("--quiet", "--silent", "-s", action="store_true", dest="quiet", help='Suppress informative output')
 
 
@@ -57,7 +59,7 @@ def _finalize_attacks_args(args):
             raise ValueError(f"Missing n value for e in position {i+1}")
         if e is None:
             e = DEFAULT_E
-        args.pubkeys.append((n, e), None)
+        args.pubkeys.append(((n, e), None))
     if args.n_e_file:
         args.pubkeys.extend((key, None) for key in parse_n_e_file(args.n_e_file))
     for filename in args.publickeys:
@@ -72,9 +74,9 @@ def _finalize_attacks_args(args):
     texts = []
     for text in args.ciphertexts:
         if args.ciphertext_outputs:
-            texts.append(text, args.ciphertext_outputs.pop(0))
+            texts.append((text, args.ciphertext_outputs.pop(0)))
         else:
-            texts.append(text, True)
+            texts.append((text, True))
     for text_file in args.ciphertext_files:
         with open(text_file, "rb") as f:
             text = int.from_bytes(f.read(), "big")

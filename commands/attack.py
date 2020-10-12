@@ -10,7 +10,7 @@ from subprocess import TimeoutExpired
 import sage
 import attack_lib
 from args import get_args
-from utils import to_bytes_auto, output_cleartext
+from utils import to_bytes_auto, output_cleartext, complete_privkey
 from certs import encode_privkey
 from crypto import uncipher
 from attacks import attack_path
@@ -75,6 +75,7 @@ def run():
 
                 if len(keys) == 1:
                     key, _ = keys[0]
+                    key = complete_privkey(*key)
 
                     if args.output_private is True:
                         sys.stdout.buffer.write(encode_privkey(*key, "PEM"))
@@ -92,6 +93,7 @@ def run():
 
                 if args.output_dir is not None:
                     for key, name in keys:
+                        key = complete_privkey(*key)
                         with open(args.output_dir/f"{name}.pem", "wb") as f:
                             f.write(encode_privkey(*key, "PEM"))
 
