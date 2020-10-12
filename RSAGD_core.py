@@ -3,13 +3,13 @@
 
 import sys
 
-import banner
+from banner import print_banner
 from args import get_args
 from commands import pem, ciphertool, attack, default
 
 
 def main():
-    banner.print()
+    print_banner()
 
     actions = {
         None: default.run,

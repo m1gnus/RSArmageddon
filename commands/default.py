@@ -10,7 +10,7 @@ from args import get_args
 
 import sage
 
-from banner import credits, show_attacks, version
+from banner import print_credits, print_attacks, version
 
 
 def run() -> None:
@@ -24,7 +24,7 @@ def run() -> None:
     }
 
     try:
-        action = next(k for k,v in vars(c).items() if v is not None)
+        action = next(k for k, v in vars(args).items() if v is not None)
     except StopIteration:
         return
 
@@ -40,6 +40,6 @@ def run() -> None:
     if args.showversion:
         version()
     elif args.showcredits:
-        credits()
+        print_credits()
     elif args.showattacks:
-        show_attacks()
+        print_attacks()
