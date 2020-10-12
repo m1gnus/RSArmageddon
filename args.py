@@ -41,6 +41,7 @@ attacks_parser.add_argument("--uncipher", action="store", dest="ciphertexts", ty
 attacks_parser.add_argument("--uncipher-file", action="append", dest="ciphertext_files", type=Path, default=[], help="File to uncipher if the private key is recovered")
 attacks_parser.add_argument("--output-private", action="store", dest="output_private", type=Path, default=None, help="Specify where to save the private key file in PEM format if the private key is recovered and --private flag is setted")
 attacks_parser.add_argument("--output-dir", action="store", dest="output_dir", type=Path, default=None, help='Specify where to save the private key files recovered from the public keys specified (for attacks which requires more than one public key couple of values (default: ".")')
+attacks_parser.add_argument("--quiet", "--silent", "-s", action="store_true", dest="quiet", help='Suppress informative output')
 
 
 def _finalize_attacks_args(args):
@@ -85,6 +86,7 @@ cipher_parser.add_argument("--plaintext-file", "--pf", action="append", dest="in
 cipher_parser.add_argument("--plaintext-file-output", "--pfo", action="append", dest="file_outputs", type=path_or_stdout, default=[], help='TODO')
 cipher_parser.add_argument("--standard", action="store", dest="padding", type=validate_padding, default="raw", help="Padding that will be used in the process for the given plaintext (--plaintext), choose one from the follows: [pkcs, oaep, raw] (default: raw)")
 cipher_parser.add_argument("--json", "-j", action="store_true", dest="json", help="Make stdout outputs JSON")
+cipher_parser.add_argument("--quiet", "--silent", "-s", action="store_true", dest="quiet", help='Suppress informative output')
 
 
 uncipher_parser.add_argument("--key", action="store", dest="key", type=Path, default=None, help="Path to a private key file")
@@ -102,6 +104,7 @@ uncipher_parser.add_argument("--ciphertext-file", "--pf", action="append", dest=
 uncipher_parser.add_argument("--ciphertext-file-output", "--pfo", action="append", dest="file_outputs", type=path_or_stdout, default=[], help='TODO')
 uncipher_parser.add_argument("--standard", action="store", dest="padding", type=validate_padding, default="raw", help="Padding that will be used in the process for the given ciphertext (--ciphertext), choose one from the follows: [pkcs, oaep, raw] (default: raw)")
 uncipher_parser.add_argument("--json", "-j", action="store_true", dest="json", help="Make stdout outputs JSON")
+uncipher_parser.add_argument("--quiet", "--silent", "-s", action="store_true", dest="quiet", help='Suppress informative output')
 
 
 def _finalize_ciphertool_args(args, cipher=False):
@@ -173,6 +176,7 @@ pem_parser.add_argument("--createpriv", action="store", dest="cpriv", type=path_
 pem_parser.add_argument("--generate", action="store_true", dest="generatekeypair", help="Generate a new key pair")
 pem_parser.add_argument("--file-format", action="store", dest="format", type=validate_file_format, default=None, help="Specify the key file format, choose one from the follows: [PEM, DER, OpenSSH] (default: PEM)")
 pem_parser.add_argument("--json", "-j", action="store_true", dest="json", help="Make --dumpvalues output JSON")
+pem_parser.add_argument("--quiet", "--silent", "-s", action="store_true", dest="quiet", help='Suppress informative output')
 
 
 def _finalize_pem_args(args):
@@ -226,6 +230,7 @@ parser.add_argument("--eulerphi", action="store", dest="n_phi", type=parse_int_a
 parser.add_argument("--show-attacks", action="store_true", dest="showattacks", help="Show implemented attacks")
 parser.add_argument("--credits", action="store_true", dest="showcredits", help="Show credits")
 parser.add_argument("--version", action="store_true", dest="showversion", help="Show version")
+parser.add_argument("--quiet", "--silent", "-s", action="store_true", dest="quiet", help='Suppress informative output')
 
 
 def _finalize_general_args(args):

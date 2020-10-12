@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 
+import os
 import sys
 
 from banner import print_banner
@@ -9,6 +10,15 @@ from commands import pem, ciphertool, attack, default
 
 
 def main():
+    try:
+        args = get_args()
+    except (ValueError, OSError) as e:
+        print(f"[-] {e}", file=sys.stderr)
+
+    if args.quiet:
+        sys.stderr.close()
+        sys.stderr = open(os.devnull, "w")
+
     print_banner()
 
     actions = {
@@ -17,11 +27,6 @@ def main():
         "ciphertool": ciphertool.run,
         "attack": attack.run
     }
-
-    try:
-        args = get_args()
-    except (ValueError, OSError) as e:
-        print(f"[-] {e}", file=sys.stderr)
 
     actions[args.subp]()
 
