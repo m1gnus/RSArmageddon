@@ -4,6 +4,8 @@ import subprocess
 
 from pathlib import Path
 
+from utils import DEFAULT_E
+
 
 def parse_unsigned(s: str, base=0) -> int:
     """Convert to int raising ValueError on negative values
@@ -88,3 +90,14 @@ def path_or_stdout(s: str) -> Path:
     if s == "-":
         return True
     return Path(s)
+
+
+def parse_n_e_file(filename: Path) -> list:
+    keys = []
+    with open(filename, "r") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            n, _, e = line.partition(",")
+            keys.append((parse_int_arg(n), parse_int_arg(e) if e else DEFAULT_E))

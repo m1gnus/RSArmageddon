@@ -10,9 +10,10 @@ from subprocess import TimeoutExpired
 import sage
 import attack_lib
 from args import get_args
-from utils import to_bytes_auto
+from utils import to_bytes_auto, output_cleartext
 from certs import encode_privkey
 from crypto import uncipher
+from attacks import attack_path
 
 
 def parse_output(s):
@@ -24,11 +25,12 @@ def parse_output(s):
             continue
         kind, _, value = map(str.strip, line.partition(":"))
         if kind == "cleartext":
-            cleartexts.append(int(value))
+            text, _, file = value.partition(",")
+            cleartexts.append(int(text), Path(file) if file else True)
         elif kind == "key":
             *key, name = value.split(",")
             key = tuple(int(x) if x else None for x in key)
-            keys.append((key, name))
+            keys.append((key, name or None))
         else:
             raise ValueError(f"Unexpected return type '{kind}' from sage script")
     return cleartexts, keys
@@ -36,7 +38,8 @@ def parse_output(s):
 
 def run():
     args = get_args()
-    keys = [":".join(map(str, key)) for key in args.pubkeys]
+    keys = [f"{n}:{e}:{name if name is not None else ''}" for (n, e), name in args.pubkeys]
+    ciphertexts = [f"{text}:{name if name is not None else ''}" for text, name in args.ciphertexts]
 
     with TemporaryDirectory() as attack_lib_dir:
         with resources.open_binary(attack_lib, "attack.py") as src:
@@ -55,7 +58,7 @@ def run():
 
             with script_manager as script:
                 try:
-                    p = sage.run(script, *args.ciphertexts, *keys, env=env, timeout=args.timeout)
+                    p = sage.run(script, *ciphertexts, *keys, env=env, timeout=args.timeout)
                 except TimeoutExpired:
                     print(f"[W] Timeout expired for attack {attack}", file=sys.stderr)
                     continue
@@ -67,11 +70,8 @@ def run():
 
                 if cleartexts:
                     print("[@] Cleartexts recovered", file=sys.stderr)
-                    for text in cleartexts:
-                        print(to_bytes_auto(text))
-
-                if not keys:
-                    continue
+                    for text, file in cleartexts:
+                        output_cleartext(text, file, json_output=args.json)
 
                 if len(keys) == 1:
                     key, _ = keys[0]
@@ -88,16 +88,12 @@ def run():
                         print(f"[$] Decrypting 0x{text_bytes.hex()}", file=sys.stderr)
                         n, e, d, _, _ = key
                         cleartext = uncipher(text, n, e, d, args.padding)
-                        cleartext_bytes = to_bytes_auto(cleartext)
-                        if filename is True:
-                            print(cleartext_bytes)
-                        else:
-                            with open(filename, "wb") as f:
-                                f.write(cleartext_bytes)
+                        output_cleartext(cleartext, filename, json_output=args.json)
 
                 if args.output_dir is not None:
                     for key, name in keys:
                         with open(args.output_dir/f"{name}.pem", "wb") as f:
                             f.write(encode_privkey(*key, "PEM"))
 
-                break
+                if keys:
+                    break

@@ -48,7 +48,7 @@ def cipher(m: int, n: int, e: int, padding: str) -> int:
         encryptor.encrypt = partial(encryptor.encrypt, sentinel=None)
 
     return int.from_bytes(encryptor.encrypt(m.to_bytes(byte_length(m), "big")), "big")
-    
+
 
 def uncipher(c: int, n: int, e: int, d: int, padding: str) -> int:
     """Decrypt a plaintext using RSA

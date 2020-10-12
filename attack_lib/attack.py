@@ -33,9 +33,15 @@ def success(keys=(), cleartexts=()):
             key = *key, None
         print("key: {}".format(",".join(str(x) if x is not None else "" for x in key)))
     for cleartext in cleartexts:
-        if not isinstance(cleartext, int):
+        if isinstance(cleartext, int):
+            text, textname = str(cleartext), ""
+        elif isinstance(cleartext, tuple):
+            text, textname = cleartext
+            text = str(text)
+            textname = textname if textname is not None else ""
+        else:
             raise ValueError("Bad cleartext '{}'".format(cleartext))
-        print("cleartext: {}".format(cleartext))
+        print("cleartext: {},{}".format(text, textname))
     print("[+] {} attack succeeded".format(name), file=sys.stderr)
     sys.exit(0)
 
@@ -58,13 +64,16 @@ def get_args(*, min_keys=1, deduplicate=False):
     ciphertexts = []
     keys = []
     for arg in islice(sys.argv, 1, None):
-        lhs, sep, rhs = arg.partition(":")
-        if sep:
-            keys.append((int(lhs), int(rhs)))
-        else:
-            ciphertexts.append(int(lhs))
+        arg = arg.split(":")
+        if len(arg) == 3:
+            n, e, keyname = arg
+            keys.append((int(n), int(e), keyname or None))
+        elif len(arg) == 2:
+            text, textname = arg
+            ciphertexts.append((int(text), textname))
     if deduplicate:
-        keys = list(dict.fromkeys(keys))
+        keys = {key: keyname for *key, keyname in keys}
+        keys = [(*key, keyname) for key, keyname in keys.items()]
         if len(keys) < min_keys:
             fail("This attack needs at least {} distinct keys".format(min_keys))
     else:

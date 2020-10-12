@@ -14,6 +14,7 @@ def main():
         args = get_args()
     except (ValueError, OSError) as e:
         print(f"[-] {e}", file=sys.stderr)
+        return
 
     if args.quiet:
         sys.stderr.close()

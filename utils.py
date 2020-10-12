@@ -1,3 +1,5 @@
+import json
+
 from gmpy2 import invert, isqrt
 
 
@@ -197,3 +199,25 @@ def compute_n(n: int, e: int, d: int, p: int, q: int, phi=None) -> int:
         raise ValueError(f"Inconsistent parameters {tup}")
 
     return ns.pop()
+
+
+def output_cleartext(text, filename, json_output=False):
+    text_raw = output.to_bytes(byte_length(output), "big")
+    if filename is True:
+        text_hex = f"0x{hexlify(text_raw).decode('ascii')}"
+        if json_output:
+            json.dump({
+                "output": output,
+                "dec": str(output),
+                "hex": text_hex,
+                "raw": str(text_raw)
+            }, sys.stdout, indent=4)
+        else:
+            with redirect_stdout(sys.stderr):
+                print(f"[+] ciphertext (dec): {output}")
+                print(f"[+] ciphertext (hex): {text_hex}")
+                print(f"[+] ciphertext (raw): {text_raw}")
+                print()
+    else:
+        with open(filename, "wb") as file:
+            file.write(text_raw)

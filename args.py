@@ -32,40 +32,57 @@ attacks_parser.add_argument("-n", action="store", dest="n", type=parse_int_list,
 attacks_parser.add_argument("-e", action="store", dest="e", type=parse_int_list, default=[], help="List of RSA public exponents <int>,<int>,<int>...")
 attacks_parser.add_argument("--n-e-file", action="store", dest="n_e_file", type=Path, default=None, help='Path to a file containing modules and public exponents, each lines is in the form "n:e" or "n"')
 attacks_parser.add_argument("--timeout", action="store", dest="timeout", type=parse_int_arg, default=None, help="Max elaboration time for attacks (seconds)")
-attacks_parser.add_argument("--attack", "--attacks", action="store", dest="attacks", type=parse_list, default=None, help="List of attacks that will be performed <str>,<str>,<str>,...")
+attacks_parser.add_argument("--attacks", action="store", dest="attacks", type=parse_list, default=None, help="List of attacks that will be performed <str>,<str>,<str>,...")
 attacks_parser.add_argument("--ext", action="store", dest="exts", type=parse_list, default=["pem", "pub"], help="Extension of public keys in the folder specified by --publickeydir")
 attacks_parser.add_argument("--private", action="store_true", dest="private", help="Dump private key file in PEM format if recovered")
 attacks_parser.add_argument("--publickey", action="append", dest="publickeys", type=Path, default=[], help="Path to a public key file")
 attacks_parser.add_argument("--publickeydir", action="append", dest="publickey_dirs", type=Path, default=[], help="Path to a folder containing public key files with extension ")
-attacks_parser.add_argument("--uncipher", action="store", dest="ciphertexts", type=parse_int_list, default=[], help="Ciphertext to decrypt if the private key is recovered")
-attacks_parser.add_argument("--uncipher-file", action="append", dest="ciphertext_files", type=Path, default=[], help="File to uncipher if the private key is recovered")
-attacks_parser.add_argument("--output-private", action="store", dest="output_private", type=Path, default=None, help="Specify where to save the private key file in PEM format if the private key is recovered and --private flag is setted")
-attacks_parser.add_argument("--output-dir", action="store", dest="output_dir", type=Path, default=None, help='Specify where to save the private key files recovered from the public keys specified (for attacks which requires more than one public key couple of values (default: ".")')
+attacks_parser.add_argument("--uncipher", "-u", action="append", dest="ciphertexts", type=parse_int_arg, default=[], help="Ciphertext to decrypt if the private key is recovered")
+attacks_parser.add_argument("--uncipher-output", "--uo", action="append", dest="ciphertext_outputs", type=path_or_stdout, default=[], help="Ciphertext to decrypt if the private key is recovered")
+attacks_parser.add_argument("--uncipher-file", "--uf", action="append", dest="ciphertext_files", type=Path, default=[], help="File to uncipher if the private key is recovered")
+attacks_parser.add_argument("--uncipher-file-output", "--ufo", action="append", dest="ciphertext_file_outputs", type=path_or_stdout, default=[], help="File to uncipher if the private key is recovered")
+attacks_parser.add_argument("--output-private", "--op", action="store", dest="output_private", type=Path, default=None, help="Specify where to save the private key file in PEM format if the private key is recovered and --private flag is setted")
+attacks_parser.add_argument("--output-dir", "--od", action="store", dest="output_dir", type=Path, default=None, help='Specify where to save the private key files recovered from the public keys specified (for attacks which requires more than one public key couple of values (default: ".")')
 attacks_parser.add_argument("--quiet", "--silent", "-s", action="store_true", dest="quiet", help='Suppress informative output')
 
 
 def _finalize_attacks_args(args):
     if args.attacks is None:
-        raise ValueError("Missing --attack flag")
+        raise ValueError("Missing --attacks flag")
     if not args.attacks:
-        raise ValueError("--attack list is empty")
+        raise ValueError("--attacks list is empty")
     args.pubkeys = []
     for i, (n, e) in enumerate(zip_longest(args.n, args.e)):
         if n is None:
             raise ValueError(f"Missing n value for e in position {i+1}")
         if e is None:
             e = DEFAULT_E
-        args.pubkeys.append((n, e))
+        args.pubkeys.append((n, e), None)
+    if args.n_e_file:
+        args.pubkeys.extend((key, None) for key in parse_n_e_file(args.n_e_file))
     for filename in args.publickeys:
         n, e, _, _, _ = load_key(filename)
-        args.pubkeys.append((n, e))
+        args.pubkeys.append(((n, e), filename.name))
     for dirname in args.publickey_dirs:
-        args.pubkeys.append(load_keys(filename, args.exts))
-    for filename in args.ciphertext_files:
-        with open(filename, "rb") as f:
-            args.ciphertexts.append(int.from_bytes(f.read()))
-    if args.output_private is not None:
-        args.private = True
+        args.pubkeys.append(load_keys(dirname, args.exts))
+    if not args.pubkeys:
+        raise ValueError("Cannot perform any attack without at least one public key")
+    if args.private and args.output_private is None:
+        args.output_private = True
+    texts = []
+    for text in args.ciphertexts:
+        if args.ciphertext_outputs:
+            texts.append(text, args.ciphertext_outputs.pop(0))
+        else:
+            texts.append(text, True)
+    for text_file in args.ciphertext_files:
+        with open(text_file, "rb") as f:
+            text = int.from_bytes(f.read(), "big")
+        if args.ciphertext_output_files:
+            texts.append(text, args.ciphertext_output_files.pop(0))
+        else:
+            texts.append(text, f"{text_file.stem}.dec")
+    args.ciphertexts = texts
 
 
 # Cipher tools
@@ -96,12 +113,12 @@ uncipher_parser.add_argument("-q", action="store", dest="q", type=parse_int_arg,
 uncipher_parser.add_argument("-e", action="store", dest="e", type=parse_int_arg, default=None, help="<int> which specify RSA public exponent")
 uncipher_parser.add_argument("-d", action="store", dest="d", type=parse_int_arg, default=None, help="<int> which specify RSA private exponent")
 uncipher_parser.add_argument("-phi", "--phi", action="store", dest="phi", type=parse_int_arg, default=None, help="<int> which specify euler's phi of RSA public modulus")
-uncipher_parser.add_argument("--ciphertext", "--pt", action="store", dest="inputs", type=parse_int_list, default=[], help="Takes an argument of <ciphertext> type which represent the ciphertext that will be encrypted with the given public key values")
-uncipher_parser.add_argument("--ciphertext-output", "--po", action="append", dest="outputs", type=path_or_stdout, default=[], help='TODO')
-uncipher_parser.add_argument("--ciphertext-string", "--ps", action="append", dest="input_strs", type=str, default=[], help="Takes a string which represent the ciphertext that will be encrypted with the given public key values")
-uncipher_parser.add_argument("--ciphertext-string-output", "--pso", action="append", dest="str_outputs", type=str, default=[], help="Takes a string which represent the ciphertext that will be encrypted with the given public key values")
-uncipher_parser.add_argument("--ciphertext-file", "--pf", action="append", dest="input_files", type=Path, default=[], help="Path to a file wich represent the ciphertext file that will be encrypted with the given public key values")
-uncipher_parser.add_argument("--ciphertext-file-output", "--pfo", action="append", dest="file_outputs", type=path_or_stdout, default=[], help='TODO')
+uncipher_parser.add_argument("--ciphertext", "--ct", action="store", dest="inputs", type=parse_int_list, default=[], help="Takes an argument of <ciphertext> type which represent the ciphertext that will be encrypted with the given public key values")
+uncipher_parser.add_argument("--ciphertext-output", "--co", action="append", dest="outputs", type=path_or_stdout, default=[], help='TODO')
+uncipher_parser.add_argument("--ciphertext-string", "--cs", action="append", dest="input_strs", type=str, default=[], help="Takes a string which represent the ciphertext that will be encrypted with the given public key values")
+uncipher_parser.add_argument("--ciphertext-string-output", "--cso", action="append", dest="str_outputs", type=str, default=[], help="Takes a string which represent the ciphertext that will be encrypted with the given public key values")
+uncipher_parser.add_argument("--ciphertext-file", "--cf", action="append", dest="input_files", type=Path, default=[], help="Path to a file wich represent the ciphertext file that will be encrypted with the given public key values")
+uncipher_parser.add_argument("--ciphertext-file-output", "--cfo", action="append", dest="file_outputs", type=path_or_stdout, default=[], help='TODO')
 uncipher_parser.add_argument("--standard", action="store", dest="padding", type=validate_padding, default="raw", help="Padding that will be used in the process for the given ciphertext (--ciphertext), choose one from the follows: [pkcs, oaep, raw] (default: raw)")
 uncipher_parser.add_argument("--json", "-j", action="store_true", dest="json", help="Make stdout outputs JSON")
 uncipher_parser.add_argument("--quiet", "--silent", "-s", action="store_true", dest="quiet", help='Suppress informative output')

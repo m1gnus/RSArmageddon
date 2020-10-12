@@ -1,5 +1,4 @@
 import sys
-import json
 
 from binascii import hexlify
 from functools import partial
@@ -8,7 +7,7 @@ from contextlib import redirect_stdout
 from crypto import cipher, uncipher
 
 from args import get_args
-from utils import byte_length
+from utils import byte_length, output_cleartext
 
 def run():
     args = get_args()
@@ -20,22 +19,4 @@ def run():
 
     for text, filename in args.inputs:
         output = f(text)
-        output_raw = output.to_bytes(byte_length(output), "big")
-        if filename is True:
-            output_hex = f"0x{hexlify(output_raw).decode('ascii')}"
-            if args.json:
-                json.dump({
-                    "output": output,
-                    "dec": str(output),
-                    "hex": output_hex,
-                    "raw": str(output_raw)
-                }, sys.stdout, indent=4)
-            else:
-                with redirect_stdout(sys.stderr):
-                    print(f"[+] ciphertext (dec): {output}")
-                    print(f"[+] ciphertext (hex): {output_hex}")
-                    print(f"[+] ciphertext (raw): {output_raw}")
-                    print()
-        else:
-            with open(filename, "wb") as file:
-                file.write(output_raw)
+        output_cleartext(output, filename, json_output=args.json)

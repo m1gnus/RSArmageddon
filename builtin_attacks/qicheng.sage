@@ -16,7 +16,7 @@ import attack
 attack.init("Qi Cheng factorization")
 
 _, keys = attack.get_args()
-n, e = keys[0]
+n, e, _ = keys[0]
 
 ATTEMPTS = 20
 
