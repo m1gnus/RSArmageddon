@@ -209,7 +209,7 @@ def output_cleartext(text, filename, json_output=False):
         text_hex = f"0x{text_raw.hex()}"
         if json_output:
             json.dump({
-                "output": output,
+                "output": str(output),
                 "dec": str(output),
                 "hex": text_hex,
                 "raw": str(text_raw)

@@ -93,7 +93,7 @@ def print_key(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=Non
 
 
 def print_key_json(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=None, qinv=None, file=None) -> None:
-    d = locals().copy()
+    d = {k: str(v) for k, v in locals().items()}
     del d["file"]
     json.dump(d, file, indent=4)
     print(file=file)
