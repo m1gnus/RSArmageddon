@@ -14,13 +14,10 @@ ______  _____  ___                                      _     _
                                           __/ |
                                          |___/
 
-Written by M1gnus && Lotus -- Guest starring: AquilaIrreale -- PGIATASTI
+Written by M1gnus, L0tus && AquilaIrreale -- PGIATASTI
 """
 
 credits_text = """
-Written by Vittorio aka M1gnus and Nalin aka L07u5
-Guest starring Simone aka AquilaIrreale
-
 Glory to PGiatasti:
     - Vittorio aka M1gnus
     - Alessio aka Alexius
@@ -30,6 +27,9 @@ Glory to PGiatasti:
     - Emanuele aka KaiserSource
     - Federico aka Heichou
     - Antonio aka CoffeeStraw
+    - Giacomo aka Giaxo
+    - Andrei aka S0uND_0f_s1lence
+    - Simone aka AquilaIrreale
 
 https://pgiatasti.it/ -- -- Visit our site to discover more about us
 """
