@@ -67,11 +67,11 @@ def success():
 
 
 @with_name_set
-def fail(s=None):
+def fail(s=None, bad_key=False):
     if s is not None:
         print("[-] {}".format(s), file=sys.stderr)
     print("[-] {} attack failed".format(name), file=sys.stderr)
-    sys.exit(1)
+    sys.exit(1 if not bad_key else 2)
 
 
 @with_name_set

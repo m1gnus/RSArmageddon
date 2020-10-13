@@ -63,7 +63,10 @@ def run():
                     print(f"[W] Timeout expired for attack {attack}", file=sys.stderr)
                     continue
 
-                if p.returncode:
+                if p.returncode == 2: # attack found out the key is bad (i.e. not an RSA key)
+                    break
+
+                if p.returncode: # attack failed for other reasons
                     continue
 
                 cleartexts, keys = parse_output(p.stdout)
