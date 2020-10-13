@@ -26,7 +26,7 @@ def parse_output(s):
         kind, _, value = map(str.strip, line.partition(":"))
         if kind == "cleartext":
             text, _, file = value.partition(",")
-            cleartexts.append(int(text), Path(file) if file else True)
+            cleartexts.append((int(text), Path(file) if file else True))
         elif kind == "key":
             *key, name = value.split(",")
             key = tuple(int(x) if x else None for x in key)
@@ -39,7 +39,7 @@ def parse_output(s):
 def run():
     args = get_args()
     keys = [f"{n}:{e}:{name if name is not None else ''}" for (n, e), name in args.pubkeys]
-    ciphertexts = [f"{text}:{name if name is not None else ''}" for text, name in args.ciphertexts]
+    ciphertexts = [f"{text}:{name if name is not True else ''}" for text, name in args.ciphertexts]
 
     with TemporaryDirectory() as attack_lib_dir:
         with resources.open_binary(attack_lib, "attack.py") as src:

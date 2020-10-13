@@ -83,7 +83,7 @@ def info(*s):
 
 
 @with_name_set
-def get_args(*, min_keys=1, deduplicate=False):
+def get_args(*, min_keys=1, min_ciphertexts=0, deduplicate=False):
     ciphertexts = []
     keys = []
     for arg in islice(sys.argv, 1, None):
@@ -102,6 +102,8 @@ def get_args(*, min_keys=1, deduplicate=False):
     else:
         if len(keys) < min_keys:
             fail("This attack needs at least {} keys".format(min_keys))
+    if len(ciphertexts) < min_ciphertexts:
+        fail("This attack needs at least {} cihertexts".format(min_cihertexts))
     return ciphertexts, keys
 
 
