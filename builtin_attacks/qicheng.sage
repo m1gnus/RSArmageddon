@@ -42,6 +42,7 @@ for j in js * ATTEMPTS:
         q = Integer(n)//p
         attack.info("p:", p)
         attack.info("q:", q)
-        attack.success(keys=[(n, e, None, p, q)])
+        attack.keys((n, e, None, p, q))
+        attack.success()
 
 attack.fail()

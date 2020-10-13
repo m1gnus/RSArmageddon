@@ -30,17 +30,29 @@ def with_name_set(f):
     return wrapper
 
 
+_keys = []
 @with_name_set
-def success(keys=(), cleartexts=()):
-    for key in keys:
+def keys(*keys):
+    _keys.extend(keys)
+
+
+_cleartexts = []
+@with_name_set
+def cleartexts(*cleartexts):
+    _cleartexts.extend(cleartexts)
+
+
+@with_name_set
+def success():
+    for key in _keys:
         if not isinstance(key, (tuple, list)) or len(key) not in (5, 6):
             raise ValueError("Bad key '{}'".format(key))
         if len(key) == 5:
-            if len(keys) > 1:
+            if len(_keys) > 1:
                 raise ValueError("Name is not optional for multiple keys")
-            key = *key, None
+            key = (*key, None)
         print("key: {}".format(",".join(str(x) if x is not None else "" for x in key)))
-    for cleartext in cleartexts:
+    for cleartext in _cleartexts:
         if isinstance(cleartext, int):
             text, textname = str(cleartext), ""
         elif isinstance(cleartext, tuple):
