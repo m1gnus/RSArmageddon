@@ -110,7 +110,7 @@ def get_sage_nt():
         raise RuntimeError(INSTALL_SAGE_NT)
 
     best_ver = best_version(sages_by_ver.keys())
-    return best_ver, *sages_by_ver[best_ver].pop()
+    return (best_ver, *sages_by_ver[best_ver].pop())
 
 
 def get_sage_posix():
