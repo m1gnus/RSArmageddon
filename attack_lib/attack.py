@@ -67,9 +67,9 @@ def success():
 
 
 @with_name_set
-def fail(s=None, bad_key=False):
-    if s is not None:
-        print("[-] {}".format(s), file=sys.stderr)
+def fail(*s, bad_key=False):
+    if s:
+        print("[-]", *map(str, s), file=sys.stderr)
     print("[-] {} attack failed".format(name), file=sys.stderr)
     sys.exit(1 if not bad_key else 2)
 
@@ -77,7 +77,7 @@ def fail(s=None, bad_key=False):
 @with_name_set
 def info(*s):
     if s:
-        print("[*]", *s, file=sys.stderr)
+        print("[*]", *map(str, s), file=sys.stderr)
     else:
         print(file=sys.stderr)
 
