@@ -10,6 +10,14 @@ name = None
 def init(attack_name):
     global name
     name = attack_name
+
+    def excepthook(exctype, value, traceback, /):
+        if exctype in (KeyboardInterrupt, RuntimeError):
+            sys.exit(2)
+        else:
+            sys.__excepthook__(exctype, value, traceback)
+    sys.excepthook = excepthook
+
     print("[+] {} attack started".format(name), file=sys.stderr)
 
 
