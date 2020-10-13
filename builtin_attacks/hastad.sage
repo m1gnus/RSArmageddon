@@ -24,7 +24,7 @@ if not len(set(es)) == 1:
 e = Integer(es[0])
 
 if len(ns) > 20:
-    attack.info("Number of ciphertexts and public keys differ")
+    attack.info("Too many messages, skipping safety pairwise GCD check, results may be inconsistent")
 elif any(gcd(a, b) != 1 for a, b in combinations(ns, 2)):
     attack.fail("Public key moduli are not coprime")
 
