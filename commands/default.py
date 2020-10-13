@@ -34,7 +34,7 @@ def run() -> None:
         pass
     else:
         with resources.path(scripts, script_name) as script:
-            sage.run(script, getattr(args, action))
+            sage.run(script, str(getattr(args, action)))
         return
 
     if args.showversion:
