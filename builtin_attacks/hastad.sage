@@ -4,74 +4,33 @@
 # hastad broadcast attack - https://github.com/ashutosh1206/Crypton/tree/master/RSA-encryption/Attack-Hastad-Broadcast
 ##
 
-import sys
-import os
-import binascii
-import signal
+from itertools import combinations
 
-"""
-hastad custom signal handler
-"""
+import attack
 
-def hastad_handler(sigNum: int, frame: str) -> None:
-    print("\n[-] hastad attack failed\n")
-    sys.exit(1) # exit (failure)
+attack.init("Hastad broadcast")
 
-signal.signal(signal.SIGHUP, hastad_handler)
-signal.signal(signal.SIGINT, hastad_handler)
-signal.signal(signal.SIGQUIT, hastad_handler)
-signal.signal(signal.SIGILL, hastad_handler)
-signal.signal(signal.SIGTRAP, hastad_handler)
-signal.signal(signal.SIGABRT, hastad_handler)
-signal.signal(signal.SIGBUS, hastad_handler)
-signal.signal(signal.SIGFPE, hastad_handler)
-signal.signal(signal.SIGUSR1, hastad_handler)
-signal.signal(signal.SIGSEGV, hastad_handler)
-signal.signal(signal.SIGUSR2, hastad_handler)
-signal.signal(signal.SIGPIPE, hastad_handler)
-signal.signal(signal.SIGTERM, hastad_handler)
-signal.signal(signal.SIGALRM, hastad_handler)
+ciphertexts, keys = attack.get_args(min_keys=3, min_ciphertexts=3, deduplicate=True)
+ns, es, _ = tuple(zip(*keys))
+cs, _ = tuple(zip(*ciphertexts))
+_, name = ciphertexts[0]
 
-def hastad(n1: int, n2: int, n3: int, e: int, c1: int, c2: int, c3: int) -> None:
+if len(ns) != len(cs):
+    attack.fail("Number of ciphertexts and public keys differ")
 
-    c4 = crt([c1, c2, c3], [n1, n2, n3])
+if not len(set(es)) == 1:
+    attack.fail("RSA exponents differ")
 
-    m = c4.nth_root(e)
-    hexm = hex(m)
+e = Integer(es[0])
 
-    print("[+] m (dec):", m)
-    print("[+] m (hex):", hexm)
-    print("[+] m (raw):", binascii.unhexlify(hexm[2:]), "\n")
+if len(ns) > 20:
+    attack.info("Number of ciphertexts and public keys differ")
+elif any(gcd(a, b) != 1 for a, b in combinations(ns, 2)):
+    attack.fail("Public key moduli are not coprime")
 
+c4 = crt([Integer(c) for c in cs], [Integer(n) for n in ns])
 
-"""
-Given a list of numbers, check if at least one number in the list is repeated
-"""
-def same_number_check(n: list) -> bool:
-    for i in n:
-        if n.count(i) != 1:
-            return True
-        else:
-            return False
+m = c4.nth_root(e)
 
-if __name__ == "__main__":
-
-    """
-    parse the arguments correctly
-    """
-    n = [Integer(x) for x in sys.argv[1].split(":") if x]
-    e = [Integer(x) for x in sys.argv[2].split(":") if x]
-
-    if len(n) < 3 or same_number_check(n):
-        print("[-] Hastad's broadcast attack requires 3 different RSA modulus")
-        sys.exit(1) # exit (failure)
-
-    n = n[:3]
-    e = e[0]
-    
-    c1 = Integer(input("Insert c1 (decimal): "))
-    c2 = Integer(input("Insert c2 (decimal): "))
-    c3 = Integer(input("Insert c3 (decimal): "))
-    print()
-
-    hastad(*n, e, c1, c2, c3)
+attack.cleartexts((m, name))
+attack.success()

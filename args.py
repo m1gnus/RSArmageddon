@@ -15,7 +15,7 @@ from parsing import (
         path_or_stdout)
 
 from utils import compute_d, complete_privkey, compute_pubkey, compute_n, DEFAULT_E
-from certs import load_key, generate_key, infer_format_priv, infer_format_pub
+from certs import load_key, load_keys, generate_key, infer_format_priv, infer_format_pub
 
 
 # Setting up the parser:
@@ -66,7 +66,7 @@ def _finalize_attacks_args(args):
         n, e, _, _, _ = load_key(filename)
         args.pubkeys.append(((n, e), filename.name))
     for dirname in args.publickey_dirs:
-        args.pubkeys.append(load_keys(dirname, args.exts))
+        args.pubkeys.extend(load_keys(dirname, args.exts))
     if not args.pubkeys:
         raise ValueError("Cannot perform any attack without at least one public key")
     if args.private and args.output_private is None:
@@ -80,10 +80,10 @@ def _finalize_attacks_args(args):
     for text_file in args.ciphertext_files:
         with open(text_file, "rb") as f:
             text = int.from_bytes(f.read(), "big")
-        if args.ciphertext_output_files:
-            texts.append(text, args.ciphertext_output_files.pop(0))
+        if args.ciphertext_file_outputs:
+            texts.append((text, args.ciphertext_file_outputs.pop(0)))
         else:
-            texts.append(text, f"{text_file.stem}.dec")
+            texts.append((text, f"{text_file.stem}.dec"))
     args.ciphertexts = texts
 
 

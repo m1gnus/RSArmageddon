@@ -95,7 +95,7 @@ def get_args(*, min_keys=1, min_ciphertexts=0, deduplicate=False):
             text, textname = arg
             ciphertexts.append((int(text), textname))
     if deduplicate:
-        keys = {key: keyname for *key, keyname in keys}
+        keys = {tuple(key): keyname for *key, keyname in keys}
         keys = [(*key, keyname) for key, keyname in keys.items()]
         if len(keys) < min_keys:
             fail("This attack needs at least {} distinct keys".format(min_keys))

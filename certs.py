@@ -133,7 +133,7 @@ def load_keys(path: Path, exts: list) -> list:
 
         for key_file in path.glob(f"*{ext}"):
             n, e, _, _, _ = load_key(key_file)
-            keys.append((n, e), key_file.name)
+            keys.append(((n, e), key_file.name))
 
     return keys
 
