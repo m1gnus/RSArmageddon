@@ -1,6 +1,8 @@
 import sys
 import json
+import hashlib
 
+from functools import partial
 from contextlib import redirect_stdout
 from gmpy2 import invert, isqrt
 
@@ -223,3 +225,12 @@ def output_cleartext(text, filename, json_output=False):
     else:
         with open(filename, "wb") as file:
             file.write(text_raw)
+
+
+# From a tip I saw here: https://stackoverflow.com/questions/3431825/generating-an-md5-checksum-of-a-file
+def file_checksum(path):
+    hash_sha256 = hashlib.sha256()
+    with open(file_path, "rb") as f:
+        for chunk in iter(partial(f.read, 4096), b""):
+            hash_sha256.update(chunk)
+    return hash_sha256.hexdigest()

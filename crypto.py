@@ -12,8 +12,6 @@ from functools import partial
 
 from utils import byte_length
 
-from misc.hash_sum import sha256_file_checksum
-
 
 standards = {
     "oaep": PKCS1_OAEP,
