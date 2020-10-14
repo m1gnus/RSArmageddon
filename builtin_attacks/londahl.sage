@@ -1,121 +1,58 @@
 #!/usr/bin/env sage
 
 ##
-#   londahl factorization - https://grocid.net/2017/09/16/finding-close-prime-factorizations/  
+#   londahl factorization - https://grocid.net/2017/09/16/finding-close-prime-factorizations/
 ##
 
-from sage.all import inverse_mod, isqrt, Integer
+import attack
 
-import os
-import sys
-import signal
+attack.init("Londahl factorization")
 
-"""
-londahl custom signal handler
-"""
+_, keys = attack.get_args()
+n, e, _ = keys[0]
 
-def londahl_handler(sigNum: int, frame: str) -> None:
-    print("\n[-] londahl attack failed\n")
-    sys.exit(1) # exit (failure)
+n = Integer(n)
+e = Integer(e)
 
-signal.signal(signal.SIGHUP, londahl_handler)
-signal.signal(signal.SIGINT, londahl_handler)
-signal.signal(signal.SIGQUIT, londahl_handler)
-signal.signal(signal.SIGILL, londahl_handler)
-signal.signal(signal.SIGTRAP, londahl_handler)
-signal.signal(signal.SIGABRT, londahl_handler)
-signal.signal(signal.SIGBUS, londahl_handler)
-signal.signal(signal.SIGFPE, londahl_handler)
-signal.signal(signal.SIGUSR1, londahl_handler)
-signal.signal(signal.SIGSEGV, londahl_handler)
-signal.signal(signal.SIGUSR2, londahl_handler)
-signal.signal(signal.SIGPIPE, londahl_handler)
-signal.signal(signal.SIGTERM, londahl_handler)
-signal.signal(signal.SIGALRM, londahl_handler)
+R = Integers(n)
 
-def londahl(n: int, e: int, private: bool, output_private: str, ciphertext_file: str, output_file: str, ciphertext: int) -> None:
+def positive_integer(s):
+    i = Integer(s)
+    if i <= 0:
+        raise ValueError("Must be a positive number")
+    return i
 
-    print("\n[+] Londahl attack started\n")
+b = attack.input("Insert londahl bound", default=20000000, validator=positive_integer)
 
-    b = input("[+] Insert londahl bound (Integer value) (default 10000000): ")
-    try: 
-        b = int(b)
-        print()
-    except ValueError:
-        print("[-] Invalid Value, default is setted\n")
-        b = 10000000
+phi_approx = n - 2 * isqrt(n) + 1
 
-    phi_approx = n - 2 * isqrt(n) + 1
+discrete_logs = {}
+z = 1
+for i in range(0, b + 1):
+   discrete_logs[z] = i
+   z = (z * 2) % n
 
-    look_up = {}
-    z = 1
+mu = R(inverse_mod(power_mod(2, phi_approx, n), n))
+fac = power_mod(2, b, n)
 
-    for i in range(0, b + 1):
-        look_up[z] = i
-        z = (z * 2) % n
+for i in range(0, b^2 + 1, b):
+    log = discrete_logs.get(mu)
+    if log is not None:
+        phi = phi_approx + (log - i)
+        break
+    mu *= fac
+else:
+    attack.fail()
 
-    mu = inverse_mod(Integer(pow(2, phi_approx, n)), n)
-    fac = Integer(pow(2, b, n))
+m = n - phi + 1
+p = Integer((m - isqrt(m^2 - 4*n)) // 2)
+q = Integer((m + isqrt(m^2 - 4*n)) // 2)
 
-    for i in range(0, b + 1):
-        if mu in look_up:
-            phi = phi_approx + (look_up[mu] - i * b)
-            break
-        mu = (mu * fac) % n
-    else:
-        print("[+] Londahl attack failed\n")
+if p * q != n:
+    attack.fail()
 
-    m = n - phi + 1
-    roots = ((m - isqrt(m ** 2 - 4 * n)) // 2, (m + isqrt(m ** 2 - 4 * n)) // 2)
+attack.info("p", p)
+attack.info("q", q)
 
-    if roots[0] * roots[1] != n:
-        print("[+] Londahl attack failed\n")
-        sys.exit(1) # exit (failure)
-    
-    p, q = Integer(roots[0]), Integer(roots[1])
-
-    print("[+] Londahl attack complete\n")
-    print("[*] p:", p)
-    print("[*] q:", q, "\n")
-
-    """
-    move PWD in the parent path
-    """
-    pathname = os.path.dirname(sys.argv[0])
-    abspath = os.path.abspath(pathname)
-    os.chdir(abspath + "/../")
-
-    """
-    create private key file
-    """
-    if private: # --private
-        os.system("sage --python -c 'from misc.software_path import *; import sys; sys.path.append(SOFTWARE_PATH); from pem_utils.certs_manipulation import *; create_privkey(" + str(n) + ", " + str(e) +", None, " + str(p) + ", " + str(q) + ", " + "\"" + str(output_private) + "\"" + ", \"PEM\")'")
-
-    """
-    uncipher a specified ciphertext file
-    """  
-    if ciphertext_file: # --uncipher-file
-        os.system("sage --python -c 'from misc.software_path import *; import sys; sys.path.append(SOFTWARE_PATH); from pem_utils.certs_manipulation import *; from parsing.args_filter import *; from cipher_tools.uncipher import *;n, e, d, p, q = fill_privkey_args(" + str(n) + ", " + str(e) + ", None," + str(p) + ", " + str(q) + "); create_privkey(" + str(n) + ", " + str(e) +", None, " + str(p) + ", " + str(q) + ", " + "\"/tmp/tmpprivkey_RSArmageddon.pem\"" + ", \"PEM\"); rsa_uncipher_file(" + "\"" + ciphertext_file + "\"" + ", " + "\"" + output_file + "\"" + ", \"/tmp/tmpprivkey_RSArmageddon.pem\", \"pkcs\"); print(\"[+] Removing temporary private key\")'; rm /tmp/tmpprivkey_RSArmageddon.pem")
-
-    """
-    uncipher a specified ciphertext
-    """
-    if ciphertext: # --uncipher
-        os.system("sage --python -c 'from parsing.args_filter import *; from cipher_tools.uncipher import *; n, e, d, p, q = fill_privkey_args(" + str(n) + ", " + str(e) + ", None," + str(p) + ", " + str(q) + "); rsa_uncipher_string(" + "int(\"" + str(ciphertext) + "\")" + ", " + str(n) +", " + "d" + ", None)'")
-
-    sys.exit(0) # exit (success)
-
-if __name__ == "__main__":
-
-    """
-    parse the arguments correctly
-    """
-    n = Integer(sys.argv[1])
-    e = Integer(sys.argv[2])
-    private = (sys.argv[3] == "True")
-    output_private = (None if sys.argv[4] == "None" else sys.argv[4])
-    ciphertext_file = (None if sys.argv[5] == "None" else sys.argv[5])
-    output_file = sys.argv[6]
-    ciphertext = (None if sys.argv[7] == "None" else sys.argv[7])
-
-    londahl(n, e, private, output_private, ciphertext_file, output_file, ciphertext)
+attack.keys((n, e, None, p, q))
+attack.success()

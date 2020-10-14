@@ -2,6 +2,7 @@ import sys
 
 from functools import wraps
 from itertools import islice
+from contextlib import redirect_stdout
 
 
 name = None
@@ -111,7 +112,7 @@ _input = input
 @with_name_set
 def input(prompt=None, *, default=None, validator=None):
     if prompt is not None:
-        prompt_default = ' [{}]'.format(default) if default is not None else ''
+        prompt_default = " [{}]".format(default) if default is not None else ""
         prompt = "[+] {}{}: ".format(prompt, prompt_default)
     else:
         prompt = ""
@@ -119,24 +120,25 @@ def input(prompt=None, *, default=None, validator=None):
     if validator is None:
         validator = lambda x: x
 
-    while True:
-        try:
-            inp = _input(prompt).strip()
-        except EOFError:
-            if prompt:
-                print(file=sys.stderr)
-            fail()
+    with redirect_stdout(sys.stderr):
+        while True:
+            try:
+                inp = _input(prompt).strip()
+            except EOFError:
+                if prompt:
+                    print()
+                fail()
 
-        if not inp:
-            if default is not None:
-                return default
+            if not inp:
+                if default is not None:
+                    return default
+                else:
+                    print("[*] Must enter a value")
+                    continue
+
+            try:
+                inp = validator(inp)
+            except ValueError as e:
+                print("[*] Invalid input ({})".format(e))
             else:
-                print("[*] Must enter a value", file=sys.stderr)
-                continue
-
-        try:
-            inp = validator(inp)
-        except ValueError as e:
-            print("[*] Invalid input ({})".format(e), file=sys.stderr)
-        else:
-            return inp
+                return inp
