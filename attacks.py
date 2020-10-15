@@ -16,7 +16,7 @@ if os.name == "posix":
     sys_atk_dir = Path("/usr/share/rsarmageddon/attacks")
     path = [user_atk_dir, sys_atk_dir]
 elif os.name == "nt":
-    app_data = os.environ.get("LOCALAPPDATA", os.environ["APPDATA"])
+    app_data = Path(os.environ.get("LOCALAPPDATA", os.environ["APPDATA"]))
     user_atk_dir = app_data/"RSArmageddon"/"attacks"
     user_atk_dir.mkdir(parents=True, exist_ok=True)
     path = [user_atk_dir]

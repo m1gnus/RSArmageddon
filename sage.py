@@ -1,4 +1,5 @@
 import os
+import os
 import sys
 import re
 import shutil
@@ -35,7 +36,7 @@ def cyg_path(path, cyg_runtime):
         return PurePosixPath(path)
     cyg_runtime = Path(cyg_runtime)
     p = subprocess.run(
-            [cyg_runtime/"bin"/"cygpath.exe", str(path)],
+            [str(cyg_runtime/"bin"/"cygpath.exe"), str(path)],
             stdout=PIPE, text=True) # TODO: is Unicode handled properly?
     return PurePosixPath(p.stdout[:-1])
 
@@ -45,7 +46,7 @@ def cyg_bash(cyg_runtime):
         return []
     else:
         cyg_runtime = Path(cyg_runtime)
-        return [cyg_runtime/"bin"/"bash.exe", "--norc", "--login"]
+        return [str(cyg_runtime/"bin"/"bash.exe"), "--norc", "--login"]
 
 
 version_re = re.compile(r"(\d+)\.(\d+)", re.ASCII)
@@ -53,7 +54,7 @@ version_re = re.compile(r"(\d+)\.(\d+)", re.ASCII)
 def version(sage, cyg_runtime=None):
     sage = PurePosixPath(sage)
     p = subprocess.run(
-            [*cyg_bash(cyg_runtime), sage, "--version"],
+            [*cyg_bash(cyg_runtime), str(sage), "--version"],
             stdout=PIPE, text=True)
     m = version_re.search(p.stdout)
     if m:
@@ -149,7 +150,7 @@ def run(script, *args, env=None, timeout=None):
     sage, cyg_runtime = get_sage()
     try:
         p = subprocess.run(
-                [*cyg_bash(cyg_runtime), sage, cyg_path(script, cyg_runtime), *args],
+                [*cyg_bash(cyg_runtime), str(sage), str(cyg_path(script, cyg_runtime)), *args],
                 env=env, timeout=timeout, stdout=PIPE, text=True)
     except TimeoutExpired as e:
         p.kill()
