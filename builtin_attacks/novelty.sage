@@ -24,8 +24,6 @@ for i in range(bound-4):
     p = int("313{}7".format("3"*i))
     q, r = divmod(n, p)
     if not r:
-        attack.info("p:", p)
-        attack.info("q:", q)
         attack.keys((n, e, None, p, q))
         attack.success()
 

@@ -39,8 +39,6 @@ for den in IntegerRange(2, depth+1):
         p = (phint - sr[0]).lift()
         if n % p == 0:
             q = n // p
-            attack.info("p:", p)
-            attack.info("q:", q)
             attack.keys((n, e, None, p, q))
             attack.success()
 

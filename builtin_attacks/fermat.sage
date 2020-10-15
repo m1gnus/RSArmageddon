@@ -28,7 +28,5 @@ q = a-b
 if n != (p*q):
     attack.fail("n != p * q")
 
-attack.info("p:", p)
-attack.info("q:", q)
 attack.keys((n, e, None, p, q))
 attack.success()

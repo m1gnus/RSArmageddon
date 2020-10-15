@@ -51,8 +51,5 @@ q = Integer((m + isqrt(m^2 - 4*n)) // 2)
 if p * q != n:
     attack.fail()
 
-attack.info("p", p)
-attack.info("q", q)
-
 attack.keys((n, e, None, p, q))
 attack.success()

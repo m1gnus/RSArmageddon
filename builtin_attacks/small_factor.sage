@@ -23,8 +23,6 @@ for i in primes(bound+1):
     if n % i == 0:
         p = i
         q = n // i
-        attack.info("p:", p)
-        attack.info("q:", q)
         attack.keys((n, e, None, p, q))
         attack.success()
 

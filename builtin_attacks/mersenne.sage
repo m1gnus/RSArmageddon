@@ -34,7 +34,5 @@ for prime in primes:
 else:
     attack.fail()
 
-attack.info("p:", p)
-attack.info("q:", q)
 attack.keys((n, e, None, p, q))
 attack.success()

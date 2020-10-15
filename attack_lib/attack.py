@@ -35,6 +35,10 @@ _keys = []
 @with_name_set
 def keys(*keys):
     _keys.extend(keys)
+    for _, _, d, p, q, *_ in keys:
+        for name, value in (("d", d), ("p", p), ("q", q)):
+            if value is not None:
+                info("{}: {}".format(name, value))
 
 
 _cleartexts = []

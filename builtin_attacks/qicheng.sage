@@ -40,8 +40,6 @@ for j in js * ATTEMPTS:
     if g > 1:
         p = Integer(g)
         q = Integer(n)//p
-        attack.info("p:", p)
-        attack.info("q:", q)
         attack.keys((n, e, None, p, q))
         attack.success()
 

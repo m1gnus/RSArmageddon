@@ -30,8 +30,6 @@ if status == "FF":
     if len(factors) == 2 and n_factors == 2:
         p, _ = factors[0]
         q, _ = factors[1]
-        attack.info("p:", p)
-        attack.info("q:", q)
         attack.keys((n, e, None, p, q))
         attack.success()
     else:

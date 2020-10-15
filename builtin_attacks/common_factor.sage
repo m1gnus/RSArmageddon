@@ -34,10 +34,6 @@ with Pool() as pool:
         if ret is not None:
             found = True
             n1, e1, n2, e2, p, q1, q2, name1, name2 = ret
-            attack.info("p:", p)
-            attack.info("q:", q1)
-            attack.info("p:", p)
-            attack.info("q:", q2)
             attack.keys(
                     (n1, e1, None, p, q1, name1),
                     (n2, e2, None, p, q2, name2))

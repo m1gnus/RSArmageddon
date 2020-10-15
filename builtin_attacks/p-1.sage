@@ -22,8 +22,6 @@ for k in primes(100000):
         p = gcd(power_mod(2, x, n)-1, n)
         if p in range(2, n):
             q = n//p
-            attack.info("p:", p)
-            attack.info("q:", q)
             attack.keys((n, e, None, p, q))
             attack.success()
 
