@@ -46,8 +46,10 @@ def run():
             with open(Path(attack_lib_dir)/"attack.py", "wb") as dst:
                 copyfileobj(src, dst)
 
+        _, cyg_runtime = sage.get_sage()
+
         env = os.environ.copy()
-        env["PYTHONPATH"] = attack_lib_dir
+        env["PYTHONPATH"] = str(sage.cyg_path(attack_lib_dir, cyg_runtime))
 
         for attack in args.attacks:
             try:

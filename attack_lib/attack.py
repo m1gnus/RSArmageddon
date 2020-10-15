@@ -12,7 +12,7 @@ def init(attack_name):
     global name
     name = attack_name
 
-    def excepthook(exctype, value, traceback, /):
+    def excepthook(exctype, value, traceback):
         if exctype in (KeyboardInterrupt, RuntimeError):
             sys.exit(2)
         else:
