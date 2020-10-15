@@ -5,20 +5,15 @@
 ##
 
 import attack
+from attack import positive_int
 
 attack.init("Novelty primes factorization")
 
 _, keys = attack.get_args()
 n, e, _ = keys[0]
 
-def positive_int(s):
-    i = int(s)
-    if i <= 0:
-        raise ValueError("Must be a positive number")
-    return i
-
 bound = attack.input("Insert upper bound: max number of digits", default=1000000, validator=positive_int)
-bound = min(bound, int(log(n, 10)+1))
+bound = min(bound, floor(log(n, 10)+1))
 
 for i in range(bound-4):
     p = int("313{}7".format("3"*i))

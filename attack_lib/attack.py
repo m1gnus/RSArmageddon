@@ -5,6 +5,13 @@ from itertools import islice
 from contextlib import redirect_stdout
 
 
+def positive_int(s):
+    i = int(s)
+    if i <= 0:
+        raise ValueError("Must be a positive number")
+    return i
+
+
 name = None
 
 

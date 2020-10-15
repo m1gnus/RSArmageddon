@@ -1,21 +1,16 @@
 #!/usr/bin/env sage
 
 ##
-# small fraction attack (p/q cloe to a small fraction) - from https://github.com/Ganapati/RsaCtfTool/blob/master/sage/smallfraction.sage
+# small fraction attack (p/q close to a small fraction) - from https://github.com/Ganapati/RsaCtfTool/blob/master/sage/smallfraction.sage
 ##
 
 import attack
+from attack import positive_int
 
 attack.init("Small fraction factorization")
 
 _, keys = attack.get_args()
 n, e, _ = keys[0]
-
-def positive_int(s):
-    i = int(s)
-    if i <= 0:
-        raise ValueError("Must be a positive number")
-    return i
 
 depth = attack.input("Insert depth", default=50, validator=positive_int)
 

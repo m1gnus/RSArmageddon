@@ -5,6 +5,7 @@
 ##
 
 import attack
+from attack import positive_int
 
 attack.init("Londahl factorization")
 
@@ -16,13 +17,7 @@ e = Integer(e)
 
 R = Integers(n)
 
-def positive_integer(s):
-    i = Integer(s)
-    if i <= 0:
-        raise ValueError("Must be a positive number")
-    return i
-
-b = attack.input("Insert londahl bound", default=20000000, validator=positive_integer)
+b = attack.input("Insert londahl bound", default=20000000, validator=positive_int)
 
 phi_approx = n - 2 * isqrt(n) + 1
 
