@@ -3,8 +3,9 @@ import sys
 
 from shutil import copyfileobj
 from pathlib import Path
-from tempfile import TemporaryDirectory
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from importlib import resources
+from contextlib import redirect_stdout
 from subprocess import TimeoutExpired
 
 import sage
@@ -24,10 +25,10 @@ def parse_output(s):
         if not line:
             continue
         kind, _, value = map(str.strip, line.partition(":"))
-        if kind == "cleartext":
+        if kind == "c":
             text, _, file = value.partition(",")
             cleartexts.append((int(text), Path(file) if file else True))
-        elif kind == "key":
+        elif kind == "k":
             *key, name = value.split(",")
             key = tuple(int(x) if x else None for x in key)
             keys.append((key, name or None))
@@ -38,13 +39,18 @@ def parse_output(s):
 
 def run():
     args = get_args()
-    keys = [f"{n}:{e}:{name if name is not None else ''}" for (n, e), name in args.pubkeys]
-    ciphertexts = [f"{text}:{name if name is not True else ''}" for text, name in args.ciphertexts]
 
-    with TemporaryDirectory() as attack_lib_dir:
-        with resources.open_binary(attack_lib, "attack.py") as src:
-            with open(Path(attack_lib_dir)/"attack.py", "wb") as dst:
-                copyfileobj(src, dst)
+    with TemporaryDirectory() as attack_lib_dir, \
+            NamedTemporaryFile("w", encoding="ascii") as input_file:
+        with redirect_stdout(input_file):
+            for (n, e), name in args.pubkeys:
+                print(f"k:{n},{e},{name if name is not None else ''}")
+            for text, name in args.ciphertexts:
+                print(f"c:{text},{name if name is not True else ''}")
+        input_file.flush()
+        with resources.open_binary(attack_lib, "attack.py") as src, \
+                open(Path(attack_lib_dir)/"attack.py", "wb") as dst:
+            copyfileobj(src, dst)
 
         _, cyg_runtime = sage.get_sage()
 
@@ -60,12 +66,12 @@ def run():
 
             with script_manager as script:
                 try:
-                    p = sage.run(script, *ciphertexts, *keys, env=env, timeout=args.timeout)
+                    p = sage.run(script, input_file.name, env=env, timeout=args.timeout)
                 except TimeoutExpired:
                     print(f"[W] Timeout expired for attack {attack}", file=sys.stderr)
                     continue
 
-                if p.returncode == 2: # attack found out the key is bad (i.e. not an RSA key)
+                if p.returncode == 2: # attack determined the key is bad (i.e. not an RSA key)
                     break
 
                 if p.returncode: # attack failed for other reasons

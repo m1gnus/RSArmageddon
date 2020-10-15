@@ -52,7 +52,7 @@ def success():
             if len(_keys) > 1:
                 raise ValueError("Name is not optional for multiple keys")
             key = (*key, None)
-        print("key: {}".format(",".join(str(x) if x is not None else "" for x in key)))
+        print("k:{}".format(",".join(str(x) if x is not None else "" for x in key)))
     for cleartext in _cleartexts:
         if isinstance(cleartext, int):
             text, textname = str(cleartext), ""
@@ -62,7 +62,7 @@ def success():
             textname = textname if textname is not None else ""
         else:
             raise ValueError("Bad cleartext '{}'".format(cleartext))
-        print("cleartext: {},{}".format(text, textname))
+        print("c:{},{}".format(text, textname))
     print("[+] {} attack succeeded".format(name), file=sys.stderr)
     sys.exit(0)
 
@@ -87,14 +87,21 @@ def info(*s):
 def get_args(*, min_keys=1, min_ciphertexts=0, deduplicate=False):
     ciphertexts = []
     keys = []
-    for arg in islice(sys.argv, 1, None):
-        arg = arg.split(":")
-        if len(arg) == 3:
-            n, e, keyname = arg
-            keys.append((int(n), int(e), keyname or None))
-        elif len(arg) == 2:
-            text, textname = arg
-            ciphertexts.append((int(text), textname))
+
+    with open(sys.argv[1], "r", encoding="ascii") as f:
+        for line in f:
+            if not line or line.isspace():
+                continue
+            kind, _, line = line.partition(":")
+            if kind == "k":
+                n, e, keyname = line.split(",", maxsplit=2)
+                keys.append((int(n), int(e), keyname or None))
+            elif kind == "c":
+                text, textname = line.split(",", maxsplit=1)
+                ciphertexts.append((int(text), textname))
+            else:
+                raise ValueError(f"Unexpected input type '{kind}' from input file")
+
     if deduplicate:
         keys = {tuple(key): keyname for *key, keyname in keys}
         keys = [(*key, keyname) for key, keyname in keys.items()]
@@ -103,8 +110,10 @@ def get_args(*, min_keys=1, min_ciphertexts=0, deduplicate=False):
     else:
         if len(keys) < min_keys:
             fail("This attack needs at least {} keys".format(min_keys))
+
     if len(ciphertexts) < min_ciphertexts:
         fail("This attack needs at least {} cihertexts".format(min_cihertexts))
+
     return ciphertexts, keys
 
 
