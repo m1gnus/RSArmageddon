@@ -1,72 +1,33 @@
 #!/usr/bin/env sage
 
 ##
-# Script taken from https://github.com/mimoo/RSA-and-LLL-attacks
+#  Based on https://github.com/mimoo/RSA-and-LLL-attacks
 ##
 
-import time
-import os
-import sys
-import binascii
-import signal
+import attack
+from attack import positive_int
 
-"""
-boneh_durfee's custom signal handler
-"""
-
-def boneh_durfee_handler(sigNum: int, frame: str) -> None:
-    print("\n[-] common factor attack failed\n")
-    sys.exit(1) # exit (failure)
-
-signal.signal(signal.SIGHUP, boneh_durfee_handler)
-signal.signal(signal.SIGINT, boneh_durfee_handler)
-signal.signal(signal.SIGQUIT, boneh_durfee_handler)
-signal.signal(signal.SIGILL, boneh_durfee_handler)
-signal.signal(signal.SIGTRAP, boneh_durfee_handler)
-signal.signal(signal.SIGABRT, boneh_durfee_handler)
-signal.signal(signal.SIGBUS, boneh_durfee_handler)
-signal.signal(signal.SIGFPE, boneh_durfee_handler)
-signal.signal(signal.SIGUSR1, boneh_durfee_handler)
-signal.signal(signal.SIGSEGV, boneh_durfee_handler)
-signal.signal(signal.SIGUSR2, boneh_durfee_handler)
-signal.signal(signal.SIGPIPE, boneh_durfee_handler)
-signal.signal(signal.SIGTERM, boneh_durfee_handler)
-signal.signal(signal.SIGALRM, boneh_durfee_handler)
-
-############################################
-# Config
-##########################################
-
-"""
-Setting debug to true will display more informations
-about the lattice, the bounds, the vectors...
-"""
+# Setting debug to true will display more informations
+# about the lattice, the bounds, the vectors...
 debug = False
 
-"""
-Setting strict to true will stop the algorithm (and
-return (-1, -1)) if we don't have a correct 
-upperbound on the determinant. Note that this 
-doesn't necesseraly mean that no solutions 
-will be found since the theoretical upperbound is
-usualy far away from actual results. That is why
-you should probably use `strict = False`
-"""
+# Setting strict to true will stop the algorithm (and
+# return (-1, -1)) if we don't have a correct
+# upperbound on the determinant. Note that this
+# doesn't necesseraly mean that no solutions
+# will be found since the theoretical upperbound is
+# usualy far away from actual results. That is why
+# you should probably use `strict = False`
 strict = False
 
-"""
-This is experimental, but has provided remarkable results
-so far. It tries to reduce the lattice as much as it can
-while keeping its efficiency. I see no reason not to use
-this option, but if things don't work, you should try
-disabling it
-"""
+# This is experimental, but has provided remarkable results
+# so far. It tries to reduce the lattice as much as it can
+# while keeping its efficiency. I see no reason not to use
+# this option, but if things don't work, you should try
+# disabling it
 helpful_only = True
 dimension_min = 7 # stop removing if lattice reaches that dimension
 
-############################################
-# Functions
-##########################################
 
 # display stats on helpful vectors
 def helpful_vectors(BB, modulus):
@@ -75,19 +36,21 @@ def helpful_vectors(BB, modulus):
         if BB[ii,ii] >= modulus:
             nothelpful += 1
 
-    #print(nothelpful, "/", BB.dimensions()[0], " vectors are not helpful")
+    attack.info(nothelpful, "/", BB.dimensions()[0], " vectors are not helpful")
+
 
 # display matrix picture with 0 and X
 def matrix_overview(BB, bound):
     for ii in range(BB.dimensions()[0]):
-        a = ('%02d ' % ii)
+        a = '{:02d} '.format(ii)
         for jj in range(BB.dimensions()[1]):
             a += '0' if BB[ii,jj] == 0 else 'X'
             if BB.dimensions()[0] < 60:
                 a += ' '
         if BB[ii, ii] >= bound:
             a += '~'
-        #print(a)
+        attack.info(a)
+
 
 # tries to remove unhelpful vectors
 # we start at current = n-1 (last vector)
@@ -114,7 +77,7 @@ def remove_unhelpful(BB, monomials, bound, current):
             # if no other vectors end up affected
             # we remove it
             if affected_vectors == 0:
-                #print("* removing unhelpful vector", ii)
+                attack.info("Removing unhelpful vector", ii)
                 BB = BB.delete_columns([ii])
                 BB = BB.delete_rows([ii])
                 monomials.pop(ii)
@@ -135,7 +98,7 @@ def remove_unhelpful(BB, monomials, bound, current):
                 # this helpful vector is not helpful enough
                 # compared to our unhelpful one
                 if affected_deeper and abs(bound - BB[affected_vector_index, affected_vector_index]) < abs(bound - BB[ii, ii]):
-                    #print("* removing unhelpful vectors", ii, "and", affected_vector_index)
+                    attack.info("Removing unhelpful vectors", ii, "and", affected_vector_index)
                     BB = BB.delete_columns([affected_vector_index, ii])
                     BB = BB.delete_rows([affected_vector_index, ii])
                     monomials.pop(affected_vector_index)
@@ -145,22 +108,19 @@ def remove_unhelpful(BB, monomials, bound, current):
     # nothing happened
     return BB
 
-""" 
-Returns:
-* 0,0   if it fails
-* -1,-1 if `strict=true`, and determinant doesn't bound
-* x0,y0 the solutions of `pol`
-"""
+
+# Returns:
+# * 0,0   if it fails
+# * -1,-1 if `strict=true`, and determinant doesn't bound
+# * x0,y0 the solutions of `pol`
 def boneh_durfee(pol, modulus, mm, tt, XX, YY):
-    """
-    Boneh and Durfee revisited by Herrmann and May
-    
-    finds a solution if:
-    * d < N^delta
-    * |x| < e^delta
-    * |y| < e^0.5
-    whenever delta < 1 - sqrt(2)/2 ~ 0.292
-    """
+    # Boneh and Durfee revisited by Herrmann and May
+
+    # finds a solution if:
+    # * d < N^delta
+    # * |x| < e^delta
+    # * |y| < e^0.5
+    # whenever delta < 1 - sqrt(2)/2 ~ 0.292
 
     # substitution (Herrman and May)
     PR.<u, x, y> = PolynomialRing(ZZ)
@@ -184,14 +144,14 @@ def boneh_durfee(pol, modulus, mm, tt, XX, YY):
             if monomial not in monomials:
                 monomials.append(monomial)
     monomials.sort()
-    
+
     # y-shifts (selected by Herrman and May)
     for jj in range(1, tt + 1):
         for kk in range(floor(mm/tt) * jj, mm + 1):
             yshift = y^jj * polZ(u, x, y)^kk * modulus^(mm - kk)
             yshift = Q(yshift).lift()
             gg.append(yshift) # substitution
-    
+
     # y-shifts list of monomials
     for jj in range(1, tt + 1):
         for kk in range(floor(mm/tt) * jj, mm + 1):
@@ -213,26 +173,25 @@ def boneh_durfee(pol, modulus, mm, tt, XX, YY):
         # reset dimension
         nn = BB.dimensions()[0]
         if nn == 0:
-            #print("failure")
-            return 0,0
+            return 0, 0
 
     # check if vectors are helpful
     if debug:
         helpful_vectors(BB, modulus^mm)
-    
+
     # check if determinant is correctly bounded
     det = BB.det()
     bound = modulus^(mm*nn)
     if det >= bound:
-        print("[-] We do not have det < bound. Solutions might not be found.")
-        print("[-] Try with highers m and t.")
+        attack.info("We do not have det < bound. Solutions might not be found.")
+        attack.info("Try with higher m and t.")
         if debug:
             diff = (log(det) - log(bound)) / log(2)
-            print("size det(L) - size e^(m*n) = ", floor(diff))
+            attack.info("size det(L) - size e^(m*n) = ", floor(diff))
         if strict:
             return -1, -1
     else:
-        print("[+] det(L) < e^(m*n) (good! If a solution exists < N^delta, it will be found)")
+        attack.info("det(L) < e^(m*n) (good! If a solution exists < N^delta, it will be found)")
 
     # display the lattice basis
     if debug:
@@ -240,18 +199,18 @@ def boneh_durfee(pol, modulus, mm, tt, XX, YY):
 
     # LLL
     if debug:
-        print("optimizing basis of the lattice via LLL, this can take a long time")
+        attack.info("Optimizing basis of the lattice via LLL, this can take a long time")
 
     BB = BB.LLL()
 
     if debug:
-        print("LLL is done!")
+        attack.info("LLL is done!")
 
     # transform vector i & j -> polynomials 1 & 2
     if debug:
-        print("[+] looking for independent vectors in the lattice")
+        attack.info("Looking for independent vectors in the lattice")
     found_polynomials = False
-    
+
     for pol1_idx in range(nn - 1):
         for pol2_idx in range(pol1_idx + 1, nn):
             # for i and j, create the two polynomials
@@ -275,117 +234,58 @@ def boneh_durfee(pol, modulus, mm, tt, XX, YY):
             break
 
     if not found_polynomials:
-        print("[-] no independant vectors could be found. This should very rarely happen...")
+        attack.info("No independant vectors could be found. This should very rarely happen...")
         return 0, 0
-    
+
     rr = rr(q, q)
 
     # solutions
     soly = rr.roots()
 
     if len(soly) == 0:
-        print("[-] Your prediction (delta) is too small")
+        attack.info("Your prediction (delta) is too small")
         return 0, 0
 
     soly = soly[0][0]
     ss = pol1(q, soly)
     solx = ss.roots()[0][0]
 
-    #
     return solx, soly
 
-def attack(N: int, e: int, ciphertext: int) -> None:
 
-    print("[+] Boneh Durfee attack started")
+attack.init("Boneh-Durfee factorization")
 
-    # the hypothesis on the private exponent (the theoretical maximum is 0.292)
-    delta = input("[+] Insert hypotesis on the private exponent (between 0.001 and 0.292) (default 0.18): ")
-    try: 
-        delta = float(delta) # this means that d < N^delta
-        if not 0.001 < delta < 0.292:
-            raise ValueError("")
-    except ValueError:
-        print("[-] Invalid Value, default is setted")
-        delta = float(.18)
+_, keys = attack.get_args()
+n, e, _ = keys[0]
 
-    #
-    # Lattice (tweak those values)
-    #
+def parse_delta(s):
+    delta = float(s)
+    if not 0.001 < delta < 0.292:
+        raise ValueError("Must be between .001 and .292")
+    return delta
 
-    # you should tweak this (after a first run), (e.g. increment it until a solution is found)
-    m = input("[+] Insert the size of the lattice (bigger is better but slower) (default 4): ")
-    try:
-        m = int(m)
-        if m <= 0:
-            raise ValueError("")
-    except ValueError:
-        print("[-] Invalid Value, default is setted")
-        m = 4
-    
-    # you need to be a lattice master to tweak these
-    t = int((1-2*delta) * m)  # optimization from Herrmann and May
-    X = 2*floor(pow(N,delta))  # this _might_ be too much
-    Y = floor(pow(N,(1/2)))    # correct if p, q are ~ same size
+# the hypothesis on the private exponent (the theoretical maximum is 0.292)
+delta = attack.input("Insert hypotesis on private exponent (between 0.001 and 0.292)", validator=parse_delta, default=float(.18))
 
-    #
-    # Don't touch anything below
-    #
+# you should tweak this (after a first run), (e.g. increment it until a solution is found)
+m = attack.input("Insert size of lattice (bigger is better but slower)", validator=positive_int, default=4)
 
-    # Problem put in equation
-    P.<x,y> = PolynomialRing(ZZ)
-    A = int((N+1)/2)
-    pol = 1 + x * (A + y)
+# you need to be a lattice master to tweak these
+t = int((1-2*delta) * m)  # optimization from Herrmann and May
+X = 2*floor(pow(n,delta)) # this _might_ be too much
+Y = floor(pow(n,(1/2)))   # correct if p, q are ~ same size
 
-    #
-    # Find the solutions!
-    #
+# Problem put in equation
+P.<x,y> = PolynomialRing(ZZ)
+A = int((n+1)/2)
+pol = 1 + x * (A + y)
 
-    solx, soly = boneh_durfee(pol, e, m, t, X, Y)
+solx, soly = boneh_durfee(pol, e, m, t, X, Y)
 
-    # found a solution?
-    if solx > 0:
-        print("[+] Boneh Durfee attack complete\n")
-
-        d = int(pol(solx, soly) / e)
-        print("[*] d:", d)
-    else:
-        print("[-] Boneh Durfee attack failed\n")
-        sys.exit(1)
-
-    """
-    move PWD in the parent path
-    """
-    pathname = os.path.dirname(sys.argv[0])
-    abspath = os.path.abspath(pathname)
-    os.chdir(abspath + "/../")
-
-    """
-    uncipher a specified ciphertext
-    """
-    if ciphertext: # --uncipher
-        print("\n[+] Decrypting ciphertext string\n")
-
-        m = pow(ciphertext, d, N)
-
-        hexm = hex(m) if (len(hex(m)) % 2) == 0 else ("0x0" + hex(m)[2:])
-        rawm = binascii.unhexlify(hexm[2:].encode())
-
-        print("[+] plaintext (dec):", m)
-        print("[+] plaintext (hex):", hexm)
-        print("[+] plaintext (raw):", rawm)
-        print()
-
-if __name__ == "__main__":
-
-    N = Integer(sys.argv[1])
-    e = Integer(sys.argv[2])
-
-    ciphertext = (None if sys.argv[7] == "None" else Integer(sys.argv[7]))
-
-    attack(N, e, ciphertext)
-
-    os.chdir("attacks")
-    os.system("rm boneh_durfee.sage.py")
-
-    sys.exit(0) # exit (success)
-    
+# found a solution?
+if solx > 0:
+    d = int(pol(solx, soly) / e)
+    attack.keys((n, e, d, None, None))
+    attack.success()
+else:
+    attack.fail()

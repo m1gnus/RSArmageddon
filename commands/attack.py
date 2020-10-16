@@ -86,7 +86,9 @@ def run():
 
                 if len(keys) == 1:
                     key, _ = keys[0]
-                    key = complete_privkey(*key)
+                    _, _, d, _, _ = key
+                    if d is None:
+                        key = complete_privkey(*key)
 
                     if args.output_private is True:
                         sys.stdout.buffer.write(encode_privkey(*key, "PEM"))
