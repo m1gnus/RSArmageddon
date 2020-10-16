@@ -276,7 +276,6 @@ m = attack.input("Insert size of lattice (bigger is better but slower)", validat
 # you need to be a lattice master to tweak these
 t = int((1-2*delta) * m)  # optimization from Herrmann and May
 X = ((RR(n)^RR(delta))*RR(2)).integer_part() # this _might_ be too much
-attack.info(type(X))
 Y = (pow(RR(n),RR(1/2))).integer_part()   # correct if p, q are ~ same size
 
 # Problem put in equation
