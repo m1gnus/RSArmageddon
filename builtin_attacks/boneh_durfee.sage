@@ -28,6 +28,8 @@ strict = False
 helpful_only = True
 dimension_min = 7 # stop removing if lattice reaches that dimension
 
+# Increase precision in Sage's RealField
+RR = RealField(20000)
 
 # display stats on helpful vectors
 def helpful_vectors(BB, modulus):
@@ -114,6 +116,7 @@ def remove_unhelpful(BB, monomials, bound, current):
 # * -1,-1 if `strict=true`, and determinant doesn't bound
 # * x0,y0 the solutions of `pol`
 def boneh_durfee(pol, modulus, mm, tt, XX, YY):
+	
     # Boneh and Durfee revisited by Herrmann and May
 
     # finds a solution if:
@@ -147,14 +150,14 @@ def boneh_durfee(pol, modulus, mm, tt, XX, YY):
 
     # y-shifts (selected by Herrman and May)
     for jj in range(1, tt + 1):
-        for kk in range(floor(mm/tt) * jj, mm + 1):
+        for kk in range((mm/tt) * jj, mm + 1):
             yshift = y^jj * polZ(u, x, y)^kk * modulus^(mm - kk)
             yshift = Q(yshift).lift()
             gg.append(yshift) # substitution
 
     # y-shifts list of monomials
     for jj in range(1, tt + 1):
-        for kk in range(floor(mm/tt) * jj, mm + 1):
+        for kk in range((mm/tt) * jj, mm + 1):
             monomials.append(u^kk * y^jj)
 
     # construct lattice B
@@ -187,7 +190,7 @@ def boneh_durfee(pol, modulus, mm, tt, XX, YY):
         attack.info("Try with higher m and t.")
         if debug:
             diff = (log(det) - log(bound)) / log(2)
-            attack.info("size det(L) - size e^(m*n) = ", floor(diff))
+            attack.info("size det(L) - size e^(m*n) = ", (diff))
         if strict:
             return -1, -1
     else:
@@ -272,8 +275,9 @@ m = attack.input("Insert size of lattice (bigger is better but slower)", validat
 
 # you need to be a lattice master to tweak these
 t = int((1-2*delta) * m)  # optimization from Herrmann and May
-X = 2*floor(pow(n,delta)) # this _might_ be too much
-Y = floor(pow(n,(1/2)))   # correct if p, q are ~ same size
+X = ((RR(n)^RR(delta))*RR(2)).integer_part() # this _might_ be too much
+attack.info(type(X))
+Y = (pow(RR(n),RR(1/2))).integer_part()   # correct if p, q are ~ same size
 
 # Problem put in equation
 P.<x,y> = PolynomialRing(ZZ)
