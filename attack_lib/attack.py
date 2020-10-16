@@ -133,7 +133,7 @@ _input = input
 def input(prompt=None, *, default=None, validator=None):
     if prompt is not None:
         prompt_default = " [{}]".format(default) if default is not None else ""
-        prompt = "[+] {}{}: ".format(prompt, prompt_default)
+        prompt = "[@] {}{}: ".format(prompt, prompt_default)
     else:
         prompt = ""
 
