@@ -105,9 +105,9 @@ def complete_privkey(n: int, e: int, d: int, p: int, q: int, phi=None) -> tuple:
 
     if n is None and (p is None or q is None):
         raise ValueError(f"You have to provide n or both p and q in tuple '{tup}'")
-    elif n is not None and (p is None and q is None and phi is None):
+    if n is not None and (p is None and q is None and phi is None):
         raise ValueError(f"If you provide n, you must provide also p, q or phi in tuple '{tup}'")
-    elif e is None and d is None:
+    if e is None and d is None:
         raise ValueError(f"You have to provide e or d in tuple '{tup}'")
 
     if n is not None and p is None and q is None and phi is not None:
@@ -151,7 +151,7 @@ def compute_d(n: int, e: int, d: int, p: int, q: int, phi=None) -> int:
         ds.add(d)
 
     if e is None:
-        raise ValueError(f"Missing public exponent")
+        raise ValueError("Missing public exponent")
 
     if phi is not None:
         ds.add(invert(e, phi))
@@ -211,8 +211,7 @@ def output_cleartext(text, filename, json_output=False):
         text_hex = f"0x{text_raw.hex()}"
         if json_output:
             json.dump({
-                "output": str(output),
-                "dec": str(output),
+                "dec": str(text),
                 "hex": text_hex,
                 "raw": str(text_raw)
             }, sys.stdout, indent=4)
@@ -228,9 +227,9 @@ def output_cleartext(text, filename, json_output=False):
 
 
 # From a tip I saw here: https://stackoverflow.com/questions/3431825/generating-an-md5-checksum-of-a-file
-def file_checksum(path):
+def file_checksum(filename):
     hash_sha256 = hashlib.sha256()
-    with open(file_path, "rb") as f:
+    with open(filename, "rb") as f:
         for chunk in iter(partial(f.read, 4096), b""):
             hash_sha256.update(chunk)
     return hash_sha256.hexdigest()

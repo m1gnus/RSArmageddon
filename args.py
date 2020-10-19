@@ -27,7 +27,6 @@ subparser = parser.add_subparsers(dest="subp")
 # Attacks management
 attacks_parser = subparser.add_parser("attack", add_help=True)
 
-#TODO
 attacks_parser.add_argument("-n", action="store", dest="n", type=parse_int_list, default=[], help="List of RSA public modules <int>,<int>,<int>...")
 attacks_parser.add_argument("-e", action="store", dest="e", type=parse_int_list, default=[], help="List of RSA public exponents <int>,<int>,<int>...")
 attacks_parser.add_argument("--n-e-file", action="store", dest="n_e_file", type=Path, default=None, help='Path to a file containing modules and public exponents, each lines is in the form "n:e" or "n"')
@@ -129,11 +128,11 @@ uncipher_parser.add_argument("--quiet", "--silent", "-s", action="store_true", d
 def _finalize_ciphertool_args(args, cipher=False):
     if cipher:
         if args.n is None and args.key is None:
-            raise ValueError(f"Must specify either --key or -n")
+            raise ValueError("Must specify either --key or -n")
         args.d, args.p, args.q, args.phi = None, None, None, None
 
     if args.key is not None and any(x is not None for x in (args.n, args.e, args.d, args.p, args.q, args.phi)):
-        raise ValueError(f"--key and -n, -e... etc. cannot be specified at the same time")
+        raise ValueError("--key and -n, -e... etc. cannot be specified at the same time")
 
     if args.key is not None:
         args.n, args.e, args.d, args.p, args.q = load_key(args.key)
@@ -142,16 +141,16 @@ def _finalize_ciphertool_args(args, cipher=False):
         args.d = compute_d(args.n, args.e, args.d, args.p, args.q, args.phi)
         args.n = compute_n(args.n, args.e, args.d, args.p, args.q, args.phi)
         if args.n is None or args.d is None:
-            raise ValueError(f"Not enough key elements to attemp decryption")
+            raise ValueError("Not enough key elements to attemp decryption")
 
     if args.e is None:
         args.e = DEFAULT_E
 
     if not any((args.inputs, args.input_strs, args.input_files)):
         if cipher:
-            raise ValueError(f"Must specify at least one of --plaintext, --plaintext-str or --plaintext-file")
+            raise ValueError("Must specify at least one of --plaintext, --plaintext-str or --plaintext-file")
         else:
-            raise ValueError(f"Must specify at least one of --ciphertext, --ciphertext-str or --ciphertext-file")
+            raise ValueError("Must specify at least one of --ciphertext, --ciphertext-str or --ciphertext-file")
 
     inputs = []
     for text in args.inputs:
@@ -174,7 +173,7 @@ def _finalize_ciphertool_args(args, cipher=False):
             inputs.append((text, filename.resolve().parent/filename.stem/".enc"))
 
     if any((args.outputs, args.str_outputs, args.file_outputs)):
-        raise ValueError(f"Too many output specifications")
+        raise ValueError("Too many output specifications")
 
     args.inputs = inputs
 
@@ -221,12 +220,12 @@ def _finalize_pem_args(args):
 
     if args.cpub is not None:
         if any(x is None for x in (args.n, args.e)):
-            raise ValueError(f"--createpub and require a valid public key")
+            raise ValueError("--createpub and require a valid public key")
         priv_fmt = infer_format_priv(args.cpriv)
 
     if args.cpriv is not None:
         if any(x is None for x in (args.p, args.q, args.d)):
-            raise ValueError(f"--createpriv and require a valid private key")
+            raise ValueError("--createpriv and require a valid private key")
         pub_fmt = infer_format_pub(args.cpub)
 
     if args.format is None and any(x is not None for x in (args.cpriv, args.cpub)):
@@ -254,7 +253,7 @@ parser.add_argument("--quiet", "--silent", "-s", action="store_true", dest="quie
 
 def _finalize_general_args(args):
     if len([x for x in vars(args).values() if x not in (None, False)]) > 1:
-        raise ValueError(f"Only one argument at a time can be specified without a command")
+        raise ValueError("Only one argument at a time can be specified without a command")
 
 
 args = None
