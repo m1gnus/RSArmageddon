@@ -66,23 +66,23 @@ def compute_pubkey(n: int, e: int, d: int, p: int, q: int, phi=None) -> tuple:
     pks = set()
 
     if n is not None and e is not None:
-        set.add((n, e))
+        pks.add((n, e))
 
     if n is not None and d is not None:
         if phi is not None:
-            set.add((n, invert(d, phi)))
+            pks.add((n, invert(d, phi)))
         else:
             if p is None:
                 p = q
             if p is not None:
                 q = n//p
-                set.add((n, invert(d, (p-1) * (q-1))))
+                pks.add((n, invert(d, (p-1) * (q-1))))
 
     if p is not None and q is not None:
         if d is not None:
-            set.add((p*q, invert(d, (p-1) * (q-1))))
+            pks.add((p*q, invert(d, (p-1) * (q-1))))
         if e is not None:
-            set.add((p*q, e))
+            pks.add((p*q, e))
 
     if len(pks) != 1:
         raise ValueError(f"Inconsistent parameters {tup}")
