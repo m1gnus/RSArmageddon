@@ -1,5 +1,4 @@
 import os
-import os
 import sys
 import re
 import shutil
@@ -15,7 +14,7 @@ if os.name == "nt":
 
 INSTALL_SAGE_POSIX = """We could not seem to find a functioning SageMath installation on your system.
 Please refer to these online instructions to fix this: <TODO: insert link to appropriate github readme paragraph>"""
-INSTALL_SAGE_POSIX = """We could not seem to find a functioning SageMath installation on your system.
+INSTALL_SAGE_NT = """We could not seem to find a functioning SageMath installation on your system.
 Please refer to these online instructions to fix this: <TODO: insert link to appropriate github readme paragraph>"""
 NO_JAVA = "This program will not run on Jython and other Java based execution environments"
 
@@ -26,8 +25,7 @@ def best_version(versions):
     supported = [(vmaj, vmin) for vmaj, vmin in versions if vmaj == SUPPORTED_VMAJ]
     if supported:
         return max(supported)
-    else:
-        return max(versions)
+    return max(versions)
 
 
 def cyg_path(path, cyg_runtime):
@@ -44,9 +42,8 @@ def cyg_path(path, cyg_runtime):
 def cyg_bash(cyg_runtime):
     if cyg_runtime is None:
         return []
-    else:
-        cyg_runtime = Path(cyg_runtime)
-        return [str(cyg_runtime/"bin"/"bash.exe"), "--norc", "--login"]
+    cyg_runtime = Path(cyg_runtime)
+    return [str(cyg_runtime/"bin"/"bash.exe"), "--norc", "--login"]
 
 
 version_re = re.compile(r"(\d+)\.(\d+)", re.ASCII)
@@ -57,11 +54,10 @@ def version(sage, cyg_runtime=None):
             [*cyg_bash(cyg_runtime), str(sage), "--version"],
             stdout=PIPE, text=True)
     m = version_re.search(p.stdout)
-    if m:
-        vmaj, vmin = m.group(1, 2)
-        return int(vmaj), int(vmin)
-    else:
+    if not m:
         raise RuntimeError(f"SageMath version could not be identified (not a sage executable?). Version string: {p.stdout}")
+    vmaj, vmin = m.group(1, 2)
+    return int(vmaj), int(vmin)
 
 
 def get_sage_nt_locations_registry():
