@@ -14,7 +14,7 @@ ______  _____  ___                                      _     _
                                           __/ |
                                          |___/
 
-Written by M1gnus, L0tus && AquilaIrreale -- PGIATASTI
+Written by M1gnus && AquilaIrreale -- PGIATASTI
 """
 
 credits_text = """
@@ -31,7 +31,7 @@ Glory to PGiatasti:
     - Andrei aka S0uND_0f_s1lence
     - Simone aka AquilaIrreale
 
-https://pgiatasti.it/ -- -- Visit our site to discover more about us
+https://pgiatasti.it/ -- Visit our site to discover more about us
 """
 
 
@@ -71,4 +71,4 @@ def print_attacks():
 
 
 def version():
-    print("RSArmageddon v.1.0 --Athena--")
+    print("RSArmageddon v2.0 --Ares--")
