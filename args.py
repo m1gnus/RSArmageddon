@@ -14,35 +14,15 @@ from certs import load_key
 from utils import DEFAULT_E
 
 
-key_parser = ArgumentParser(add_help=False)
-text_parser_common = ArgumentParser(add_help=False)
-plaintext_parser = ArgumentParser(add_help=False, parents=[text_parser_common])
-ciphertext_parser = ArgumentParser(add_help=False, parents=[text_parser_common])
-
-
 class ReadKeyFile(Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        key = load_key(values[0])
+    def __call__(self, parser, namespace, path, option_string=None):
+        key = load_key(path)
         for k, v in zip(("n", "e", "d", "p", "q"), key):
             if getattr(namespace, k, None) is not None:
                 setattr(namespace, k, v)
 
 
-class Input(Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        inputs = getattr(namespace, "inputs", [])
-        inputs.append((values[0], True))
-
-
-class Output(Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        inputs = getattr(namespace, "inputs", None)
-        if not inputs:
-            raise ValueError(f"{option_string} found but no inputs have been given yet") from e
-        cur_text, _ = inputs[-1]
-        inputs[-1] = (cur_text, values[0])
-
-
+key_parser = ArgumentParser(add_help=False)
 key_parser.add_argument("--key", "-k", action=ReadKeyFile, type=Path,          help="Path to a key file")
 key_parser.add_argument("-n",          action="store",     type=parse_int_arg, help="RSA public modulus")
 key_parser.add_argument("-e",          action="store",     type=parse_int_arg, help="RSA public exponent")
@@ -51,37 +31,60 @@ key_parser.add_argument("-p",          action="store",     type=parse_int_arg, h
 key_parser.add_argument("-q",          action="store",     type=parse_int_arg, help="RSA second prime factor")
 key_parser.add_argument("--phi",       action="store",     type=parse_int_arg, help="Euler's phi of RSA public modulus")
 
+
+class Input(Action):
+    def __call__(self, parser, namespace, input_, option_string=None):
+        inputs = getattr(namespace, "inputs", [])
+        if not inputs:
+            setattr(namespace, "inputs", inputs)
+        inputs.append((input_, True))
+
+
+class Output(Action):
+    def __call__(self, parser, namespace, dest, option_string=None):
+        inputs = getattr(namespace, "inputs", None)
+        if not inputs:
+            raise ValueError(f"{option_string} found but no inputs have been given yet") from e
+        cur_text, _ = inputs[-1]
+        inputs[-1] = (cur_text, dest)
+
+
+text_parser_common = ArgumentParser(add_help=False)
 text_parser_common.add_argument("--output", "-o", action=Output, type=path_or_stdout, help="")
 text_parser_common.add_argument("--encryption-standard", "--std", choices=["oaep", "pkcs", "raw"], help="")
 
+plaintext_parser = ArgumentParser(add_help=False, parents=[text_parser_common])
 plaintext_parser.add_argument("--plaintext",      "--pt",  "--encrypt",      action=Input, type=parse_int_arg, help="")
 plaintext_parser.add_argument("--plaintext-raw",  "--ptr", "--encrypt-raw",  action=Input, type=str,           help="")
 plaintext_parser.add_argument("--plaintext-file", "--ptf", "--encrypt-file", action=Input, type=Path,          help="")
 
+ciphertext_parser = ArgumentParser(add_help=False, parents=[text_parser_common])
 ciphertext_parser.add_argument("--ciphertext",      "--ct",  "--decrypt",      action=Input, type=parse_int_arg, help="")
 ciphertext_parser.add_argument("--ciphertext-raw",  "--ctr", "--decrypt-raw",  action=Input, type=str,           help="")
 ciphertext_parser.add_argument("--ciphertext-file", "--ctf", "--decrypt-file", action=Input, type=Path,          help="")
 
+commons_parser = ArgumentParser(add_help=False)
+commons_parser.add_argument("--show-attacks",            action="store_true", help="Show implemented attacks")
+commons_parser.add_argument("--show-builtin-attacks",    action="store_true", help="Show implemented attacks")
+commons_parser.add_argument("--credits",                 action="store_true", help="Show credits")
+commons_parser.add_argument("--version",                 action="store_true", help="Show version")
+commons_parser.add_argument("--json",                    action="store_true", help="Show version")
+commons_parser.add_argument("--quiet", "--silent", "-s", action="store_true", help='Suppress informative output')
+
+main_parser = ArgumentParser(parents=[commons_parser])
+
 scripts_parser = ArgumentParser(add_help=False)
 scripts_parser.add_argument("n", action="store", type=parse_int_arg, help="")
 
-main_parser = ArgumentParser()
-main_parser.add_argument("--show-attacks",         action="store_true", help="Show implemented attacks")
-main_parser.add_argument("--show-builtin-attacks", action="store_true", help="Show implemented attacks")
-main_parser.add_argument("--credits",              action="store_true", help="Show credits")
-main_parser.add_argument("--version",              action="store_true", help="Show version")
-main_parser.add_argument("--json",                 action="store_true", help="Show version")
-main_parser.add_argument("--quiet", "-q",          action="store_true", help='Suppress informative output')
-
 command_subparsers = main_parser.add_subparsers(dest="command")
-attack_parser = command_subparsers.add_parser("attack", parents=[ciphertext_parser])
-pem_parser = command_subparsers.add_parser("pem", parents=[key_parser])
-cipher_parser = command_subparsers.add_parser("encrypt", parents=[key_parser, plaintext_parser])
-uncipher_parser = command_subparsers.add_parser("decrypt", parents=[key_parser, ciphertext_parser])
-command_subparsers.add_parser("factor",   parents=[scripts_parser])
-command_subparsers.add_parser("ecm",      parents=[scripts_parser])
-command_subparsers.add_parser("isprime",  parents=[scripts_parser])
-command_subparsers.add_parser("eulerphi", parents=[scripts_parser])
+attack_parser = command_subparsers.add_parser("attack", parents=[commons_parser, ciphertext_parser])
+pem_parser = command_subparsers.add_parser("pem", parents=[commons_parser, key_parser])
+cipher_parser = command_subparsers.add_parser("encrypt", parents=[commons_parser, key_parser, plaintext_parser])
+uncipher_parser = command_subparsers.add_parser("decrypt", parents=[commons_parser, key_parser, ciphertext_parser])
+command_subparsers.add_parser("factor",   parents=[commons_parser, scripts_parser])
+command_subparsers.add_parser("ecm",      parents=[commons_parser, scripts_parser])
+command_subparsers.add_parser("isprime",  parents=[commons_parser, scripts_parser])
+command_subparsers.add_parser("eulerphi", parents=[commons_parser, scripts_parser])
 
 pem_parser.add_argument("--generate",       "-g",    action="store_true", help="")
 pem_parser.add_argument("--dump-values",    "--dv",  action="store_true", help="")
@@ -91,18 +94,20 @@ pem_parser.add_argument("--file-format",    "--ff",  choices=["pem", "der", "ope
 
 
 class NewKey(Action):
-    def __call__(self, parser, namespace, values, option_string=None):
+    def __call__(self, parser, namespace, n, option_string=None):
         keys = getattr(namespace, "keys", [])
-        keys.append((values[0], DEFAULT_E))
+        if not keys:
+            setattr(namespace, "keys", keys)
+        keys.append((n, DEFAULT_E))
 
 
 class SetE(Action):
-    def __call__(self, parser, namespace, values, option_string=None):
+    def __call__(self, parser, namespace, e, option_string=None):
         keys = getattr(namespace, "keys", None)
         if not keys:
-            raise ValueError(f"-e found but no moduli (-n) have been given yet") from e
+            raise ValueError(f"-e found but no moduli (-n) have been given yet")
         n, _ = keys[-1]
-        keys[-1] = (n, values[0])
+        keys[-1] = (n, e)
 
 
 attack_parser.add_argument("attacks", action="store", type=parse_list, help="")
