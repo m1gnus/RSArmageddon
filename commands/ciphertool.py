@@ -1,22 +1,28 @@
 import sys
 
-from binascii import hexlify
 from functools import partial
-from contextlib import redirect_stdout
 
+from args import args
 from crypto import cipher, uncipher
+from utils import int_from_path, output_text
 
-from args import get_args
-from utils import byte_length, output_cleartext
 
 def run():
-    args = get_args()
-
-    if args.csubp == "cipher":
-        f = partial(cipher, n=args.n, e=args.e, padding=args.padding)
+    if args.command == "encrypt":
+        n, e = compute_pubkey(args.n, args.e, args.d, args.p, args.q, args.phi)
+        f = partial(cipher, n=args.n, e=args.e, padding=args.encryption_standard)
     else:
-        f = partial(uncipher, n=args.n, e=args.e, d=args.d, padding=args.padding)
+        d = compute_d(args.n, args.e, args.d, args.p, args.q, args.phi)
+        n = compute_n(args.n, args.e, args.d, args.p, args.q, args.phi)
+        f = partial(uncipher, n=args.n, e=args.e, d=args.d, padding=args.encryption_standard)
+
+    if not args.inputs:
+        print("Nothing to do", file=sys.stderr)
 
     for text, filename in args.inputs:
+        if isinstance(text, Path):
+            text = int_from_path(text)
+        elif isinstance(text, str):
+            text = text.encode("ascii")
         output = f(text)
-        output_cleartext(output, filename, json_output=args.json)
+        output_text(output, filename, json_output=args.json)

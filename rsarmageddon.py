@@ -5,31 +5,45 @@ import os
 import sys
 
 from banner import print_banner
-from args import get_args
-from commands import pem, ciphertool, attack, default
+from args import args
+from commands import pem, ciphertool, attack, misc
 
 
 def main():
-    try:
-        args = get_args()
-    except (ValueError, OSError) as e:
-        print(f"[-] {e}", file=sys.stderr)
-        return
-
     if args.quiet:
         sys.stderr.close()
         sys.stderr = open(os.devnull, "w")
 
-    print_banner()
+    banner_actions = compress(zip(
+        (version, args.version),
+        (credits, args.credits),
+        (print_attacks, args.print_attacks),
+        (print_attacks_short, args.print_attacks_short)
+    ))
 
-    actions = {
-        None: default.run,
+    try:
+        action = next(banner_actions)
+    except StopIteration:
+        pass
+    else:
+        action()
+        return
+
+    if not args.command:
+        return
+
+    commands = {
         "pem": pem.run,
         "ciphertool": ciphertool.run,
         "attack": attack.run
     }
 
-    actions[args.subp]()
+    action = actions.get(args.command, misc.run)
+
+    try:
+        action()
+    except (ValueError, OSError) as e:
+        print(f"[-] {e}", file=sys.stderr)
 
 
 if __name__ == "__main__":

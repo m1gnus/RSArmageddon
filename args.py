@@ -11,7 +11,6 @@ from parsing import (
         path_or_stdout)
 
 from certs import load_key
-from utils import DEFAULT_E
 
 
 class ReadKeyFile(Action):
@@ -65,7 +64,7 @@ ciphertext_parser.add_argument("--ciphertext-file", "--ctf", "--decrypt-file", a
 
 commons_parser = ArgumentParser(add_help=False)
 commons_parser.add_argument("--show-attacks",            action="store_true", help="Show implemented attacks")
-commons_parser.add_argument("--show-builtin-attacks",    action="store_true", help="Show implemented attacks")
+commons_parser.add_argument("--show-attacks-short",      action="store_true", help="Show implemented attacks")
 commons_parser.add_argument("--credits",                 action="store_true", help="Show credits")
 commons_parser.add_argument("--version",                 action="store_true", help="Show version")
 commons_parser.add_argument("--json",                    action="store_true", help="Show version")
@@ -98,7 +97,7 @@ class NewKey(Action):
         keys = getattr(namespace, "keys", [])
         if not keys:
             setattr(namespace, "keys", keys)
-        keys.append((n, DEFAULT_E))
+        keys.append((n, None))
 
 
 class SetE(Action):
@@ -123,6 +122,4 @@ attack_parser.add_argument("--output-key-file", "--okf", action="store", type=pa
 attack_parser.add_argument("--output-key-dir", "--okd", action="store", type=Path, help="")
 
 
-if __name__ == "__main__":
-    args = main_parser.parse_args()
-    print(args)
+args = main_parser.parse_args()

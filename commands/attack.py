@@ -11,7 +11,7 @@ from subprocess import TimeoutExpired
 import sage
 import attack_lib
 from args import get_args
-from utils import to_bytes_auto, output_cleartext, complete_privkey
+from utils import to_bytes_auto, output_text, complete_privkey
 from certs import encode_privkey
 from crypto import uncipher
 from attacks import attack_path
@@ -82,7 +82,7 @@ def run():
                 if cleartexts:
                     print("[@] Cleartexts recovered", file=sys.stderr)
                     for text, file in cleartexts:
-                        output_cleartext(text, file, json_output=args.json)
+                        output_text(text, file, json_output=args.json)
 
                 if len(keys) == 1:
                     key, _ = keys[0]
@@ -102,7 +102,7 @@ def run():
                         print(f"[$] Decrypting 0x{text_bytes.hex()}", file=sys.stderr)
                         n, e, d, _, _ = key
                         cleartext = uncipher(text, n, e, d, args.padding)
-                        output_cleartext(cleartext, filename, json_output=args.json)
+                        output_text(cleartext, filename, json_output=args.json)
 
                 if args.output_dir is not None:
                     for key, name in keys:

@@ -28,6 +28,11 @@ def to_bytes_auto(n: int) -> bytes:
     return n.to_bytes(byte_length(n), "big")
 
 
+def int_from_path(path):
+    with open(text, "rb") as f:
+        return int.from_bytes(f.read(), "big")
+
+
 def compute_extra_key_elements(d: int, p: int, q: int) -> tuple:
     """Compute extra key elements
 
@@ -205,7 +210,7 @@ def compute_n(n: int, e: int, d: int, p: int, q: int, phi=None) -> int:
     return ns.pop()
 
 
-def output_cleartext(text, filename, json_output=False):
+def output_text(text, filename, json_output=False):
     text_raw = to_bytes_auto(text)
     if filename is True:
         text_hex = f"0x{text_raw.hex()}"

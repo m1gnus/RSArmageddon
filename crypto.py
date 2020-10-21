@@ -10,7 +10,7 @@ from Crypto.PublicKey import RSA
 from pathlib import Path
 from functools import partial
 
-from utils import byte_length
+from utils import to_bytes_auto, DEFAULT_E
 
 
 standards = {
@@ -19,7 +19,7 @@ standards = {
 }
 
 
-def cipher(m: int, n: int, e: int, padding: str) -> int:
+def cipher(m, n, e=None, padding) -> int:
     """Encrypt a plaintext using RSA
 
     Arguments:
@@ -28,6 +28,10 @@ def cipher(m: int, n: int, e: int, padding: str) -> int:
     e -- RSA public exponent
     padding -- padding type
     """
+
+    if e is None:
+        e = DEFAULT_E
+
     if m > n-2:
         e_mess = str(m)
         if len(e_mess) > 10:
@@ -45,10 +49,10 @@ def cipher(m: int, n: int, e: int, padding: str) -> int:
     if standard is PKCS1_v1_5:
         encryptor.encrypt = partial(encryptor.encrypt, sentinel=None)
 
-    return int.from_bytes(encryptor.encrypt(m.to_bytes(byte_length(m), "big")), "big")
+    return int.from_bytes(encryptor.encrypt(to_bytes_auto(m)), "big")
 
 
-def uncipher(c: int, n: int, e: int, d: int, padding: str) -> int:
+def uncipher(c, n, e=None, d, padding) -> int:
     """Decrypt a plaintext using RSA
 
     Arguments:
@@ -57,6 +61,10 @@ def uncipher(c: int, n: int, e: int, d: int, padding: str) -> int:
     d -- RSA private exponent
     padding -- padding type
     """
+
+    if e is None:
+        e = DEFAULT_E
+
     c %= n
 
     if padding == "raw":
@@ -70,4 +78,4 @@ def uncipher(c: int, n: int, e: int, d: int, padding: str) -> int:
     if standard is PKCS1_v1_5:
         decryptor.decrypt = partial(decryptor.decrypt, sentinel=None)
 
-    return int.from_bytes(decryptor.decrypt(c.to_bytes(byte_length(c), "big")), "big")
+    return int.from_bytes(decryptor.decrypt(to_bytes_auto(c)), "big")
