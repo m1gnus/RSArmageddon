@@ -11,10 +11,11 @@ from subprocess import TimeoutExpired
 import sage
 import attack_lib
 from args import args
-from utils import to_bytes_auto, output_text, complete_privkey
-from certs import encode_privkey
+from utils import DEFAULT_E, to_bytes_auto, output_text, compute_d, complete_privkey
+from certs import encode_privkey, load_key, load_keys
 from crypto import uncipher
 from attacks import attack_path
+from parsing import parse_n_e_file
 
 
 def parse_output(s):
@@ -38,14 +39,26 @@ def parse_output(s):
 
 
 def run():
-    args = get_args()
+    keys = []
+    for n, e in args.keys:
+        if e is None:
+            e = DEFAULT_E
+        keys.append(((n, e), None))
+    for path in args.n_e_files:
+        keys.extend((key, None) for key in parse_n_e_file(path))
+    for path in args.key_paths:
+        if path.is_dir():
+            keys.extend(load_keys(path, exts=args.exts))
+        else:
+            n, e, _, _, _ = load_key(path)
+            keys.append(((n, e), path.name))
 
     with TemporaryDirectory() as attack_lib_dir, \
             NamedTemporaryFile("w", encoding="ascii") as input_file:
         with redirect_stdout(input_file):
-            for (n, e), name in args.pubkeys:
+            for (n, e), name in keys:
                 print(f"k:{n},{e},{name if name is not None else ''}")
-            for text, name in args.ciphertexts:
+            for text, name in args.inputs:
                 print(f"c:{text},{name if name is not True else ''}")
         input_file.flush()
         with resources.open_binary(attack_lib, "attack.py") as src, \
@@ -88,26 +101,29 @@ def run():
                     key, _ = keys[0]
                     _, _, d, _, _ = key
                     if d is None:
-                        key = complete_privkey(*key)
+                        d = compute_d(*key)
 
-                    if args.output_private is True:
+                    if args.output_key_file is None and args.output_key:
+                        args.output_key_file = True
+
+                    if args.output_key_file is True:
                         sys.stdout.buffer.write(encode_privkey(*key, "PEM"))
                         print()
-                    elif args.output_private:
-                        with open(args.output_private, "wb") as f:
+                    elif args.output_key_file:
+                        with open(args.output_key_file, "wb") as f:
                             f.write(encode_privkey(*key, "PEM"))
 
-                    for text, filename in args.ciphertexts:
+                    for text, filename in args.inputs:
                         text_bytes = to_bytes_auto(text)
                         print(f"[$] Decrypting 0x{text_bytes.hex()}", file=sys.stderr)
                         n, e, d, _, _ = key
-                        cleartext = uncipher(text, n, e, d, args.padding)
+                        cleartext = uncipher(text, n, e, d, args.file_format)
                         output_text(cleartext, filename, json_output=args.json)
 
-                if args.output_dir is not None:
+                if args.output_key_dir is not None:
                     for key, name in keys:
                         key = complete_privkey(*key)
-                        with open(args.output_dir/f"{name}.pem", "wb") as f:
+                        with open(args.output_key_dir/f"{name}.pem", "wb") as f:
                             f.write(encode_privkey(*key, "PEM"))
 
                 if keys:

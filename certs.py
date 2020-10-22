@@ -103,7 +103,7 @@ def load_key(path: Path) -> tuple:
     """Load key elements from a key file
 
     Arguments:
-    path -- path to a key file 
+    path -- path to a key file
     """
 
     # obtain a RsaKey object from the key file: https://pycryptodome.readthedocs.io/en/latest/src/public_key/rsa.html 
