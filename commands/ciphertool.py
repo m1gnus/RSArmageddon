@@ -25,4 +25,7 @@ def run():
         elif isinstance(text, bytes):
             text = int.from_bytes(text)
         output = f(text)
-        output_text(output, filename, json_output=args.json)
+        encoding = None
+        if args.command == "decrypt":
+            encoding = args.encoding
+        output_text(output, filename, encoding=encoding, json_output=args.json)

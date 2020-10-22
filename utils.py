@@ -210,21 +210,30 @@ def compute_n(n: int, e: int, d: int, p: int, q: int, phi=None) -> int:
     return ns.pop()
 
 
-def output_text(text, filename, json_output=False):
+def output_text(text, filename, encoding=None, json_output=False):
     text_raw = to_bytes_auto(text)
+    if encoding is not None:
+        text_str = text_raw.decode(encoding)
+    else:
+        text_str = None
     if filename is True:
         text_hex = f"0x{text_raw.hex()}"
         if json_output:
-            json.dump({
+            output = {
                 "dec": str(text),
                 "hex": text_hex,
                 "raw": str(text_raw)
-            }, sys.stdout, indent=4)
+            }
+            if text_str is not None:
+                output["str"] = text_str
+            json.dump(output, sys.stdout, indent=4)
         else:
             with redirect_stdout(sys.stderr):
                 print(f"[+] ciphertext (dec): {text}")
                 print(f"[+] ciphertext (hex): {text_hex}")
                 print(f"[+] ciphertext (raw): {text_raw}")
+                if text_str is not None:
+                    print(f"[+] ciphertext (str): {text_str}")
                 print()
     else:
         with open(filename, "wb") as file:

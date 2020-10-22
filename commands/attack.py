@@ -99,7 +99,7 @@ def run():
                 if cleartexts:
                     print("[@] Cleartexts recovered", file=sys.stderr)
                     for text, file in cleartexts:
-                        output_text(text, file, json_output=args.json)
+                        output_text(text, file, encoding=args.encoding, json_output=args.json)
 
                 if len(keys) == 1:
                     key, _ = keys[0]
@@ -122,7 +122,7 @@ def run():
                         print(f"[$] Decrypting 0x{text_bytes.hex()}", file=sys.stderr)
                         n, e, d, _, _ = key
                         cleartext = uncipher(text, n, e, d, args.file_format)
-                        output_text(cleartext, filename, json_output=args.json)
+                        output_text(cleartext, filename, encoding=args.encoding, json_output=args.json)
 
                 if args.output_key_dir is not None:
                     for key, name in keys:

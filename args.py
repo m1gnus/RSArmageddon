@@ -1,3 +1,4 @@
+import os
 import sys
 
 from pathlib import Path
@@ -7,8 +8,7 @@ from certs import load_key
 from parsing import (
         parse_int_arg,
         parse_list,
-        path_or_stdout,
-        undo_arg_encoding)
+        path_or_stdout)
 
 
 class ReadKeyFile(Action):
@@ -51,17 +51,19 @@ text_parser_common.set_defaults(inputs=[])
 
 plaintext_parser = ArgumentParser(add_help=False, parents=[text_parser_common])
 plaintext_parser.add_argument("--plaintext",      "--pt",  "--encrypt",      action=Input, type=parse_int_arg, help="")
-plaintext_parser.add_argument("--plaintext-raw",  "--ptr", "--encrypt-raw",  action=Input, type=sys.fsencode,  help="")
+plaintext_parser.add_argument("--plaintext-raw",  "--ptr", "--encrypt-raw",  action=Input, type=os.fsencode,   help="")
 plaintext_parser.add_argument("--plaintext-file", "--ptf", "--encrypt-file", action=Input, type=Path,          help="")
 
 ciphertext_parser = ArgumentParser(add_help=False, parents=[text_parser_common])
 ciphertext_parser.add_argument("--ciphertext",      "--ct",  "--decrypt",      action=Input, type=parse_int_arg, help="")
-ciphertext_parser.add_argument("--ciphertext-raw",  "--ctr", "--decrypt-raw",  action=Input, type=sys.fsencode,  help="")
+ciphertext_parser.add_argument("--ciphertext-raw",  "--ctr", "--decrypt-raw",  action=Input, type=os.fsencode,   help="")
 ciphertext_parser.add_argument("--ciphertext-file", "--ctf", "--decrypt-file", action=Input, type=Path,          help="")
+ciphertext_parser.add_argument("--encoding", action="store", help="")
 
 commons_parser = ArgumentParser(add_help=False)
 commons_parser.add_argument("--show-attacks",            action="store_true", help="Show implemented attacks")
 commons_parser.add_argument("--show-attacks-short",      action="store_true", help="Show implemented attacks")
+commons_parser.add_argument("--show-encodings",          action="store_true", help="Show encodings")
 commons_parser.add_argument("--credits",                 action="store_true", help="Show credits")
 commons_parser.add_argument("--version",                 action="store_true", help="Show version")
 commons_parser.add_argument("--json",                    action="store_true", help="Show version")

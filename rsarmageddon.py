@@ -12,6 +12,7 @@ from banner import (
         print_credits,
         print_attacks,
         print_attacks_short,
+        print_encodings,
         version)
 from commands import pem, ciphertool, attack, misc
 
@@ -21,13 +22,15 @@ def main():
         sys.stderr.close()
         sys.stderr = open(os.devnull, "w")
 
-    print_banner()
+    if not (args.show_attacks_short or args.show_encodings):
+        print_banner()
 
     banner_actions = compress(*zip(
         (version, args.version),
         (credits, args.credits),
         (print_attacks, args.show_attacks),
-        (print_attacks_short, args.show_attacks_short)
+        (print_attacks_short, args.show_attacks_short),
+        (print_encodings, args.show_encodings)
     ))
 
     try:

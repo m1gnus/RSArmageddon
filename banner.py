@@ -1,6 +1,7 @@
 import sys
 import attacks
 
+from encodings.aliases import aliases
 from contextlib import redirect_stdout
 
 
@@ -68,6 +69,11 @@ def print_attacks():
             print()
             _print_attacks("Installed", attacks.installed)
         print()
+
+
+def print_encodings():
+    for enc in sorted(c for c in set(aliases.values()) if not c.endswith("_codec")):
+        print(enc)
 
 
 def version():
