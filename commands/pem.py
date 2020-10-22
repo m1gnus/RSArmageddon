@@ -8,13 +8,16 @@ from utils import compute_extra_key_elements, compute_pubkey, complete_privkey
 def run():
     """Execute pem command
     """
-    n, e, d, p, q = args.n, args.e, args.d, args.p, args.q
+    if args.generate:
+        n, e, d, p, q = generate_key()
+    else:
+        n, e, d, p, q = args.n, args.e, args.d, args.p, args.q
 
-    try:
-        n, e = compute_pubkey(n, e, d, p, q)
-        n, e, d, p, q = complete_privkey(n, e, d, p, q)
-    except ValueError:
-        pass
+        try:
+            n, e = compute_pubkey(n, e, d, p, q)
+            n, e, d, p, q = complete_privkey(n, e, d, p, q)
+        except ValueError:
+            pass
 
     if args.dump_values:
         dp, dq, pinv, qinv = compute_extra_key_elements(d, p, q)

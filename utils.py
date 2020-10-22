@@ -29,7 +29,7 @@ def to_bytes_auto(n):
 
 
 def int_from_path(path):
-    with open(text, "rb") as f:
+    with open(path, "rb") as f:
         return int.from_bytes(f.read(), "big")
 
 

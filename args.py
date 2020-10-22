@@ -15,7 +15,7 @@ class ReadKeyFile(Action):
     def __call__(self, parser, namespace, path, option_string=None):
         key = load_key(path)
         for k, v in zip(("n", "e", "d", "p", "q"), key):
-            if getattr(namespace, k, None) is not None:
+            if getattr(namespace, k, None) is None:
                 setattr(namespace, k, v)
 
 
@@ -46,7 +46,7 @@ class Output(Action):
 
 text_parser_common = ArgumentParser(add_help=False)
 text_parser_common.add_argument("--output", "-o", action=Output, type=path_or_stdout, help="")
-text_parser_common.add_argument("--encryption-standard", "--std", choices=["oaep", "pkcs", "raw"], help="")
+text_parser_common.add_argument("--encryption-standard", "--std", choices=["oaep", "pkcs", "raw"], default="pkcs", help="")
 text_parser_common.set_defaults(inputs=[])
 
 plaintext_parser = ArgumentParser(add_help=False, parents=[text_parser_common])
