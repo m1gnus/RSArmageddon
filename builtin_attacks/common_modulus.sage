@@ -6,7 +6,7 @@
 
 import attack
 
-attack.init("Common modulus")
+attack.init("Common modulus", "common_modulus")
 
 ciphertexts, keys = attack.get_args(min_keys=2, min_ciphertexts=2)
 n1, e1, _ = keys[0]

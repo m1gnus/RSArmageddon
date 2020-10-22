@@ -7,7 +7,7 @@
 import attack
 from attack import positive_int
 
-attack.init("Small fraction factorization")
+attack.init("Small fraction factorization", "small_fraction")
 
 _, keys = attack.get_args()
 n, e, _ = keys[0]

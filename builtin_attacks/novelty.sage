@@ -7,7 +7,7 @@
 import attack
 from attack import positive_int
 
-attack.init("Novelty primes factorization")
+attack.init("Novelty primes factorization", "novelty")
 
 _, keys = attack.get_args()
 n, e, _ = keys[0]

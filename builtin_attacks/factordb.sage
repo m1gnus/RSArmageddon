@@ -14,7 +14,7 @@ from urllib import request
 URL = "http://factordb.com/api"
 
 
-attack.init("FactorDB factorization")
+attack.init("FactorDB factorization", "factordb")
 
 _, keys = attack.get_args()
 n, e, _ = keys[0]

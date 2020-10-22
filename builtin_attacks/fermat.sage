@@ -8,7 +8,7 @@
 
 import attack
 
-attack.init("Fermat factorization")
+attack.init("Fermat factorization", "fermat")
 
 _, keys = attack.get_args()
 n, e, _ = keys[0]

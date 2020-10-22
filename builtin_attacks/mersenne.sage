@@ -7,7 +7,7 @@
 import attack
 
 
-attack.init("Mersenne primes factorization")
+attack.init("Mersenne primes factorization", "mersenne")
 
 _, keys = attack.get_args()
 n, e, _ = keys[0]

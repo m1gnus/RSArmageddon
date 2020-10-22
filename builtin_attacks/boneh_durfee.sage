@@ -256,7 +256,7 @@ def boneh_durfee(pol, modulus, mm, tt, XX, YY):
     return solx, soly
 
 
-attack.init("Boneh-Durfee factorization")
+attack.init("Boneh-Durfee factorization", "boneh_durfee")
 
 _, keys = attack.get_args()
 n, e, _ = keys[0]

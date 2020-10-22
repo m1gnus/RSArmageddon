@@ -1,7 +1,7 @@
 import sys
 
 from functools import wraps
-from itertools import islice
+from itertools import count, islice
 from contextlib import redirect_stdout
 
 
@@ -13,11 +13,14 @@ def positive_int(s):
 
 
 name = None
+_default_key_name = None
 
 
-def init(attack_name):
-    global name
+def init(attack_name, default_key_name):
+    global name, _default_key_name
+
     name = attack_name
+    _default_key_name = default_key_name
 
     def excepthook(exctype, value, traceback):
         if exctype in (KeyboardInterrupt, RuntimeError):
@@ -56,13 +59,14 @@ def cleartexts(*cleartexts):
 
 @with_name_set
 def success():
+    unnamed_keys = sum(1 for key in _keys if len(key) == 5 or key[-1] is None)
+    field_width = len(str(unnamed_keys))
+    auto_name = (f"{_default_key_name}_{c:0{field_width}}" for c in count())
     for key in _keys:
         if not isinstance(key, (tuple, list)) or len(key) not in (5, 6):
             raise ValueError("Bad key '{}'".format(key))
-        if len(key) == 5:
-            if len(_keys) > 1:
-                raise ValueError("Name is not optional for multiple keys")
-            key = (*key, None)
+        if len(key) == 5 or key[-1] is None:
+            key = (*key[:5], next(auto_name))
         print("k:{}".format(",".join(str(x) if x is not None else "" for x in key)))
     for cleartext in _cleartexts:
         if isinstance(cleartext, int):
@@ -101,6 +105,7 @@ def get_args(*, min_keys=1, min_ciphertexts=0, deduplicate=False):
 
     with open(sys.argv[1], "r", encoding="ascii") as f:
         for line in f:
+            line = line.strip()
             if not line or line.isspace():
                 continue
             kind, _, line = line.partition(":")
