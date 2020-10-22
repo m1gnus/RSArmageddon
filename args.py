@@ -113,13 +113,15 @@ attack_parser.add_argument("attacks", action="store", type=parse_list, help="")
 attack_parser.add_argument("-n", action=NewKey, type=parse_int_arg, help="")
 attack_parser.add_argument("-e", action=SetE, type=parse_int_arg, help="")
 attack_parser.add_argument("--n-e-file", "--nef", action="append", dest="nefs", type=Path, default=[], help="")
-attack_parser.add_argument("--key", "-k", action="append", dest="key_files", type=Path, default=[], help="")
-attack_parser.add_argument("--key-dir", "--kd", action="append", dest="key_dirs", type=Path, default=[], help="")
 attack_parser.add_argument("--timeout", "-t", action="store", type=int, help="")
 attack_parser.add_argument("--exts", "-x", action="store", type=parse_list, default=["pem", "pub"], help="")
 attack_parser.add_argument("--output-key", "--ok", action="store_true", help="")
 attack_parser.add_argument("--output-key-file", "--okf", action="store", type=path_or_stdout, help="")
 attack_parser.add_argument("--output-key-dir", "--okd", action="store", type=Path, help="")
+attack_parser.add_argument("key_paths", action="store", nargs="*", type=Path, default=[], help="")
 
 
 args = main_parser.parse_args()
+
+if __name__ == "__main__":
+    print(args)
