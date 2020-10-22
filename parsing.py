@@ -7,7 +7,7 @@ from pathlib import Path
 from utils import DEFAULT_E
 
 
-def parse_unsigned(s: str, base=0) -> int:
+def parse_unsigned(s, base=0):
     """Convert to int raising ValueError on negative values
 
     Arguments:
@@ -22,7 +22,7 @@ def parse_unsigned(s: str, base=0) -> int:
     return ret
 
 
-def parse_int_arg(s: str) -> int:
+def parse_int_arg(s):
     """Take a string in the format string[:base] and return the corresponding integer
 
     Arguments:
@@ -36,7 +36,7 @@ def parse_int_arg(s: str) -> int:
     return parse_unsigned(*args)
 
 
-def parse_list(s: str) -> list:
+def parse_list(s):
     """Parse a comma separated list of arguments (example1,example2,...) into a list
 
     Arguments:
@@ -45,7 +45,7 @@ def parse_list(s: str) -> list:
     return [x if x else None for x in s.split(",")] if s else []
 
 
-def parse_int_list(s: str) -> list:
+def parse_int_list(s):
     """Parse a comma separated list of ints (example1,example2,...) into a list
 
     Arguments:
@@ -54,13 +54,13 @@ def parse_int_list(s: str) -> list:
     return [parse_int_arg(x) if x is not None else None for x in parse_list(s)]
 
 
-def path_or_stdout(s: str) -> Path:
+def path_or_stdout(s):
     if s == "-":
         return True
     return Path(s)
 
 
-def parse_n_e_file(filename: Path) -> list:
+def parse_n_e_file(filename):
     with open(filename, "r") as f:
         for line in f:
             line = line.strip()

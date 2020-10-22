@@ -5,7 +5,7 @@ from certs import print_key, print_key_json, generate_key, encode_pubkey, encode
 from utils import compute_extra_key_elements, compute_pubkey, complete_privkey
 
 
-def run() -> None:
+def run():
     """Execute pem command
     """
     n, e, d, p, q = args.n, args.e, args.d, args.p, args.q

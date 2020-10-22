@@ -10,7 +10,7 @@ import scripts
 from args import args
 
 
-def run() -> None:
+def run():
     script_names = {
         "eulerphi": "euler_phi.sage",
         "factor":   "factor.sage",

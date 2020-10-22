@@ -24,7 +24,7 @@ public_formats = {".pub": "PEM"}
 public_formats.update(common_formats)
 
 
-def infer_format_priv(p: Path) -> str:
+def infer_format_priv(p):
     """Infer private key file format from extension
 
     Arguments:
@@ -36,7 +36,7 @@ def infer_format_priv(p: Path) -> str:
         return None
 
 
-def infer_format_pub(p: Path) -> str:
+def infer_format_pub(p):
     """Infer public key file format from extension
 
     Arguments:
@@ -48,7 +48,7 @@ def infer_format_pub(p: Path) -> str:
         return None
 
 
-def generate_key(e=None) -> tuple:
+def generate_key(e=None):
     """Generate a new key randomly
 
     Keyword Arguments:
@@ -59,7 +59,7 @@ def generate_key(e=None) -> tuple:
     return key.n, key.e, key.d, key.p, key.q
 
 
-def print_key(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=None, qinv=None, file=None) -> None:
+def print_key(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=None, qinv=None, file=None):
     """Print key elements in a more readable format
 
     Keyword arguments:
@@ -92,14 +92,14 @@ def print_key(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=Non
         print()
 
 
-def print_key_json(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=None, qinv=None, file=None) -> None:
+def print_key_json(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=None, qinv=None, file=None):
     d = {k: str(v) for k, v in locals().items()}
     del d["file"]
     json.dump(d, file, indent=4)
     print(file=file)
 
 
-def load_key(path: Path) -> tuple:
+def load_key(path):
     """Load key elements from a key file
 
     Arguments:
@@ -117,7 +117,7 @@ def load_key(path: Path) -> tuple:
         return key.n, key.e, None, None, None
 
 
-def load_keys(path: Path, exts: list) -> list:
+def load_keys(path, exts):
     """Load key elements from keys found in a directory
 
     Arguments:
@@ -145,7 +145,7 @@ file_formats = {
 }
 
 
-def encode_pubkey(n: int, e: int, file_format: str) -> None:
+def encode_pubkey(n, e, file_format):
     """Encode a public key to file_format
 
     Arguments:
@@ -160,7 +160,7 @@ def encode_pubkey(n: int, e: int, file_format: str) -> None:
         raise ValueError(f"Cannot create a public key file (key data is incomplete): {(n, e)}") from e
 
 
-def encode_privkey(n: int, e: int, d: int, p: int, q: int, file_format: str) -> None:
+def encode_privkey(n, e, d, p, q, file_format):
     """Encode a public key to file_format
 
     Arguments:

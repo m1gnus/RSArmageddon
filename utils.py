@@ -10,7 +10,7 @@ from gmpy2 import invert, isqrt
 DEFAULT_E = 65537
 
 
-def byte_length(n: int) -> int:
+def byte_length(n):
     """Return byte length of the given integer
 
     Arguments:
@@ -19,7 +19,7 @@ def byte_length(n: int) -> int:
     return -(n.bit_length() // -8)
 
 
-def to_bytes_auto(n: int) -> bytes:
+def to_bytes_auto(n):
     """Convert int to shortest possible bytes object, big endian
 
     Arguments:
@@ -33,7 +33,7 @@ def int_from_path(path):
         return int.from_bytes(f.read(), "big")
 
 
-def compute_extra_key_elements(d: int, p: int, q: int) -> tuple:
+def compute_extra_key_elements(d, p, q):
     """Compute extra key elements
 
     Arguments:
@@ -55,7 +55,7 @@ def compute_extra_key_elements(d: int, p: int, q: int) -> tuple:
     return dp, dq, pinv, qinv
 
 
-def compute_pubkey(n: int, e: int, d: int, p: int, q: int, phi=None) -> tuple:
+def compute_pubkey(n, e, d, p, q, phi=None):
     """Compute public key elements
 
     Arguments:
@@ -95,7 +95,7 @@ def compute_pubkey(n: int, e: int, d: int, p: int, q: int, phi=None) -> tuple:
     return pks.pop()
 
 
-def complete_privkey(n: int, e: int, d: int, p: int, q: int, phi=None) -> tuple:
+def complete_privkey(n, e, d, p, q, phi=None):
     """Compute missing private key elements
 
     Arguments:
@@ -137,7 +137,7 @@ def complete_privkey(n: int, e: int, d: int, p: int, q: int, phi=None) -> tuple:
 
     return n, e, d, p, q
 
-def compute_d(n: int, e: int, d: int, p: int, q: int, phi=None) -> int:
+def compute_d(n, e, d, p, q, phi=None):
     """Compute d from available parameters
 
     Arguments:
@@ -177,7 +177,7 @@ def compute_d(n: int, e: int, d: int, p: int, q: int, phi=None) -> int:
     return ds.pop()
 
 
-def compute_n(n: int, e: int, d: int, p: int, q: int, phi=None) -> int:
+def compute_n(n, e, d, p, q, phi=None):
     """Compute d from available parameters
 
     Arguments:

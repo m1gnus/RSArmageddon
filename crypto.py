@@ -19,7 +19,7 @@ standards = {
 }
 
 
-def cipher(m, n, e=None, padding="pkcs") -> int:
+def cipher(m, n, e=None, padding="pkcs"):
     """Encrypt a plaintext using RSA
 
     Arguments:
@@ -54,7 +54,7 @@ def cipher(m, n, e=None, padding="pkcs") -> int:
     return int.from_bytes(encryptor.encrypt(to_bytes_auto(m)), "big")
 
 
-def uncipher(c, n, e=None, d=None, padding="pkcs") -> int:
+def uncipher(c, n, e=None, d=None, padding="pkcs"):
     """Decrypt a plaintext using RSA
 
     Arguments:
