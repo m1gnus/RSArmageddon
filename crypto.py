@@ -19,7 +19,7 @@ standards = {
 }
 
 
-def cipher(m, n, e=None, padding) -> int:
+def cipher(m, n, e=None, padding="pkcs") -> int:
     """Encrypt a plaintext using RSA
 
     Arguments:
@@ -31,6 +31,8 @@ def cipher(m, n, e=None, padding) -> int:
 
     if e is None:
         e = DEFAULT_E
+
+    padding = padding.casefold()
 
     if m > n-2:
         e_mess = str(m)
@@ -52,7 +54,7 @@ def cipher(m, n, e=None, padding) -> int:
     return int.from_bytes(encryptor.encrypt(to_bytes_auto(m)), "big")
 
 
-def uncipher(c, n, e=None, d, padding) -> int:
+def uncipher(c, n, e=None, d=None, padding="pkcs") -> int:
     """Decrypt a plaintext using RSA
 
     Arguments:
@@ -64,6 +66,8 @@ def uncipher(c, n, e=None, d, padding) -> int:
 
     if e is None:
         e = DEFAULT_E
+
+    padding = padding.casefold()
 
     c %= n
 

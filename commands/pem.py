@@ -2,13 +2,19 @@ import sys
 
 from args import args
 from certs import print_key, print_key_json, generate_key, encode_pubkey, encode_privkey, load_key
-from utils import compute_extra_key_elements
+from utils import compute_extra_key_elements, compute_pubkey, complete_privkey
 
 
 def run() -> None:
     """Execute pem command
     """
     n, e, d, p, q = args.n, args.e, args.d, args.p, args.q
+
+    try:
+        n, e = compute_pubkey(n, e, d, p, q)
+        n, e, d, p, q = complete_privkey(n, e, d, p, q)
+    except ValueError:
+        pass
 
     if args.dump_values:
         dp, dq, pinv, qinv = compute_extra_key_elements(d, p, q)

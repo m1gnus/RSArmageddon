@@ -54,38 +54,6 @@ def parse_int_list(s: str) -> list:
     return [parse_int_arg(x) if x is not None else None for x in parse_list(s)]
 
 
-def validate_padding(s: str) -> str:
-    """Take a string and check if its a valid argument for file padding
-
-    Arguments:
-    s -- padding
-    """
-    cs = s.casefold()
-    if cs in {"pkcs", "oaep", "raw"}:
-        return cs
-    else:
-        raise ValueError(f"Invalid file padding '{s}'")
-
-
-def validate_file_format(s: str) -> str:
-    """Take a string and check if its a valid argument for file format
-
-    Arguments:
-    s -- file format
-    """
-
-    formats = {
-        "pem": "PEM",
-        "der": "DER",
-        "openssh": "OpenSSH"
-    }
-
-    try:
-        return formats[s.casefold()]
-    except KeyError:
-        raise ValueError(f"Invalid file format {s}")
-
-
 def path_or_stdout(s: str) -> Path:
     if s == "-":
         return True

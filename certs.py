@@ -138,6 +138,13 @@ def load_keys(path: Path, exts: list) -> list:
     return keys
 
 
+file_formats = {
+    "pem": "PEM",
+    "der": "DER",
+    "openssh": "OpenSSH"
+}
+
+
 def encode_pubkey(n: int, e: int, file_format: str) -> None:
     """Encode a public key to file_format
 
@@ -146,7 +153,11 @@ def encode_pubkey(n: int, e: int, file_format: str) -> None:
     e -- RSA public exponent
     file_format -- file format
     """
-    return RSA.construct((n, e)).exportKey(format=file_format)
+    file_format = file_formats[file_format.casefold()]
+    try:
+        return RSA.construct((n, e)).exportKey(format=file_format)
+    except NotImplementedError as e:
+        raise ValueError(f"Cannot create a public key file (key data is incomplete): {(n, e)}") from e
 
 
 def encode_privkey(n: int, e: int, d: int, p: int, q: int, file_format: str) -> None:
@@ -160,4 +171,8 @@ def encode_privkey(n: int, e: int, d: int, p: int, q: int, file_format: str) -> 
     q -- RSA second factor
     file_format -- file format
     """
-    return RSA.construct((n, e, d, p, q)).exportKey(format=file_format)
+    file_format = file_formats[file_format.casefold()]
+    try:
+        return RSA.construct((n, e, d, p, q)).exportKey(format=file_format)
+    except NotImplementedError as e:
+        raise ValueError(f"Cannot create a private key file (key data is incomplete): {(n, e, d, p, q)}") from e

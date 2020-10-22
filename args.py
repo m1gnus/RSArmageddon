@@ -1,16 +1,13 @@
 import sys
+
 from pathlib import Path
 from argparse import ArgumentParser, Action
 
+from certs import load_key
 from parsing import (
         parse_int_arg,
         parse_list,
-        parse_int_list,
-        validate_padding,
-        validate_file_format,
         path_or_stdout)
-
-from certs import load_key
 
 
 class ReadKeyFile(Action):

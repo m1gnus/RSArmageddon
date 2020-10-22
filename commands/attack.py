@@ -10,7 +10,7 @@ from subprocess import TimeoutExpired
 
 import sage
 import attack_lib
-from args import get_args
+from args import args
 from utils import to_bytes_auto, output_text, complete_privkey
 from certs import encode_privkey
 from crypto import uncipher

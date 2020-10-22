@@ -8,7 +8,6 @@ import sage
 import scripts
 
 from args import args
-from banner import print_credits, print_attacks, version
 
 
 def run() -> None:

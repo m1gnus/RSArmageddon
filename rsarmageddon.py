@@ -4,8 +4,15 @@
 import os
 import sys
 
-from banner import print_banner
+from itertools import compress
+
 from args import args
+from banner import (
+        print_banner,
+        print_credits,
+        print_attacks,
+        print_attacks_short,
+        version)
 from commands import pem, ciphertool, attack, misc
 
 
@@ -14,11 +21,13 @@ def main():
         sys.stderr.close()
         sys.stderr = open(os.devnull, "w")
 
-    banner_actions = compress(zip(
+    print_banner()
+
+    banner_actions = compress(*zip(
         (version, args.version),
         (credits, args.credits),
-        (print_attacks, args.print_attacks),
-        (print_attacks_short, args.print_attacks_short)
+        (print_attacks, args.show_attacks),
+        (print_attacks_short, args.show_attacks_short)
     ))
 
     try:
@@ -38,10 +47,10 @@ def main():
         "attack": attack.run
     }
 
-    action = actions.get(args.command, misc.run)
+    command = commands.get(args.command, misc.run)
 
     try:
-        action()
+        command()
     except (ValueError, OSError) as e:
         print(f"[-] {e}", file=sys.stderr)
 
