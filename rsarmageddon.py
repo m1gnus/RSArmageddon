@@ -43,7 +43,8 @@ def main():
 
     commands = {
         "pem": pem.run,
-        "ciphertool": ciphertool.run,
+        "encrypt": ciphertool.run,
+        "decrypt": ciphertool.run,
         "attack": attack.run
     }
 
