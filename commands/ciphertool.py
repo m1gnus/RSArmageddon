@@ -22,7 +22,7 @@ def run():
     for text, filename in args.inputs:
         if isinstance(text, Path):
             text = int_from_path(text)
-        elif isinstance(text, str):
-            text = text.encode("ascii")
+        elif isinstance(text, bytes):
+            text = int.from_bytes(text)
         output = f(text)
         output_text(output, filename, json_output=args.json)

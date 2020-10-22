@@ -59,6 +59,10 @@ def run():
             for (n, e), name in keys:
                 print(f"k:{n},{e},{name if name is not None else ''}")
             for text, name in args.inputs:
+                if isinstance(text, Path):
+                    text = int_from_path(text)
+                elif isinstance(text, bytes):
+                    text = int.from_bytes(text)
                 print(f"c:{text},{name if name is not True else ''}")
         input_file.flush()
         with resources.open_binary(attack_lib, "attack.py") as src, \

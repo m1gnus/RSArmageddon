@@ -7,7 +7,8 @@ from certs import load_key
 from parsing import (
         parse_int_arg,
         parse_list,
-        path_or_stdout)
+        path_or_stdout,
+        undo_arg_encoding)
 
 
 class ReadKeyFile(Action):
@@ -50,12 +51,12 @@ text_parser_common.set_defaults(inputs=[])
 
 plaintext_parser = ArgumentParser(add_help=False, parents=[text_parser_common])
 plaintext_parser.add_argument("--plaintext",      "--pt",  "--encrypt",      action=Input, type=parse_int_arg, help="")
-plaintext_parser.add_argument("--plaintext-raw",  "--ptr", "--encrypt-raw",  action=Input, type=str,           help="")
+plaintext_parser.add_argument("--plaintext-raw",  "--ptr", "--encrypt-raw",  action=Input, type=sys.fsencode,  help="")
 plaintext_parser.add_argument("--plaintext-file", "--ptf", "--encrypt-file", action=Input, type=Path,          help="")
 
 ciphertext_parser = ArgumentParser(add_help=False, parents=[text_parser_common])
 ciphertext_parser.add_argument("--ciphertext",      "--ct",  "--decrypt",      action=Input, type=parse_int_arg, help="")
-ciphertext_parser.add_argument("--ciphertext-raw",  "--ctr", "--decrypt-raw",  action=Input, type=str,           help="")
+ciphertext_parser.add_argument("--ciphertext-raw",  "--ctr", "--decrypt-raw",  action=Input, type=sys.fsencode,  help="")
 ciphertext_parser.add_argument("--ciphertext-file", "--ctf", "--decrypt-file", action=Input, type=Path,          help="")
 
 commons_parser = ArgumentParser(add_help=False)
