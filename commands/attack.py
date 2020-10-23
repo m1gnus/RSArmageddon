@@ -5,6 +5,7 @@ from shutil import copyfileobj
 from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from importlib import resources
+from itertools import chain
 from contextlib import redirect_stdout
 from subprocess import TimeoutExpired
 
@@ -14,7 +15,7 @@ from args import args
 from utils import DEFAULT_E, to_bytes_auto, output_text, compute_d, complete_privkey
 from certs import encode_privkey, load_key, load_keys
 from crypto import uncipher
-from attacks import attack_path
+from attacks import attack_path, builtin, installed
 from parsing import parse_n_e_file
 
 
@@ -39,6 +40,24 @@ def parse_output(s):
 
 
 def run():
+    attacks = list(dict.fromkeys(args.attacks))
+    if len(attacks) != len(args.attacks):
+        print("[W] Attacks specified more than once are ignored", file=sys.stderr)
+    try:
+        i = attacks.index("all")
+    except ValueError:
+        pass
+    else:
+        l = attacks[:i]
+        r = attacks[i+1:]
+        all_attacks = {
+            **installed,
+            **builtin
+        }
+        for attack in chain(l, r):
+            all_attacks.pop(attack, None)
+        attacks = [*l, *all_attacks, *r]
+
     keys = []
     for n, e in args.keys:
         if e is None:
@@ -74,7 +93,7 @@ def run():
         env = os.environ.copy()
         env["PYTHONPATH"] = str(sage.cyg_path(attack_lib_dir, cyg_runtime))
 
-        for attack in args.attacks:
+        for attack in attacks:
             try:
                 script_manager = attack_path(attack)
             except ValueError as e:
