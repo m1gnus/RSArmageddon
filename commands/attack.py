@@ -119,6 +119,8 @@ def run():
                     print("[@] Cleartexts recovered", file=sys.stderr)
                     for text, file in cleartexts:
                         output_text(text, file, encoding=args.encoding, json_output=args.json)
+                        if file is True:
+                            print()
 
                 if len(keys) == 1:
                     key, _ = keys[0]
@@ -142,6 +144,8 @@ def run():
                         n, e, d, _, _ = key
                         cleartext = uncipher(text, n, e, d, args.file_format)
                         output_text(cleartext, filename, encoding=args.encoding, json_output=args.json)
+                        if filename is True:
+                            print()
 
                 if args.output_key_dir is not None:
                     for key, name in keys:
