@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 from importlib import resources
 from importlib.resources import contents, is_resource
@@ -24,22 +25,30 @@ else:
     path = []
 
 
-def sanitize(s):
-    return s.replace("\n", " ")
+suffix_re = re.compile(r"\.sage$")
+prefix_re = re.compile(r"^\d{2}_")
+
+
+def attack_name(s):
+    if isinstance(s, Path):
+        s = s.stem
+    else:
+        s = suffix_re.sub("", s)
+    return prefix_re.sub("", s).replace("\n", " ")
 
 
 builtin = {
-    sanitize(res[:-5]): res
-    for res in contents(builtin_attacks)
+    attack_name(res): res
+    for res in sorted(contents(builtin_attacks))
     if is_resource(builtin_attacks, res)
         and res.endswith(".sage")
 }
 
 
 installed = {
-    sanitize(f.stem): f
+    attack_name(f): f
     for d in reversed(path)
-    for f in d.glob("*.sage")
+    for f in sorted(d.glob("*.sage"))
     if f.is_file()
 }
 
