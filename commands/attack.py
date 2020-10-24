@@ -72,6 +72,10 @@ def run():
             n, e, _, _, _ = load_key(path)
             keys.append(((n, e), path.name))
 
+    if not keys:
+        print("[-] please provide at least one key", file=sys.stderr)
+        return
+
     with TemporaryDirectory() as attack_lib_dir, \
             NamedTemporaryFile("w", encoding="ascii") as input_file:
         with redirect_stdout(input_file):
