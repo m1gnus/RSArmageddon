@@ -106,7 +106,7 @@ def run():
 
             with script_manager as script:
                 try:
-                    p = sage.run(script, input_file.name, env=env, timeout=args.timeout)
+                    p, output = sage.run(script, input_file.name, env=env, timeout=args.timeout)
                 except TimeoutExpired:
                     print(f"[W] Timeout expired for attack {attack}", file=sys.stderr)
                     continue
@@ -117,7 +117,7 @@ def run():
                 if p.returncode: # attack failed for other reasons
                     continue
 
-                cleartexts, keys = parse_output(p.stdout)
+                cleartexts, keys = parse_output(output)
 
                 if cleartexts:
                     print("[@] Cleartexts recovered", file=sys.stderr)
