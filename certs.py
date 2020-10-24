@@ -117,7 +117,7 @@ def load_key(path):
         return key.n, key.e, None, None, None
 
 
-def load_keys(path, exts):
+def load_keys(path, exts=("pem", "pub"), recursive=False):
     """Load key elements from keys found in a directory
 
     Arguments:
@@ -131,7 +131,11 @@ def load_keys(path, exts):
         if not ext.startswith("."):
             ext = f".{ext}"
 
-        for key_file in path.glob(f"*{ext}"):
+        pattern = f"*{ext}"
+        if recursive:
+            pattern = f"**/{pattern}"
+
+        for key_file in path.glob(pattern):
             n, e, _, _, _ = load_key(key_file)
             keys.append(((n, e), key_file.stem))
 

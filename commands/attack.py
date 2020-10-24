@@ -67,7 +67,7 @@ def run():
         keys.extend((key, None) for key in parse_n_e_file(path))
     for path in args.key_paths:
         if path.is_dir():
-            keys.extend(load_keys(path, exts=args.exts))
+            keys.extend(load_keys(path, recursive=args.recursive, exts=args.exts))
         else:
             n, e, _, _, _ = load_key(path)
             keys.append(((n, e), path.name))

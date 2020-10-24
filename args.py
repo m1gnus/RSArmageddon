@@ -116,6 +116,7 @@ attack_parser.add_argument("--output-key", "--ok", action="store_true", help="")
 attack_parser.add_argument("--output-key-file", "--okf", action="store", type=path_or_stdout, help="")
 attack_parser.add_argument("--output-key-dir", "--okd", action="store", type=Path, help="")
 attack_parser.add_argument("--key", "-k", action="append", dest="key_paths", type=Path, default=[], help="")
+attack_parser.add_argument("--recursive", "-r", action="store_true", help="")
 attack_parser.set_defaults(keys=[])
 
 
