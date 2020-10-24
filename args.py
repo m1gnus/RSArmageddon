@@ -84,11 +84,11 @@ command_subparsers.add_parser("ecm",      parents=[commons_parser, scripts_parse
 command_subparsers.add_parser("isprime",  parents=[commons_parser, scripts_parser])
 command_subparsers.add_parser("eulerphi", parents=[commons_parser, scripts_parser])
 
-pem_parser.add_argument("--generate",       "-g",    action="store_true", help="")
-pem_parser.add_argument("--dump-values",    "--dv",  action="store_true", help="")
-pem_parser.add_argument("--create-public",  "--cpu", action="store", type=path_or_stdout, help="")
-pem_parser.add_argument("--create-private", "--cpr", action="store", type=path_or_stdout, help="")
-pem_parser.add_argument("--file-format",    "--ff",  choices=["pem", "der", "openssh"], default="pem", help="")
+pem_parser.add_argument("--generate", "-g",                      action="store_true", help="")
+pem_parser.add_argument("--dump-values", "--dumpvalues", "--dv", action="store_true", help="")
+pem_parser.add_argument("--create-public", "--cpu",              action="store", type=path_or_stdout, help="")
+pem_parser.add_argument("--create-private", "--cpr",             action="store", type=path_or_stdout, help="")
+pem_parser.add_argument("--file-format", "--ff", choices=["pem", "der", "openssh"], default="pem", help="")
 
 
 class NewKey(Action):
