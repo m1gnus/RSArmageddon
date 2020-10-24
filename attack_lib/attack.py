@@ -1,5 +1,6 @@
 import sys
 
+from operator import itemgetter
 from functools import wraps
 from itertools import count, islice
 from contextlib import redirect_stdout
@@ -99,7 +100,7 @@ def info(*s):
 
 
 @with_name_set
-def get_args(*, min_keys=1, min_ciphertexts=0, deduplicate=False):
+def get_args(*, min_keys=1, min_ciphertexts=0, deduplicate=None):
     ciphertexts = []
     keys = []
 
@@ -116,11 +117,18 @@ def get_args(*, min_keys=1, min_ciphertexts=0, deduplicate=False):
                 text, textname = line.split(",", maxsplit=1)
                 ciphertexts.append((int(text), textname))
             else:
-                raise ValueError(f"Unexpected input type '{kind}' from input file")
+                raise ValueError("Unexpected input type '{}' from input file".input(kind))
 
     if deduplicate:
-        keys = {tuple(key): keyname for *key, keyname in keys}
-        keys = [(*key, keyname) for key, keyname in keys.items()]
+        if deduplicate in ("n", "ns"):
+            cmp_key = itemgetter(0)
+        elif deduplicate == "keys":
+            cmp_key = itemgetter(0, 1)
+        else:
+            raise ValueError("Bad value for deduplicate argument '{}'".format(deduplicate))
+        keys = {cmp_key(key): key for key in reversed(keys)}
+        keys = list(keys.values())
+        keys.reverse()
         if len(keys) < min_keys:
             fail("This attack needs at least {} distinct keys".format(min_keys))
     else:
