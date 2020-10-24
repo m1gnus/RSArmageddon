@@ -2,7 +2,7 @@ import os
 import sys
 
 from pathlib import Path
-from argparse import ArgumentParser, Action
+from argparse import ArgumentParser, Action, Namespace, SUPPRESS
 
 from certs import load_key
 from parsing import (
@@ -60,14 +60,14 @@ ciphertext_parser.add_argument("--ciphertext-raw",  "--ctr", "--decrypt-raw",  a
 ciphertext_parser.add_argument("--ciphertext-file", "--ctf", "--decrypt-file", action=Input, type=Path,          help="")
 ciphertext_parser.add_argument("--encoding", action="store", help="")
 
-commons_parser = ArgumentParser(add_help=False)
-commons_parser.add_argument("--show-attacks",            action="store_true", help="Show implemented attacks")
-commons_parser.add_argument("--show-attacks-short",      action="store_true", help="Show implemented attacks")
-commons_parser.add_argument("--show-encodings",          action="store_true", help="Show encodings")
-commons_parser.add_argument("--credits",                 action="store_true", help="Show credits")
-commons_parser.add_argument("--version",                 action="store_true", help="Show version")
-commons_parser.add_argument("--json",                    action="store_true", help="Show version")
-commons_parser.add_argument("--quiet", "--silent", "-s", action="store_true", help='Suppress informative output')
+commons_parser = ArgumentParser(argument_default=SUPPRESS, add_help=False)
+commons_parser.add_argument("--show-attacks",            action="store_const", const=True, help="Show implemented attacks")
+commons_parser.add_argument("--show-attacks-short",      action="store_const", const=True, help="Show implemented attacks")
+commons_parser.add_argument("--show-encodings",          action="store_const", const=True, help="Show encodings")
+commons_parser.add_argument("--credits",                 action="store_const", const=True, help="Show credits")
+commons_parser.add_argument("--version",                 action="store_const", const=True, help="Show version")
+commons_parser.add_argument("--json",                    action="store_const", const=True, help="Show version")
+commons_parser.add_argument("--quiet", "--silent", "-s", action="store_const", const=True, help='Suppress informative output')
 
 main_parser = ArgumentParser(parents=[commons_parser])
 
@@ -119,7 +119,19 @@ attack_parser.add_argument("key_paths", action="store", nargs="*", type=Path, de
 attack_parser.set_defaults(keys=[])
 
 
-args = main_parser.parse_args()
+class CustomNamespace(Namespace):
+    def __init__(self):
+        super().__init__()
+        self.show_attacks=False
+        self.show_attacks_short=False
+        self.show_encodings=False
+        self.credits=False
+        self.version=False
+        self.json=False
+        self.quiet=False
+
+
+args = main_parser.parse_args(namespace=CustomNamespace())
 
 if __name__ == "__main__":
     print(args)
