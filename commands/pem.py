@@ -6,8 +6,6 @@ from utils import compute_extra_key_elements, compute_pubkey, complete_privkey
 
 
 def run():
-    """Execute pem command
-    """
     if args.generate:
         n, e, d, p, q = generate_key()
     else:
@@ -43,3 +41,6 @@ def run():
         else:
             with open(args.create_private, "wb") as f:
                 f.write(key)
+
+    if not any((args.dump_values, args.create_public, args.create_private)):
+        print("[-] Nothing to do", file=sys.stderr)
