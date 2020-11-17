@@ -1,11 +1,12 @@
 import sys
 import json
+import random
 import hashlib
 
 from functools import partial
 from contextlib import redirect_stdout
 from base64 import b64encode, urlsafe_b64encode
-from gmpy2 import invert, isqrt
+from gmpy2 import invert, isqrt, gcd
 
 
 DEFAULT_E = 65537
@@ -96,6 +97,40 @@ def compute_pubkey(n, e, d, p, q, phi=None):
     return pks.pop()
 
 
+def recover_pq(n, e, d):
+    k = d*e - 1
+
+    if k % 2 != 0:
+        raise ValueError(f"p and q cannot be recovered from these parameters {(n, e, d)}")
+
+    factor = 1
+    while k % 2 == 0:
+        factor *= 2
+        k //= 2
+
+    for i in range(100):
+        b = 0
+        g = random.randint(0, n)
+        y = pow(g, k, n)
+        if y == 1 or y == (n - 1):
+            continue
+        for j in range(1, factor):
+            x = pow(y, 2, n)
+            if x in (1, n-1):
+                break
+            y = x
+        else:
+            x = pow(y, 2, n)
+        if x == 1:
+            break
+    else:
+        raise ValueError(f"p and q cannot be recovered (not enough iterations?)")
+
+    p = int(gcd(y-1, n))
+    q = n // p
+    return p, q
+
+
 def complete_privkey(n, e, d, p, q, phi=None):
     """Compute missing private key elements
 
@@ -111,8 +146,8 @@ def complete_privkey(n, e, d, p, q, phi=None):
 
     if n is None and (p is None or q is None):
         raise ValueError(f"You have to provide n or both p and q in tuple '{tup}'")
-    if n is not None and (p is None and q is None and phi is None):
-        raise ValueError(f"If you provide n, you must provide also p, q or phi in tuple '{tup}'")
+    if n is not None and (p is None and q is None and phi is None) and (d is None or e is None):
+        raise ValueError(f"If you provide n, you must provide also either one of p, q or phi, or d and e, in tuple '{tup}'")
     if e is None and d is None:
         raise ValueError(f"You have to provide e or d in tuple '{tup}'")
 
@@ -125,6 +160,9 @@ def complete_privkey(n, e, d, p, q, phi=None):
         p = n//q
     elif q is None:
         q = n//p
+
+    if p is None:
+        p, q = recover_pq(n, e, d)
 
     if n != p * q:
         raise ValueError(f"n is not equal to p * q in tuple '{tup}'")
