@@ -48,9 +48,6 @@ def cipher(m, n, e=None, padding="pkcs"):
 
     encryptor = standard.new(key)
 
-    if standard is PKCS1_v1_5:
-        encryptor.encrypt = partial(encryptor.encrypt, sentinel=None)
-
     return int.from_bytes(encryptor.encrypt(to_bytes_auto(m)), "big")
 
 
@@ -82,4 +79,7 @@ def uncipher(c, n, e=None, d=None, padding="pkcs"):
     if standard is PKCS1_v1_5:
         decryptor.decrypt = partial(decryptor.decrypt, sentinel=None)
 
-    return int.from_bytes(decryptor.decrypt(to_bytes_auto(c)), "big")
+    dec = decryptor.decrypt(to_bytes_auto(c))
+    if dec is None:
+        raise ValueError("Invalid ciphertext (padding: {padding})")
+    return int.from_bytes(dec, "big")

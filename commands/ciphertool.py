@@ -11,11 +11,11 @@ from utils import int_from_path, output_text, compute_d, compute_n, compute_pubk
 def run():
     if args.command == "encrypt":
         n, e = compute_pubkey(args.n, args.e, args.d, args.p, args.q, args.phi)
-        f = partial(cipher, n=args.n, e=args.e, padding=args.encryption_standard)
+        f = partial(cipher, n=n, e=e, padding=args.encryption_standard)
     else:
         d = compute_d(args.n, args.e, args.d, args.p, args.q, args.phi)
         n = compute_n(args.n, args.e, args.d, args.p, args.q, args.phi)
-        f = partial(uncipher, n=args.n, e=args.e, d=args.d, padding=args.encryption_standard)
+        f = partial(uncipher, n=n, e=args.e, d=d, padding=args.encryption_standard)
 
     if not args.inputs:
         print("Nothing to do", file=sys.stderr)

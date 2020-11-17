@@ -77,17 +77,17 @@ def compute_pubkey(n, e, d, p, q, phi=None):
 
     if n is not None and d is not None:
         if phi is not None:
-            pks.add((n, invert(d, phi)))
+            pks.add((n, int(invert(d, phi))))
         else:
             if p is None:
                 p = q
             if p is not None:
                 q = n//p
-                pks.add((n, invert(d, (p-1) * (q-1))))
+                pks.add((n, int(invert(d, (p-1) * (q-1)))))
 
     if p is not None and q is not None:
         if d is not None:
-            pks.add((p*q, invert(d, (p-1) * (q-1))))
+            pks.add((p*q, int(invert(d, (p-1) * (q-1)))))
         if e is not None:
             pks.add((p*q, e))
 
@@ -198,17 +198,17 @@ def compute_d(n, e, d, p, q, phi=None):
         raise ValueError("Missing public exponent")
 
     if phi is not None:
-        ds.add(invert(e, phi))
+        ds.add(int(invert(e, phi)))
 
     if p is None:
         p = q
 
     if p is not None:
         if q is not None:
-            ds.add(invert(e, (p-1) * (q-1)))
+            ds.add(int(invert(e, (p-1) * (q-1))))
         if n is not None:
             q = n//p
-            ds.add(invert(e, (p-1) * (q-1)))
+            ds.add(int(invert(e, (p-1) * (q-1))))
 
     if len(ds) != 1:
         raise ValueError(f"Inconsistent parameters {tup}")
