@@ -275,7 +275,10 @@ def output_text(text, filename, encoding=None, json_output=False):
     text_b64 = b64encode(text_raw).decode("ascii")
     text_b64_url = urlsafe_b64encode(text_raw).decode("ascii")
     if encoding is not None:
-        text_str = text_raw.decode(encoding)
+        try:
+            text_str = text_raw.decode(encoding)
+        except ValueError:
+            text_str = f"Cannot decode ({encoding})"
     else:
         text_str = None
     if filename is True:
@@ -293,13 +296,13 @@ def output_text(text, filename, encoding=None, json_output=False):
             json.dump(output, sys.stdout, indent=4)
         else:
             with redirect_stdout(sys.stderr):
-                print(f"[+] ciphertext (dec): {text}")
-                print(f"[+] ciphertext (hex): {text_hex}")
-                print(f"[+] ciphertext (raw): {text_raw}")
-                print(f"[+] ciphertext (b64): {text_b64}")
-                print(f"[+] ciphertext (url): {text_b64_url}")
+                print(f"[+] text (dec): {text}")
+                print(f"[+] text (hex): {text_hex}")
+                print(f"[+] text (raw): {text_raw}")
+                print(f"[+] text (b64): {text_b64}")
+                print(f"[+] text (url): {text_b64_url}")
                 if text_str is not None:
-                    print(f"[+] ciphertext (str): {text_str}")
+                    print(f"[+] text (str): {text_str}")
     else:
         with open(filename, "wb") as file:
             file.write(text_raw)

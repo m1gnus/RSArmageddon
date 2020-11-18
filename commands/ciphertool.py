@@ -24,7 +24,7 @@ def run():
         if isinstance(text, Path):
             text = int_from_path(text)
         elif isinstance(text, bytes):
-            text = int.from_bytes(text)
+            text = int.from_bytes(text, "big")
         output = f(text)
         encoding = None
         if args.command == "decrypt":
