@@ -12,6 +12,11 @@ from gmpy2 import invert, isqrt, gcd
 DEFAULT_E = 65537
 
 
+def carmichael_lcm(p, q):
+    phi = (p-1)*(q-1)
+    return phi // gcd(p-1, q-1)
+
+
 def byte_length(n):
     """Return byte length of the given integer
 
@@ -77,19 +82,26 @@ def compute_pubkey(n, e, d, p, q, phi=None):
 
     if n is not None and d is not None:
         if phi is not None:
-            pks.add((n, int(invert(d, phi))))
+            tmp_e = int(invert(d, phi))
+            pks.add((n, tmp_e))
         else:
             if p is None:
                 p = q
             if p is not None:
                 q = n//p
-                pks.add((n, int(invert(d, (p-1) * (q-1)))))
+                phi =  (p-1) * (q-1)
+                tmp_e = int(invert(d, phi))
+                if e is not None and tmp_e != e:
+                    tmp_e = int(invert(d, phi//gcd(p-1,q-1)))
+                pks.add((n, tmp_e))
 
     if p is not None and q is not None:
         if d is not None:
-            pks.add((p*q, int(invert(d, (p-1) * (q-1)))))
-        if e is not None:
-            pks.add((p*q, e))
+            phi =  (p-1) * (q-1)
+            tmp_e = int(invert(d, phi))
+            if e is not None and tmp_e != e:
+                tmp_e = int(invert(d, phi//gcd(p-1,q-1)))
+            pks.add((p*q, tmp_e))
 
     if len(pks) != 1:
         raise ValueError(f"Inconsistent parameters {tup}")
@@ -131,7 +143,7 @@ def recover_pq(n, e, d):
     return p, q
 
 
-def complete_privkey(n, e, d, p, q, phi=None):
+def complete_privkey(n, e, d, p, q, phi=None, use_lcm=True):
     """Compute missing private key elements
 
     Arguments:
@@ -167,7 +179,10 @@ def complete_privkey(n, e, d, p, q, phi=None):
     if n != p * q:
         raise ValueError(f"n is not equal to p * q in tuple '{tup}'")
 
-    phi = (p-1) * (q-1)
+    if use_lcm:
+        phi = carmichael_lcm(p, q)
+    else:
+        phi = (p-1) * (q-1)
 
     if e is None:
         e = int(invert(d, phi))
@@ -194,7 +209,7 @@ def compute_d(n, e, d, p, q, phi=None):
     if d is not None:
         ds.add(d)
 
-    if e is None:
+    if e is None and len(ds) == 0:
         raise ValueError("Missing public exponent")
 
     if phi is not None:
@@ -205,10 +220,16 @@ def compute_d(n, e, d, p, q, phi=None):
 
     if p is not None:
         if q is not None:
-            ds.add(int(invert(e, (p-1) * (q-1))))
+            tmp_d = int(invert(e, (p-1) * (q-1)))
+            if d is not None and tmp_d != d:
+                tmp_d = int(invert(e, carmichael_lcm(p, q)))
+            ds.add(tmp_d)
         if n is not None:
             q = n//p
-            ds.add(int(invert(e, (p-1) * (q-1))))
+            tmp_d = int(invert(e, (p-1) * (q-1)))
+            if d is not None and tmp_d != d:
+                tmp_d = int(invert(e, carmichael_lcm(p, q)))
+            ds.add(tmp_d)
 
     if len(ds) != 1:
         raise ValueError(f"Inconsistent parameters {tup}")
