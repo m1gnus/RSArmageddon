@@ -12,7 +12,7 @@ from subprocess import TimeoutExpired
 import sage
 import attack_lib
 from args import args
-from utils import DEFAULT_E, to_bytes_auto, output_text, compute_d, complete_privkey
+from utils import DEFAULT_E, to_bytes_auto, output_text, compute_d, complete_privkey, int_from_path, compute_d
 from certs import encode_privkey, load_key, load_keys
 from crypto import uncipher
 from attacks import attack_path, builtin, installed
@@ -128,7 +128,7 @@ def run():
 
                 if len(keys) == 1:
                     key, _ = keys[0]
-                    _, _, d, _, _ = key
+                    n, e, d, _, _ = key
                     if d is None:
                         d = compute_d(*key)
 
@@ -143,10 +143,14 @@ def run():
                             f.write(encode_privkey(*key, "PEM"))
 
                     for text, filename in args.inputs:
-                        text_bytes = to_bytes_auto(text)
+                        if isinstance(text, Path):
+                            with open(text, "rb") as f:
+                                text_bytes = f.read()
+                                text = int.from_bytes(text_bytes, "big")
+                        else:
+                            text_bytes = to_bytes_auto(text)
                         print(f"[$] Decrypting 0x{text_bytes.hex()}", file=sys.stderr)
-                        n, e, d, _, _ = key
-                        cleartext = uncipher(text, n, e, d, args.file_format)
+                        cleartext = uncipher(text, n, e, d, args.encryption_standard)
                         output_text(cleartext, filename, encoding=args.encoding, json_output=args.json)
                         if filename is True:
                             print()
