@@ -10,7 +10,7 @@ import attack
 
 attack.init("Hastad broadcast", "hastad")
 
-ciphertexts, keys = attack.get_args(min_keys=3, min_ciphertexts=3, deduplicate=True)
+ciphertexts, keys = attack.get_args(min_keys=2, min_ciphertexts=2, deduplicate="keys")
 ns, es, _ = tuple(zip(*keys))
 cs, _ = tuple(zip(*ciphertexts))
 _, name = ciphertexts[0]
@@ -28,9 +28,12 @@ if len(ns) > 20:
 elif any(gcd(a, b) != 1 for a, b in combinations(ns, 2)):
     attack.fail("Public key moduli are not coprime")
 
-c4 = crt([Integer(c) for c in cs], [Integer(n) for n in ns])
+cr = crt([Integer(c) for c in cs], [Integer(n) for n in ns])
 
-m = c4.nth_root(e)
+try:
+    m = cr.nth_root(e)
+except ValueError:
+    attack.fail()
 
 attack.cleartexts((m, name))
 attack.success()
