@@ -2,6 +2,7 @@ import sys
 import binascii
 import subprocess
 
+from base64 import b64decode, b85decode
 from pathlib import Path
 
 from utils import DEFAULT_E
@@ -23,17 +24,30 @@ def parse_unsigned(s, base=0):
 
 
 def parse_int_arg(s):
-    """Take a string in the format string[:base] and return the corresponding integer
+    """Take a string in the format number[:base] and return the corresponding integer
 
     Arguments:
     s -- string to convert
     """
-    args = [x for x in s.split(":") if x]
-    if len(args) == 2:
-        args[1] = int(args[1])
-    if len(args) > 2:
-        raise ValueError(f"Too many ':' in '{s}'")
-    return parse_unsigned(*args)
+    number, sep, base = s.rpartition(":")
+    if not sep:
+        number, base = base, number
+    number = number.strip()
+    base = base.strip()
+    try:
+        if base in ("b64", "base64"):
+            return int.from_bytes(b64decode(number, validate=True), "big")
+        elif base in ("b85", "base85"):
+            return int.from_bytes(b85decode(number), "big")
+    except binascii.Error as e:
+        raise ValueError(str(e)) from e
+
+    if base:
+        base = int(base)
+    else:
+        base = 10
+
+    return parse_unsigned(number, base)
 
 
 def parse_list(s):
