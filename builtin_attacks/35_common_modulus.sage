@@ -8,7 +8,7 @@ import attack
 
 attack.init("Common modulus", "common_modulus")
 
-ciphertexts, keys = attack.get_args(min_keys=2, min_ciphertexts=2)
+ciphertexts, keys = attack.get_args(min_keys=2, min_ciphertexts=2, deduplicate="keys")
 n1, e1, _ = keys[0]
 n2, e2, _ = keys[1]
 c1, name = ciphertexts[0]
