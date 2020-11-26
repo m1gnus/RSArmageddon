@@ -7,6 +7,7 @@ from argparse import ArgumentParser, Action, Namespace, SUPPRESS
 from certs import load_key
 from parsing import (
         parse_int_arg,
+        parse_time,
         parse_list,
         path_or_stdout)
 
@@ -110,7 +111,7 @@ attack_parser.add_argument("attacks", action="store", type=parse_list, help="")
 attack_parser.add_argument("-n", action=NewKey, type=parse_int_arg, help="")
 attack_parser.add_argument("-e", action=SetE, type=parse_int_arg, help="")
 attack_parser.add_argument("--n-e-file", "--nef", action="append", dest="n_e_files", type=Path, default=[], help="")
-attack_parser.add_argument("--timeout", "-t", action="store", type=int, help="")
+attack_parser.add_argument("--timeout", "-t", action="store", type=parse_time, help="")
 attack_parser.add_argument("--exts", "-x", action="store", type=parse_list, default=["pem", "pub"], help="")
 attack_parser.add_argument("--output-key", "--ok", action="store_true", help="")
 attack_parser.add_argument("--output-key-file", "--okf", action="store", type=path_or_stdout, help="")

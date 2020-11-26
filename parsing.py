@@ -1,3 +1,4 @@
+import re
 import sys
 import binascii
 import subprocess
@@ -48,6 +49,29 @@ def parse_int_arg(s):
         base = 10
 
     return parse_unsigned(number, base)
+
+
+time_re1 = re.compile(r"(\d+)([hms]?)")
+time_re2 = re.compile(r"(?:(?:(\d+):)?(?:(\d+):))?(\d+)")
+time_mult = {
+    "": 1,
+    "s": 1,
+    "m": 60,
+    "h": 3600
+}
+def parse_time(s):
+    sc = s.strip().casefold()
+    m1 = time_re1.fullmatch(sc)
+    if m1:
+        return int(m1.group(1)) * time_mult[m1.group(2)]
+    m2 = time_re2.fullmatch(sc)
+    if m2:
+        h, m, s = m2.groups()
+        h = h or "0"
+        m = m or "0"
+        h, m, s = int(h), int(m), int(s)
+        return h*3600 + m*60 + s
+    raise ValueError(f"Bad time '{s}'")
 
 
 def parse_list(s):
