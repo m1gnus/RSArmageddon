@@ -149,11 +149,16 @@ def run():
                                 text = int.from_bytes(text_bytes, "big")
                         else:
                             text_bytes = to_bytes_auto(text)
-                        print(f"[$] Decrypting 0x{text_bytes.hex()}", file=sys.stderr)
-                        cleartext = uncipher(text, n, e, d, args.encryption_standard)
-                        output_text(cleartext, filename, encoding=args.encoding, json_output=args.json)
-                        if filename is True:
-                            print()
+                        for std in args.encryption_standard:
+                            print(f"[$] Decrypting 0x{text_bytes.hex()} with encryption standard {std}", file=sys.stderr)
+                            try:
+                                cleartext = uncipher(text, n, e, d, std)
+                            except ValueError as e:
+                                print(e, file=sys.stderr)
+                            else:
+                                output_text(cleartext, filename, encoding=args.encoding, json_output=args.json)
+                            if filename is True:
+                                print()
 
                 if args.output_key_dir is not None:
                     for key, name in keys:

@@ -9,6 +9,7 @@ from parsing import (
         parse_int_arg,
         parse_time,
         parse_list,
+        parse_std_list,
         path_or_stdout)
 
 
@@ -47,7 +48,7 @@ class Output(Action):
 
 text_parser_common = ArgumentParser(add_help=False)
 text_parser_common.add_argument("--output", "-o", action=Output, type=path_or_stdout, help="")
-text_parser_common.add_argument("--encryption-standard", "--std", choices=["oaep", "pkcs", "raw"], default="pkcs", help="")
+text_parser_common.add_argument("--encryption-standard", "--std", action="store", type=parse_std_list, default=["pkcs"], help="")
 text_parser_common.set_defaults(inputs=[])
 
 plaintext_parser = ArgumentParser(add_help=False, parents=[text_parser_common])

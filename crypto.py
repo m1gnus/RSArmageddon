@@ -19,60 +19,56 @@ standards = {
 }
 
 
-def cipher(m, n, e=None, padding="pkcs"):
+def cipher(m, n, e=None, std="pkcs"):
     """Encrypt a plaintext using RSA
 
     Arguments:
     m -- plaintext
     n -- RSA modulus
     e -- RSA public exponent
-    padding -- padding type
+    std -- encryption standard
     """
 
     if e is None:
         e = DEFAULT_E
 
-    padding = padding.casefold()
-
     if m > n-2:
         e_mess = str(m)
         if len(e_mess) > 10:
             e_mess = f"{e_mess[:10]} ..."
-        raise ValueError(f"Modulus to small for the given plaintext: {e_mess}")
+        raise ValueError(f"Modulus to small for plaintext: {e_mess}")
 
-    if padding == "raw":
+    if std == "raw":
         return pow(m, e, n)
 
     key = RSA.construct((n, e))
-    standard = standards[padding]
+    standard = standards[std]
 
     encryptor = standard.new(key)
 
     return int.from_bytes(encryptor.encrypt(to_bytes_auto(m)), "big")
 
 
-def uncipher(c, n, e=None, d=None, padding="pkcs"):
+def uncipher(c, n, e=None, d=None, std="pkcs"):
     """Decrypt a plaintext using RSA
 
     Arguments:
     c -- ciphertext
     n -- RSA modulus
     d -- RSA private exponent
-    padding -- padding type
+    std -- encryption standard
     """
 
     if e is None:
         e = DEFAULT_E
 
-    padding = padding.casefold()
-
     c %= n
 
-    if padding == "raw":
+    if std == "raw":
         return pow(c, d, n)
 
     key = RSA.construct((n, e, d))
-    standard = standards[padding]
+    standard = standards[std]
 
     decryptor = standard.new(key)
 
@@ -81,5 +77,5 @@ def uncipher(c, n, e=None, d=None, padding="pkcs"):
 
     dec = decryptor.decrypt(to_bytes_auto(c))
     if dec is None:
-        raise ValueError("Invalid ciphertext (padding: {padding})")
+        raise ValueError(f"Invalid ciphertext (encryption standard: {std})")
     return int.from_bytes(dec, "big")

@@ -6,6 +6,7 @@ import subprocess
 from base64 import b64decode, b85decode
 from pathlib import Path
 
+from crypto import standards
 from utils import DEFAULT_E
 
 
@@ -90,6 +91,19 @@ def parse_int_list(s):
     s -- comma separated string
     """
     return [parse_int_arg(x) if x is not None else None for x in parse_list(s)]
+
+
+def parse_std_list(s):
+    all_standards = ["raw", *standards.keys()]
+    allowed = {*standards, "all"}
+    l = [x.strip().casefold() for x in s.split(",") if x.strip()]
+    l = list(dict.fromkeys(l)) # Deduplicate list keeping order
+    for std in l:
+        if std not in allowed:
+            raise ValueError(f"Invalid encryption standard '{std}'")
+    if "all" in l:
+        l = all_standards
+    return l
 
 
 def path_or_stdout(s):
