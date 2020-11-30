@@ -8,6 +8,8 @@ from pathlib import Path, PurePosixPath
 from itertools import count, chain
 from subprocess import Popen, PIPE, TimeoutExpired
 
+from psutil import Process, wait_procs
+
 if os.name == "nt":
     from winreg import HKEY_CURRENT_USER, OpenKey, EnumKey, QueryValueEx
 
@@ -150,6 +152,10 @@ def run(script, *args, env=None, timeout=None):
     try:
         output, _ = p.communicate(timeout=timeout)
     except TimeoutExpired as e:
-        p.kill()
+        pp = Process(p.pid)
+        subprocesses = [pp, *pp.children(recursive=True)]
+        for subp in subprocesses:
+            subp.terminate()
+        wait_procs(subprocesses)
         raise e
     return p, output
