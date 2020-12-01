@@ -120,9 +120,9 @@ def run():
                 cleartexts, keys = parse_output(output)
 
                 if cleartexts:
-                    print("[@] Cleartexts recovered", file=sys.stderr)
+                    print("[@] Plaintext recovered", file=sys.stderr)
                     for text, file in cleartexts:
-                        output_text(text, file, encoding=args.encoding, json_output=args.json)
+                        output_text("plaintext", text, file, encoding=args.encoding, json_output=args.json)
                         if file is True:
                             print()
 
@@ -150,13 +150,14 @@ def run():
                         else:
                             text_bytes = to_bytes_auto(text)
                         for std in args.encryption_standard:
+                            print(file=sys.stderr)
                             print(f"[$] Decrypting 0x{text_bytes.hex()} with encryption standard {std}", file=sys.stderr)
                             try:
                                 cleartext = uncipher(text, n, e, d, std)
                             except ValueError as e:
                                 print(e, file=sys.stderr)
                             else:
-                                output_text(cleartext, filename, encoding=args.encoding, json_output=args.json)
+                                output_text("plaintext", cleartext, filename, encoding=args.encoding, json_output=args.json)
                             if filename is True:
                                 print()
 

@@ -28,6 +28,7 @@ def run():
             text = int_from_path(text)
         elif isinstance(text, bytes):
             text = int.from_bytes(text, "big")
+        first_line = True
         for std in args.encryption_standard:
             filename = base_filename
             if filename is not True and len(std) > 1:
@@ -40,4 +41,12 @@ def run():
             encoding = None
             if args.command == "decrypt":
                 encoding = args.encoding
-            output_text(output, filename, encoding=encoding, json_output=args.json) # TODO: add enc std label for stdout
+                label = "plaintext"
+            else:
+                label = "ciphertext"
+            if len(args.encryption_standard) > 1:
+                if not first_line:
+                    print(file=sys.stderr)
+                first_line = False
+                print(f"[$] Using encryption standard {std}", file=sys.stderr)
+            output_text(label, output, filename, encoding=encoding, json_output=args.json) # TODO: add enc std label for stdout

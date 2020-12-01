@@ -270,7 +270,7 @@ def compute_n(n, e, d, p, q, phi=None):
     return ns.pop()
 
 
-def output_text(text, filename, encoding=None, json_output=False):
+def output_text(label, text, filename, encoding=None, json_output=False):
     text_raw = to_bytes_auto(text)
     text_b64 = b64encode(text_raw).decode("ascii")
     text_b64_url = urlsafe_b64encode(text_raw).decode("ascii")
@@ -296,13 +296,13 @@ def output_text(text, filename, encoding=None, json_output=False):
             json.dump(output, sys.stdout, indent=4)
         else:
             with redirect_stdout(sys.stderr):
-                print(f"[+] text (dec): {text}")
-                print(f"[+] text (hex): {text_hex}")
-                print(f"[+] text (raw): {text_raw}")
-                print(f"[+] text (b64): {text_b64}")
-                print(f"[+] text (url): {text_b64_url}")
+                print(f"[+] {label} (dec): {text}")
+                print(f"[+] {label} (hex): {text_hex}")
+                print(f"[+] {label} (raw): {text_raw}")
+                print(f"[+] {label} (b64): {text_b64}")
+                print(f"[+] {label} (url): {text_b64_url}")
                 if text_str is not None:
-                    print(f"[+] text (str): {text_str}")
+                    print(f"[+] {label} (str): {text_str}")
     else:
         with open(filename, "wb") as file:
             file.write(text_raw)
