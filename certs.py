@@ -178,5 +178,5 @@ def encode_privkey(n, e, d, p, q, file_format):
     file_format = file_formats[file_format.casefold()]
     try:
         return RSA.construct((n, e, d, p, q)).exportKey(format=file_format)
-    except NotImplementedError as e:
-        raise ValueError(f"Cannot create a private key file (key data is incomplete): {(n, e, d, p, q)}") from e
+    except NotImplementedError as exc:
+        raise ValueError(f"Cannot create a private key file (key data is incomplete): {(n, e, d, p, q)}") from exc

@@ -128,9 +128,10 @@ def run():
 
                 if len(keys) == 1:
                     key, _ = keys[0]
-                    n, e, d, _, _ = key
+                    n, e, d, p, q = key
                     if d is None:
                         d = compute_d(*key)
+                        key = (n, e, d, p, q)
 
                     if args.output_key_file is None and args.output_key:
                         args.output_key_file = True

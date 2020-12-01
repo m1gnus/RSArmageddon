@@ -95,7 +95,7 @@ def parse_int_list(s):
 
 def parse_std_list(s):
     all_standards = ["raw", *standards.keys()]
-    allowed = {*standards, "all"}
+    allowed = {*all_standards, "all"}
     l = [x.strip().casefold() for x in s.split(",") if x.strip()]
     l = list(dict.fromkeys(l)) # Deduplicate list keeping order
     for std in l:
