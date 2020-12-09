@@ -22,12 +22,12 @@ def main():
         sys.stderr.close()
         sys.stderr = open(os.devnull, "w")
 
-    if not (args.show_attacks_short or args.show_encodings):
+    if not any((args.show_attacks_short, args.show_encodings, args.version)):
         print_banner()
 
     banner_actions = compress(*zip(
         (version, args.version),
-        (credits, args.credits),
+        (print_credits, args.credits),
         (print_attacks, args.show_attacks),
         (print_attacks_short, args.show_attacks_short),
         (print_encodings, args.show_encodings)

@@ -1,5 +1,6 @@
 import sys
 import attacks
+import output
 
 from encodings.aliases import aliases
 from contextlib import redirect_stdout
@@ -18,7 +19,7 @@ ______  _____  ___                                      _     _
 Written by M1gnus && AquilaIrreale -- PGIATASTI
 """
 
-credits_text = """
+credits_text = ("""
 Glory to PGiatasti:
     - Vittorio aka M1gnus
     - Alessio aka Alexius
@@ -33,15 +34,15 @@ Glory to PGiatasti:
     - Simone aka AquilaIrreale
 
 https://pgiatasti.it/ -- Visit our site to discover more about us
-"""
+""").lstrip()
 
 
 def print_banner():
-    print(banner_text, file=sys.stderr)
+    output.yellow(banner_text)
 
 
 def print_credits():
-    print(credits_text, file=sys.stderr)
+    output.white(credits_text)
 
 
 def print_attacks_short():
@@ -52,18 +53,17 @@ def print_attacks_short():
 
 
 def _print_attacks(header, attacks):
-    print(f" {header} ".center(32, "="))
-    print(f"==={str(len(attacks)).center(26)}===")
-    print("="*32)
+    output.white(f" {header} ".center(32, "="))
+    output.white(f"==={str(len(attacks)).center(26)}===")
+    output.white("="*32)
     print()
 
     for attack in sorted(attacks):
-        print(attack)
+        output.white(attack)
 
 
 def print_attacks():
     with redirect_stdout(sys.stderr):
-        print()
         _print_attacks("Builtin", attacks.builtin)
         if attacks.installed:
             print()
