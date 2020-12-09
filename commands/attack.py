@@ -9,6 +9,7 @@ from itertools import chain
 from contextlib import redirect_stdout
 from subprocess import TimeoutExpired
 
+import output
 import sage
 import attack_lib
 from args import args
@@ -42,7 +43,7 @@ def parse_output(s):
 def run():
     attacks = list(dict.fromkeys(args.attacks))
     if len(attacks) != len(args.attacks):
-        print("[W] Attacks specified more than once are ignored", file=sys.stderr)
+        output.warning("Attacks specified more than once are ignored")
     try:
         i = attacks.index("all")
     except ValueError:
@@ -73,7 +74,7 @@ def run():
             keys.append(((n, e), path.name))
 
     if not keys:
-        print("[-] please provide at least one key", file=sys.stderr)
+        output.error("please provide at least one key")
         return
 
     with TemporaryDirectory() as attack_lib_dir, \
@@ -101,14 +102,14 @@ def run():
             try:
                 script_manager = attack_path(attack)
             except ValueError as e:
-                print(e, file=sys.stderr)
+                output.error(e)
                 continue
 
             with script_manager as script:
                 try:
-                    p, output = sage.run(script, input_file.name, env=env, timeout=args.timeout)
+                    p, script_output = sage.run(script, input_file.name, env=env, timeout=args.timeout)
                 except TimeoutExpired:
-                    print(f"[W] Timeout expired for attack {attack}", file=sys.stderr)
+                    output.warning(f"Timeout expired for attack {attack}")
                     continue
 
                 if p.returncode == 2: # attack determined the key is bad (i.e. not an RSA key)
@@ -117,10 +118,10 @@ def run():
                 if p.returncode: # attack failed for other reasons
                     continue
 
-                cleartexts, keys = parse_output(output)
+                cleartexts, keys = parse_output(script_output)
 
                 if cleartexts:
-                    print("[@] Plaintext recovered", file=sys.stderr)
+                    output.info("Plaintext recovered")
                     for text, file in cleartexts:
                         output_text("plaintext", text, file, encoding=args.encoding, json_output=args.json)
                         if file is True:
@@ -151,12 +152,12 @@ def run():
                         else:
                             text_bytes = to_bytes_auto(text)
                         for std in args.encryption_standard:
-                            print(file=sys.stderr)
-                            print(f"[$] Decrypting 0x{text_bytes.hex()} with encryption standard {std}", file=sys.stderr)
+                            output.newline()
+                            output.info(f"Decrypting 0x{text_bytes.hex()} with encryption standard {std}")
                             try:
                                 cleartext = uncipher(text, n, e, d, std)
                             except ValueError as e:
-                                print(e, file=sys.stderr)
+                                output.error(e)
                             else:
                                 output_text("plaintext", cleartext, filename, encoding=args.encoding, json_output=args.json)
                             if filename is True:

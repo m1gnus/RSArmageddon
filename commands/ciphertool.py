@@ -3,6 +3,8 @@ import sys
 from pathlib import Path
 from functools import partial
 
+import output
+
 from args import args
 from crypto import cipher, uncipher
 from utils import int_from_path, output_text, compute_d, compute_n, compute_pubkey, complete_privkey, DEFAULT_E
@@ -21,7 +23,7 @@ def run():
         f = partial(uncipher, n=n, e=e, d=d)
 
     if not args.inputs:
-        print("Nothing to do", file=sys.stderr)
+        output.error("Nothing to do")
 
     for text, base_filename in args.inputs: # TODO: implement args.inputs parsing func
         if isinstance(text, Path):
@@ -34,9 +36,9 @@ def run():
             if filename is not True and len(std) > 1:
                 filename = f"{filename}.{std}"
             try:
-                output = f(text, std=std)
+                output_data = f(text, std=std)
             except ValueError as e:
-                print(f"[-] {std}: {e}", file=sys.stderr)
+                output.error(f"{std}: {e}")
                 continue
             encoding = None
             if args.command == "decrypt":
@@ -46,7 +48,7 @@ def run():
                 label = "ciphertext"
             if len(args.encryption_standard) > 1:
                 if not first_line:
-                    print(file=sys.stderr)
+                    output.newline()
                 first_line = False
-                print(f"[$] Using encryption standard {std}", file=sys.stderr)
-            output_text(label, output, filename, encoding=encoding, json_output=args.json) # TODO: add enc std label for stdout
+                output.info(f"Using encryption standard {std}")
+            output_text(label, output_data, filename, encoding=encoding, json_output=args.json) # TODO: add enc std label for stdout

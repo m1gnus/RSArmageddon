@@ -8,6 +8,8 @@ from contextlib import redirect_stdout
 from base64 import b64encode, urlsafe_b64encode
 from gmpy2 import invert, isqrt, gcd
 
+import output
+
 
 DEFAULT_E = 65537
 
@@ -296,13 +298,13 @@ def output_text(label, text, filename, encoding=None, json_output=False):
             json.dump(output, sys.stdout, indent=4)
         else:
             with redirect_stdout(sys.stderr):
-                print(f"[+] {label} (dec): {text}")
-                print(f"[+] {label} (hex): {text_hex}")
-                print(f"[+] {label} (raw): {text_raw}")
-                print(f"[+] {label} (b64): {text_b64}")
-                print(f"[+] {label} (url): {text_b64_url}")
+                output.primary(f"{label} (dec): {text}")
+                output.primary(f"{label} (hex): {text_hex}")
+                output.primary(f"{label} (raw): {text_raw}")
+                output.primary(f"{label} (b64): {text_b64}")
+                output.primary(f"{label} (url): {text_b64_url}")
                 if text_str is not None:
-                    print(f"[+] {label} (str): {text_str}")
+                    output.primary(f"{label} (str): {text_str}")
     else:
         with open(filename, "wb") as file:
             file.write(text_raw)

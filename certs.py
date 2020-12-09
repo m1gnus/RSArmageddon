@@ -7,6 +7,7 @@ from pathlib import Path
 from gmpy2 import invert
 from Crypto.PublicKey import RSA
 
+import output
 from utils import DEFAULT_E
 
 
@@ -59,7 +60,7 @@ def generate_key(e=None):
     return key.n, key.e, key.d, key.p, key.q
 
 
-def print_key(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=None, qinv=None, file=None):
+def print_key(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=None, qinv=None):
     """Print key elements in a more readable format
 
     Keyword arguments:
@@ -74,29 +75,23 @@ def print_key(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=Non
     qinv
     file -- file-like object
     """
-
-    if file is None:
-        file = sys.stdout
-
-    with redirect_stdout(file):
-        print(f"[*] n: {n}")
-        print(f"[*] e: {e}")
-        print(f"[*] d: {d}")
-        print(f"[*] p: {p}")
-        print(f"[*] q: {q}")
-        print()
-        print(f"[#] dp: {dp}")
-        print(f"[#] dq: {dq}")
-        print(f"[#] pinv: {pinv}")
-        print(f"[#] qinv: {qinv}")
-        print()
+    output.primary(f"n: {n}")
+    output.primary(f"e: {e}")
+    output.primary(f"d: {d}")
+    output.primary(f"p: {p}")
+    output.primary(f"q: {q}")
+    output.newline()
+    output.secondary(f"dp: {dp}")
+    output.secondary(f"dq: {dq}")
+    output.secondary(f"pinv: {pinv}")
+    output.secondary(f"qinv: {qinv}")
+    output.newline()
 
 
-def print_key_json(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=None, qinv=None, file=None):
+def print_key_json(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=None, qinv=None):
     d = {k: str(v) for k, v in locals().items()}
-    del d["file"]
-    json.dump(d, file, indent=4)
-    print(file=file)
+    json.dump(d, indent=4)
+    print()
 
 
 def load_key(path):

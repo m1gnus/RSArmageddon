@@ -6,6 +6,7 @@ import sys
 
 from itertools import compress
 
+import output
 from args import args
 from banner import (
         print_banner,
@@ -56,16 +57,16 @@ def main():
     try:
         command()
     except (ValueError, OSError) as e:
-        print(f"[-] {e}", file=sys.stderr)
+        output.error(e)
 
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("[-] Interrupted")
+        output.error("Interrupted")
     #except Exception as e:
-    #    print(f"[E] Unhandled exception: {e}")
+    #    output.error(f"Unhandled exception: {e}")
     else:
         sys.exit(0)
 

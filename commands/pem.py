@@ -1,5 +1,7 @@
 import sys
 
+import output
+
 from args import args
 from certs import print_key, print_key_json, generate_key, encode_pubkey, encode_privkey, load_key
 from utils import compute_extra_key_elements, compute_pubkey, complete_privkey
@@ -20,9 +22,9 @@ def run():
     if args.dump_values:
         dp, dq, pinv, qinv = compute_extra_key_elements(d, p, q)
         if args.json:
-            print_key_json(n, e, d, p, q, dp, dq, pinv, qinv, file=sys.stdout)
+            print_key_json(n, e, d, p, q, dp, dq, pinv, qinv)
         else:
-            print_key(n, e, d, p, q, dp, dq, pinv, qinv, file=sys.stderr)
+            print_key(n, e, d, p, q, dp, dq, pinv, qinv)
 
     if args.create_public:
         key = encode_pubkey(n, e, args.file_format)
@@ -43,4 +45,4 @@ def run():
                 f.write(key)
 
     if not any((args.dump_values, args.create_public, args.create_private)):
-        print("[-] Nothing to do", file=sys.stderr)
+        output.error("Nothing to do")

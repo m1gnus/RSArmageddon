@@ -10,6 +10,9 @@ from subprocess import Popen, PIPE, TimeoutExpired
 
 from psutil import Process, wait_procs
 
+import output
+
+
 if os.name == "nt":
     from winreg import HKEY_CURRENT_USER, OpenKey, EnumKey, QueryValueEx
 
@@ -138,9 +141,9 @@ def get_sage():
     version, sage, cyg_runtime = get_sage_by_platform[os.name]()
     vmaj, vmin = version
     if vmaj != SUPPORTED_VMAJ:
-        print(f"[W] Using unsupported SageMath version {vmaj}.{vmin}", file=sys.stderr)
-        print(f"[W] RSArmageddon is not supposed to work with versions other than {SUPPORTED_VMAJ}.x,", file=sys.stderr)
-        print(f"[W] try installing the latest one of those before reporting a bug", file=sys.stderr)
+        output.warning(f"Using unsupported SageMath version {vmaj}.{vmin}")
+        output.warning(f"RSArmageddon is not supposed to work with versions other than {SUPPORTED_VMAJ}.x,")
+        output.warning(f"try installing the latest one of those before reporting a bug")
     return sage, cyg_runtime
 
 
