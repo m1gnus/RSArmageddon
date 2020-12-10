@@ -3,49 +3,55 @@ import colorama
 from colorama import Fore
 
 
+def _print(*args, **kwargs):
+    print(*args, **kwargs, file=sys.stderr)
+
+
 colorama.init(autoreset=True)
 
 
 def yellow(msg):
-    print(f"{Fore.YELLOW}{msg}", file=sys.stderr)
+    _print(f"{Fore.YELLOW}{msg}")
 
 
 def white(msg):
-    print(f"{Fore.LIGHTWHITE_EX}{msg}", file=sys.stderr)
+    _print(f"{Fore.LIGHTWHITE_EX}{msg}")
 
 
 def success(msg):
-    print(f"[{Fore.GREEN}+{Fore.RESET}] {msg}", file=sys.stderr)
+    _print(f"[{Fore.GREEN}+{Fore.RESET}] {msg}")
 
 
 def primary(msg):
-    print(f"[{Fore.BLUE}*{Fore.RESET}] {msg}", file=sys.stderr)
+    _print(f"[{Fore.BLUE}*{Fore.RESET}] {msg}")
 
 
 def secondary(msg):
-    print(f"[{Fore.CYAN}#{Fore.RESET}] {msg}", file=sys.stderr)
+    _print(f"[{Fore.CYAN}#{Fore.RESET}] {msg}")
 
 
 def info(msg):
-    print(f"[{Fore.BLUE}${Fore.RESET}] {msg}", file=sys.stderr)
+    _print(f"[{Fore.BLUE}${Fore.RESET}] {msg}")
 
 
 def warning(msg):
-    print(f"[{Fore.LIGHTYELLOW_EX}W{Fore.RESET}] {msg}", file=sys.stderr)
+    _print(f"[{Fore.LIGHTYELLOW_EX}W{Fore.RESET}] {msg}")
 
 
 def error(msg):
-    print(f"[{Fore.RED}-{Fore.RESET}] {msg}", file=sys.stderr)
+    _print(f"[{Fore.RED}-{Fore.RESET}] {msg}")
 
 
 def newline():
-    print(file=sys.stderr)
+    _print()
 
 
 if __name__ == "__main__":
-    yellow("Yellow")
-    white("White")
+    yellow("Yellow text")
+    white("White text")
     success("Success")
+    primary("Primary output")
+    secondary("Secondary output")
     info("Info")
     warning("Warning")
     error("Error")
