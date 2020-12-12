@@ -23,11 +23,11 @@ def success(msg):
 
 
 def primary(msg):
-    _print(f"[{Fore.BLUE}*{Fore.RESET}] {msg}")
+    _print(f"[{Fore.CYAN}*{Fore.RESET}] {msg}")
 
 
 def secondary(msg):
-    _print(f"[{Fore.CYAN}#{Fore.RESET}] {msg}")
+    _print(f"[{Fore.MAGENTA}#{Fore.RESET}] {msg}")
 
 
 def info(msg):
