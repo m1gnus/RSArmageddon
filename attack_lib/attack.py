@@ -1,4 +1,5 @@
 import sys
+import output
 
 from operator import itemgetter
 from functools import wraps
@@ -30,7 +31,7 @@ def init(attack_name, default_key_name):
             sys.__excepthook__(exctype, value, traceback)
     sys.excepthook = excepthook
 
-    print("[+] {} attack started".format(name), file=sys.stderr)
+    output.success("{} attack started".format(name))
 
 
 def with_name_set(f):
@@ -79,24 +80,24 @@ def success():
         else:
             raise ValueError("Bad cleartext '{}'".format(cleartext))
         print("c:{},{}".format(text, textname))
-    print("[+] {} attack succeeded".format(name), file=sys.stderr)
+    output.success("{} attack succeeded".format(name))
     sys.exit(0)
 
 
 @with_name_set
 def fail(*s, bad_key=False):
     if s:
-        print("[-]", *map(str, s), file=sys.stderr)
-    print("[-] {} attack failed".format(name), file=sys.stderr)
+        output.error(" ".join(map(str, s)))
+    output.error("{} attack failed".format(name))
     sys.exit(1 if not bad_key else 2)
 
 
 @with_name_set
 def info(*s):
     if s:
-        print("[*]", *map(str, s), file=sys.stderr)
+        output.primary(" ".join(map(str, s)))
     else:
-        print(file=sys.stderr)
+        output.newline()
 
 
 @with_name_set
@@ -146,32 +147,32 @@ _input = input
 def input(prompt=None, *, default=None, validator=None):
     if prompt is not None:
         prompt_default = " [{}]".format(default) if default is not None else ""
-        prompt = "[@] {}{}: ".format(prompt, prompt_default)
-    else:
-        prompt = ""
+        prompt = "{}{}: ".format(prompt, prompt_default)
 
     if validator is None:
         validator = lambda x: x
 
-    with redirect_stdout(sys.stderr):
-        while True:
-            try:
-                inp = _input(prompt).strip()
-            except EOFError:
-                if prompt:
-                    print()
-                fail()
+    while True:
+        if prompt is not None:
+            output.info(prompt, newline=False)
 
-            if not inp:
-                if default is not None:
-                    return default
-                else:
-                    print("[*] Must enter a value")
-                    continue
+        try:
+            inp = _input().strip()
+        except EOFError:
+            if prompt:
+                output.newline()
+            fail()
 
-            try:
-                inp = validator(inp)
-            except ValueError as e:
-                print("[*] Invalid input ({})".format(e))
+        if not inp:
+            if default is not None:
+                return default
             else:
-                return inp
+                output.warning("Must enter a value")
+                continue
+
+        try:
+            inp = validator(inp)
+        except ValueError as e:
+            output.warning("Invalid input ({})".format(e))
+        else:
+            return inp

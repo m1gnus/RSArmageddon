@@ -4,7 +4,7 @@ from colorama import Fore
 
 
 def _print(*args, **kwargs):
-    print(*args, **kwargs, file=sys.stderr)
+    print(*args, **kwargs, file=sys.stderr, flush=True)
 
 
 colorama.init(autoreset=True)
