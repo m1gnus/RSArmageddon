@@ -1,11 +1,12 @@
 #!/usr/bin/env sage
 
 import sys
+import output
 
 
 n = Integer(sys.argv[1])
-print("[+] Start Primality test", file=sys.stderr)
+output.success("Start Primality test")
 if is_prime(n):
-    print("[*] The number is prime", file=sys.stderr)
+    output.info("The number is prime")
 else:
-    print("[*] The number is not prime", file=sys.stderr)
+    output.info("The number is not prime")

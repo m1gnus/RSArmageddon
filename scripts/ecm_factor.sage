@@ -3,10 +3,12 @@
 import sys
 from itertools import groupby
 
+import output
+
 
 n = Integer(sys.argv[1])
-print("[+] Start Factorization with ECM method", file=sys.stderr)
+output.success("Start Factorization with ECM method")
 results = groupby(ecm.factor(n))
-print("[+] Factorization complete", file=sys.stderr)
+output.success("Factorization complete")
 for fact, exp in results:
-    print("[*] {}^{}".format(fact,len(tuple(exp))), file=sys.stderr)
+    output.primary("{}^{}".format(fact, len(tuple(exp))))

@@ -1,9 +1,11 @@
 #!/usr/bin/env sage
 
 import sys
+import output
 
 
 n = Integer(sys.argv[1])
-print("[+] Start calculating euler's phi of {}".format(n), file=sys.stderr)
+output.success("Start calculating euler's phi of {}".format(n))
 res = euler_phi(n)
-print("[*] {}".format(res), file=sys.stderr)
+output.success("Done")
+output.primary("{}".format(res))

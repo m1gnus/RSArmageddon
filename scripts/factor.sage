@@ -1,10 +1,11 @@
 #!/usr/bin/env sage
 
 import sys
+import output
 
 n = Integer(sys.argv[1])
-print("[+] Start Factorization", file=sys.stderr)
+output.success("Start Factorization")
 results = factor(n)
-print("[+] Factorization complete", file=sys.stderr)
+output.success("Factorization complete")
 for fact, exp in results:
-    print("[*] {}^{}".format(fact, exp), file=sys.stderr)
+    output.primary("{}^{}".format(fact, exp))
