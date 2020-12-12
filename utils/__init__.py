@@ -3,12 +3,14 @@ import json
 import random
 import hashlib
 
+from pathlib import Path
+from shutil import copyfileobj
 from functools import partial
 from contextlib import redirect_stdout
+from importlib import resources, import_module
 from base64 import b64encode, urlsafe_b64encode
 from gmpy2 import invert, isqrt, gcd
-
-import output
+from utils import output
 
 
 DEFAULT_E = 65537
@@ -317,3 +319,28 @@ def file_checksum(filename):
         for chunk in iter(partial(f.read, 4096), b""):
             hash_sha256.update(chunk)
     return hash_sha256.hexdigest()
+
+
+def module_root(m):
+    mpath = Path(m.__file__)
+    if mpath.stem == "__init__":
+        mpath = mpath.parent
+    return mpath
+
+
+def copy_resource(package, res, dest):
+    with resources.open_binary(package, res) as src, \
+            open(Path(dest)/res, "wb") as dst:
+        copyfileobj(src, dst)
+
+
+def copy_resource_tree(package, dest):
+    package_name = package.__name__.split(".")[-1]
+    dest_subdir = Path(dest)/package_name
+    dest_subdir.mkdir(mode=0o755, exist_ok=True)
+    for x in resources.contents(package):
+        if resources.is_resource(package, x):
+            copy_resource(package, x, dest_subdir)
+        elif x != "__pycache__":
+            subpackage = import_module(f".{x}", package.__name__)
+            copy_resource_tree(subpackage, dest_subdir)

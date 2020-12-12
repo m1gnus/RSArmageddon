@@ -1,8 +1,7 @@
 import sys
 
-import output
-
 from args import args
+from utils import output
 from certs import print_key, print_key_json, generate_key, encode_pubkey, encode_privkey, load_key
 from utils import compute_extra_key_elements, compute_pubkey, complete_privkey
 

@@ -1,23 +1,25 @@
 import os
 import sys
 
-from shutil import copyfileobj
 from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
-from importlib import resources
 from itertools import chain
 from contextlib import redirect_stdout
 from subprocess import TimeoutExpired
 
-import output
 import sage
+import utils
+import colorama
 import attack_lib
 from args import args
-from utils import DEFAULT_E, to_bytes_auto, output_text, compute_d, complete_privkey, int_from_path, compute_d
 from certs import encode_privkey, load_key, load_keys
 from crypto import uncipher
 from attacks import attack_path, builtin, installed
 from parsing import parse_n_e_file
+from utils import (
+        output, DEFAULT_E, to_bytes_auto, output_text,
+        compute_d, complete_privkey, int_from_path,
+        compute_d, copy_resource, copy_resource_tree)
 
 
 def parse_output(s):
@@ -89,9 +91,10 @@ def run():
                     text = int.from_bytes(text)
                 print(f"c:{text},{name if name is not True else ''}")
         input_file.flush()
-        with resources.open_binary(attack_lib, "attack.py") as src, \
-                open(Path(attack_lib_dir)/"attack.py", "wb") as dst:
-            copyfileobj(src, dst)
+
+        copy_resource(attack_lib, "attack.py", attack_lib_dir)
+        copy_resource(utils, "output.py", attack_lib_dir)
+        copy_resource_tree(colorama, attack_lib_dir)
 
         _, cyg_runtime = sage.get_sage()
 

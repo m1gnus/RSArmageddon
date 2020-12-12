@@ -6,7 +6,7 @@ import sys
 
 from itertools import compress
 
-import output
+from utils import output
 from args import args
 from banner import (
         print_banner,

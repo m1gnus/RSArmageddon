@@ -7,8 +7,7 @@ from pathlib import Path
 from gmpy2 import invert
 from Crypto.PublicKey import RSA
 
-import output
-from utils import DEFAULT_E
+from utils import output, DEFAULT_E
 
 
 common_formats = {

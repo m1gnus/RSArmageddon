@@ -1,7 +1,7 @@
 import sys
 import attacks
-import output
 
+from utils import output
 from encodings.aliases import aliases
 from contextlib import redirect_stdout
 

@@ -7,10 +7,8 @@ import subprocess
 from pathlib import Path, PurePosixPath
 from itertools import count, chain
 from subprocess import Popen, PIPE, TimeoutExpired
-
 from psutil import Process, wait_procs
-
-import output
+from utils import output
 
 
 if os.name == "nt":
@@ -86,8 +84,8 @@ def get_sage_nt_locations_appdata():
     assert os.name == "nt"
     try:
         appdata = Path(os.environ.get("LOCALAPPDATA", os.environ["APPDATA"]))
-    except KeyError:
-        raise RuntimeError("Cannot find the AppData folder! Is this a sane Windows site?")
+    except KeyError as e:
+        raise RuntimeError("Cannot find the AppData folder! Is this a sane Windows machine?") from e
     for subdir in appdata.glob("sagemath*"):
         m = version_re.search(subdir.name)
         if m:
