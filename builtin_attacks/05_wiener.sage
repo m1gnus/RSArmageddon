@@ -7,9 +7,7 @@
 
 import attack
 
-attack.init("Wiener factorization", "wiener")
-
-_, keys = attack.get_args()
+_, keys = attack.init("Wiener factorization", "wiener")
 n, e, _ = keys[0]
 
 n = Integer(n)

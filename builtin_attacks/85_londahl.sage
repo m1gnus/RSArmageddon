@@ -7,9 +7,7 @@
 import attack
 from attack import positive_int
 
-attack.init("Londahl factorization", "londahl")
-
-_, keys = attack.get_args()
+_, keys = attack.init("Londahl factorization", "londahl")
 n, e, _ = keys[0]
 
 n = Integer(n)

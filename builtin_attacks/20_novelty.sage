@@ -7,9 +7,7 @@
 import attack
 from attack import positive_int
 
-attack.init("Novelty primes factorization", "novelty")
-
-_, keys = attack.get_args()
+_, keys = attack.init("Novelty primes factorization", "novelty")
 n, e, _ = keys[0]
 
 bound = attack.input("Insert upper bound: max number of digits", default=1000000, validator=positive_int)

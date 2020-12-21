@@ -7,9 +7,7 @@
 
 import attack
 
-attack.init("Pollard's p-1 factorization", "pollard_p_1")
-
-_, keys = attack.get_args()
+_, keys = attack.init("Pollard's p-1 factorization", "pollard_p_1")
 n, e, _ = keys[0]
 
 B = isqrt(n)

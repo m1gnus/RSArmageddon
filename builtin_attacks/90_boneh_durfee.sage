@@ -252,9 +252,7 @@ def boneh_durfee(pol, modulus, mm, tt, XX, YY):
     return 0, 0
 
 
-attack.init("Boneh-Durfee factorization", "boneh_durfee")
-
-_, keys = attack.get_args()
+_, keys = attack.init("Boneh-Durfee factorization", "boneh_durfee")
 n, e, _ = keys[0]
 
 def parse_delta(s):

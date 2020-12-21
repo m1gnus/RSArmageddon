@@ -13,10 +13,7 @@ from urllib import request
 
 URL = "http://factordb.com/api"
 
-
-attack.init("FactorDB factorization", "factordb")
-
-_, keys = attack.get_args()
+_, keys = attack.init("FactorDB factorization", "factordb")
 n, e, _ = keys[0]
 
 with request.urlopen(f"{URL}?query={n}") as response:

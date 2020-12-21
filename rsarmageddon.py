@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 import os
 import sys
 
@@ -19,6 +18,8 @@ from commands import pem, ciphertool, attack, misc
 
 
 def main():
+    output.init(args.color)
+
     if args.quiet:
         sys.stderr.close()
         sys.stderr = open(os.devnull, "w")

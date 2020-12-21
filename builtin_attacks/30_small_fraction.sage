@@ -7,9 +7,7 @@
 import attack
 from attack import positive_int
 
-attack.init("Small fraction factorization", "small_fraction")
-
-_, keys = attack.get_args()
+_, keys = attack.init("Small fraction factorization", "small_fraction")
 n, e, _ = keys[0]
 
 depth = attack.input("Insert depth", default=50, validator=positive_int)

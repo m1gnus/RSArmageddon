@@ -82,6 +82,7 @@ def run():
     with TemporaryDirectory() as attack_lib_dir, \
             NamedTemporaryFile("w", encoding="ascii") as input_file:
         with redirect_stdout(input_file):
+            print(f"C:{args.color}")
             for (n, e), name in keys:
                 print(f"k:{n},{e},{name if name is not None else ''}")
             for text, name in args.inputs:

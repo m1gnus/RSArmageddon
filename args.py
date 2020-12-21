@@ -69,7 +69,8 @@ commons_parser.add_argument("--show-encodings",          action="store_const", c
 commons_parser.add_argument("--credits",                 action="store_const", const=True, help="Show credits")
 commons_parser.add_argument("--version",                 action="store_const", const=True, help="Show version")
 commons_parser.add_argument("--json",                    action="store_const", const=True, help="Show version")
-commons_parser.add_argument("--quiet", "--silent", "-s", action="store_const", const=True, help='Suppress informative output')
+commons_parser.add_argument("--quiet", "--silent", "-s", action="store_const", const=True, help="Suppress informative output")
+commons_parser.add_argument("--color", choices=["auto", "always", "never"], help="Suppress informative output")
 
 main_parser = ArgumentParser(parents=[commons_parser])
 
@@ -132,6 +133,7 @@ class CustomNamespace(Namespace):
         self.version=False
         self.json=False
         self.quiet=False
+        self.color="auto"
 
 
 args = main_parser.parse_args(namespace=CustomNamespace())

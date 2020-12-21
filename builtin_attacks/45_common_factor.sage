@@ -22,9 +22,7 @@ def common_factor(indices):
         return n1, e1, n2, e2, p, q1, q2, name1, name2
 
 
-attack.init("Common factor", "common_factor")
-
-_, keys = attack.get_args(min_keys=2, deduplicate="ns")
+_, keys = attack.init("Common factor", "common_factor", min_keys=2, deduplicate="ns")
 
 found = False
 

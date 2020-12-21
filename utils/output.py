@@ -7,15 +7,23 @@ def _print(*args, **kwargs):
     print(*args, **kwargs, file=sys.stderr, flush=True)
 
 
-colorama.init(autoreset=True)
+def init(color="auto"):
+    if color == "auto":
+        colorama.init()
+    elif color == "always":
+        colorama.init(strip=False)
+    elif color == "never":
+        colorama.init(strip=True, convert=False)
+    else:
+        raise ValueError(f"Bad color setting {color!r}")
 
 
 def yellow(msg, newline=True):
-    _print(f"{Fore.YELLOW}{msg}", end=("\n" if newline else ""))
+    _print(f"{Fore.YELLOW}{msg}{Fore.RESET}", end=("\n" if newline else ""))
 
 
 def white(msg, newline=True):
-    _print(f"{Fore.LIGHTWHITE_EX}{msg}", end=("\n" if newline else ""))
+    _print(f"{Fore.LIGHTWHITE_EX}{msg}{Fore.RESET}", end=("\n" if newline else ""))
 
 
 def success(msg, newline=True):

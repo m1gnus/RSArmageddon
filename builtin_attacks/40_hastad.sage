@@ -8,9 +8,7 @@ from itertools import combinations
 
 import attack
 
-attack.init("Hastad broadcast", "hastad")
-
-ciphertexts, keys = attack.get_args(min_keys=2, min_ciphertexts=2, deduplicate="keys")
+ciphertexts, keys = attack.init("Hastad broadcast", "hastad", min_keys=2, min_ciphertexts=2, deduplicate="keys")
 ns, es, _ = tuple(zip(*keys))
 cs, _ = tuple(zip(*ciphertexts))
 _, name = ciphertexts[0]

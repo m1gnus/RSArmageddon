@@ -8,9 +8,7 @@
 
 import attack
 
-attack.init("Fermat factorization", "fermat")
-
-_, keys = attack.get_args()
+_, keys = attack.init("Fermat factorization", "fermat")
 n, e, _ = keys[0]
 
 a = isqrt(n)

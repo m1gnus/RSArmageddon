@@ -13,9 +13,7 @@ sys.setrecursionlimit(100000)
 
 import attack
 
-attack.init("Qi Cheng factorization", "qicheng")
-
-_, keys = attack.get_args()
+_, keys = attack.init("Qi Cheng factorization", "qicheng")
 n, e, _ = keys[0]
 
 ATTEMPTS = 20

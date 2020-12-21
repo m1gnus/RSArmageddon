@@ -7,9 +7,7 @@
 import attack
 from attack import positive_int
 
-attack.init("Small factor factorization", "small_factor")
-
-_, keys = attack.get_args()
+_, keys = attack.init("Small factor factorization", "small_factor")
 n, e, _ = keys[0]
 
 bound = attack.input("Insert upper bound", default=10000000, validator=positive_int)
