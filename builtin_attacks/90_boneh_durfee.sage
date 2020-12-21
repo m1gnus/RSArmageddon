@@ -111,20 +111,19 @@ def remove_unhelpful(BB, monomials, bound, current):
     return BB
 
 
+# Boneh and Durfee revisited by Herrmann and May
+#
+# finds a solution if:
+# * d < N^delta
+# * |x| < e^delta
+# * |y| < e^0.5
+# whenever delta < 1 - sqrt(2)/2 ~ 0.292
+#
 # Returns:
 # * 0,0   if it fails
 # * -1,-1 if `strict=true`, and determinant doesn't bound
 # * x0,y0 the solutions of `pol`
 def boneh_durfee(pol, modulus, mm, tt, XX, YY):
-	
-    # Boneh and Durfee revisited by Herrmann and May
-
-    # finds a solution if:
-    # * d < N^delta
-    # * |x| < e^delta
-    # * |y| < e^0.5
-    # whenever delta < 1 - sqrt(2)/2 ~ 0.292
-
     # substitution (Herrman and May)
     PR.<u, x, y> = PolynomialRing(ZZ)
     Q = PR.quotient(x*y + 1 - u) # u = xy + 1
@@ -150,14 +149,14 @@ def boneh_durfee(pol, modulus, mm, tt, XX, YY):
 
     # y-shifts (selected by Herrman and May)
     for jj in range(1, tt + 1):
-        for kk in range((mm/tt) * jj, mm + 1):
+        for kk in range((mm//tt) * jj, mm + 1):
             yshift = y^jj * polZ(u, x, y)^kk * modulus^(mm - kk)
             yshift = Q(yshift).lift()
             gg.append(yshift) # substitution
 
     # y-shifts list of monomials
     for jj in range(1, tt + 1):
-        for kk in range((mm/tt) * jj, mm + 1):
+        for kk in range((mm//tt) * jj, mm + 1):
             monomials.append(u^kk * y^jj)
 
     # construct lattice B
@@ -212,7 +211,6 @@ def boneh_durfee(pol, modulus, mm, tt, XX, YY):
     # transform vector i & j -> polynomials 1 & 2
     if debug:
         attack.info("Looking for independent vectors in the lattice")
-    found_polynomials = False
 
     for pol1_idx in range(nn - 1):
         for pol2_idx in range(pol1_idx + 1, nn):
@@ -230,30 +228,28 @@ def boneh_durfee(pol, modulus, mm, tt, XX, YY):
             # are these good polynomials?
             if rr.is_zero() or rr.monomials() == [1]:
                 continue
-            else:
-                found_polynomials = True
-                break
-        if found_polynomials:
-            break
 
-    if not found_polynomials:
-        attack.info("No independant vectors could be found. This should very rarely happen...")
-        return 0, 0
+            rr = rr(q, q)
 
-    rr = rr(q, q)
+            # solutions
+            soly = rr.roots()
 
-    # solutions
-    soly = rr.roots()
+            if len(soly) == 0:
+                attack.info("Your prediction (delta) is too small")
+                return 0, 0
 
-    if len(soly) == 0:
-        attack.info("Your prediction (delta) is too small")
-        return 0, 0
+            soly = soly[0][0]
+            ss = pol1(q, soly)
+            solx = ss.roots()
 
-    soly = soly[0][0]
-    ss = pol1(q, soly)
-    solx = ss.roots()[0][0]
+            if len(solx) == 0 or solx[0][0] <= 0:
+                continue
 
-    return solx, soly
+            solx = solx[0][0]
+            return solx, soly
+
+    attack.info("No independent vectors could be found. This should very rarely happen...")
+    return 0, 0
 
 
 attack.init("Boneh-Durfee factorization", "boneh_durfee")
@@ -263,7 +259,7 @@ n, e, _ = keys[0]
 
 def parse_delta(s):
     delta = float(s)
-    if not 0.001 < delta < 0.292:
+    if not 0.001 <= delta <= 0.292:
         raise ValueError("Must be between .001 and .292")
     return delta
 
