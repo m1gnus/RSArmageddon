@@ -10,36 +10,36 @@ def _print(*args, **kwargs):
 colorama.init(autoreset=True)
 
 
-def yellow(msg):
-    _print(f"{Fore.YELLOW}{msg}")
+def yellow(msg, newline=True):
+    _print(f"{Fore.YELLOW}{msg}", end=("\n" if newline else ""))
 
 
-def white(msg):
-    _print(f"{Fore.LIGHTWHITE_EX}{msg}")
+def white(msg, newline=True):
+    _print(f"{Fore.LIGHTWHITE_EX}{msg}", end=("\n" if newline else ""))
 
 
-def success(msg):
-    _print(f"[{Fore.GREEN}+{Fore.RESET}] {msg}")
+def success(msg, newline=True):
+    _print(f"[{Fore.GREEN}+{Fore.RESET}] {msg}", end=("\n" if newline else ""))
 
 
-def primary(msg):
-    _print(f"[{Fore.CYAN}*{Fore.RESET}] {msg}")
+def primary(msg, newline=True):
+    _print(f"[{Fore.CYAN}*{Fore.RESET}] {msg}", end=("\n" if newline else ""))
 
 
-def secondary(msg):
-    _print(f"[{Fore.MAGENTA}#{Fore.RESET}] {msg}")
+def secondary(msg, newline=True):
+    _print(f"[{Fore.MAGENTA}#{Fore.RESET}] {msg}", end=("\n" if newline else ""))
 
 
-def info(msg):
-    _print(f"[{Fore.BLUE}${Fore.RESET}] {msg}")
+def info(msg, newline=True):
+    _print(f"[{Fore.BLUE}${Fore.RESET}] {msg}", end=("\n" if newline else ""))
 
 
-def warning(msg):
-    _print(f"[{Fore.LIGHTYELLOW_EX}W{Fore.RESET}] {msg}")
+def warning(msg, newline=True):
+    _print(f"[{Fore.LIGHTYELLOW_EX}W{Fore.RESET}] {msg}", end=("\n" if newline else ""))
 
 
-def error(msg):
-    _print(f"[{Fore.RED}-{Fore.RESET}] {msg}")
+def error(msg, newline=True):
+    _print(f"[{Fore.RED}-{Fore.RESET}] {msg}", end=("\n" if newline else ""))
 
 
 def newline():
