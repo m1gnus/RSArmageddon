@@ -1,17 +1,13 @@
 import sys
-import output
+import signal
+import multiprocessing
 
 from operator import itemgetter
 from functools import wraps
 from itertools import count, islice
 from contextlib import redirect_stdout
 
-
-def positive_int(s):
-    i = int(s)
-    if i <= 0:
-        raise ValueError("Must be a positive number")
-    return i
+import output
 
 
 name = None
@@ -75,6 +71,14 @@ def init(attack_name, default_key_name, *, min_keys=1, min_ciphertexts=0, dedupl
 
     output.success("{} attack started".format(name))
     return ciphertexts, keys
+
+
+@wraps(multiprocessing.Pool)
+def Pool(*args, **kwargs):
+    old_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
+    pool = multiprocessing.Pool(*args, **kwargs)
+    signal.signal(signal.SIGINT, old_handler)
+    return pool
 
 
 def with_name_set(f):
@@ -141,6 +145,13 @@ def info(*s):
         output.primary(" ".join(map(str, s)))
     else:
         output.newline()
+
+
+def positive_int(s):
+    i = int(s)
+    if i <= 0:
+        raise ValueError("Must be a positive number")
+    return i
 
 
 _input = input

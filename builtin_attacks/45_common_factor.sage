@@ -5,7 +5,6 @@
 #   https://www.slideshare.net/VineetKumar130/common-factor-attack-on-rsa
 ##
 
-from multiprocessing import Pool
 from itertools import combinations
 
 import attack
@@ -26,7 +25,7 @@ _, keys = attack.init("Common factor", "common_factor", min_keys=2, deduplicate=
 
 found = False
 
-with Pool() as pool:
+with attack.Pool() as pool:
     indices = combinations(range(len(keys)), 2)
     for ret in pool.imap_unordered(common_factor, indices, chunksize=10000):
         if ret is not None:
