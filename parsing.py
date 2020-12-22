@@ -10,7 +10,7 @@ from crypto import standards
 from utils import DEFAULT_E
 
 
-def parse_unsigned(s, base=0):
+def parse_unsigned(s, base=None):
     """Convert to int raising ValueError on negative values
 
     Arguments:
@@ -19,14 +19,25 @@ def parse_unsigned(s, base=0):
     Keyword arguments:
     base -- numeric base of the conversion
     """
-    ret = int(s, base)
+    if base is not None:
+        if base < 2:
+            raise ValueError("base cannot be less than 2")
+        ret = int(s, base)
+    else:
+        s = s.strip()
+        if len(s) > 1 and not s[1].isalpha():
+            s = s.lstrip("0")
+        if not s:
+            s = "0"
+        ret = int(s, 0)
     if ret < 0:
         raise ValueError(f"'{ret}' is not unsigned")
     return ret
 
 
 def parse_int_arg(s):
-    """Take a string in the format number[:base] and return the corresponding integer
+    """Take a string in the format number[:base] or any format
+    recognized by python and return the corresponding integer
 
     Arguments:
     s -- string to convert
@@ -45,11 +56,9 @@ def parse_int_arg(s):
         raise ValueError(str(e)) from e
 
     if base:
-        base = int(base)
+        return parse_unsigned(number, int(base))
     else:
-        base = 10
-
-    return parse_unsigned(number, base)
+        return parse_unsigned(number)
 
 
 time_re1 = re.compile(r"(\d+)([hms]?)")
