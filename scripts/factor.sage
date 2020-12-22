@@ -4,6 +4,8 @@ import sys
 import output
 
 n = Integer(sys.argv[1])
+output.init(sys.argv[2])
+
 output.success("Start Factorization")
 results = factor(n)
 output.success("Factorization complete")

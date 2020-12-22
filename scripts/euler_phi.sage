@@ -5,6 +5,8 @@ import output
 
 
 n = Integer(sys.argv[1])
+output.init(sys.argv[2])
+
 output.success("Start calculating euler's phi of {}".format(n))
 res = euler_phi(n)
 output.success("Done")

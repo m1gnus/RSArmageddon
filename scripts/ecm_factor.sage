@@ -7,6 +7,8 @@ import output
 
 
 n = Integer(sys.argv[1])
+output.init(sys.argv[2])
+
 output.success("Start Factorization with ECM method")
 results = groupby(ecm.factor(n))
 output.success("Factorization complete")

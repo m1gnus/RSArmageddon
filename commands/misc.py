@@ -25,13 +25,13 @@ def run():
     script_name = script_names[args.command]
 
     with resources.path(scripts, script_name) as script, \
-            TemporaryDirectory() as attack_lib_dir:
-        copy_resource(utils, "output.py", attack_lib_dir)
-        copy_resource_tree(colorama, attack_lib_dir)
+            TemporaryDirectory() as libs_dir:
+        copy_resource(utils, "output.py", libs_dir)
+        copy_resource_tree(colorama, libs_dir)
 
         _, cyg_runtime = sage.get_sage()
 
         env = os.environ.copy()
-        env["PYTHONPATH"] = str(sage.cyg_path(attack_lib_dir, cyg_runtime))
+        env["PYTHONPATH"] = str(sage.cyg_path(libs_dir, cyg_runtime))
 
-        sage.run(script, str(args.n), env=env)
+        sage.run(script, str(args.n), args.color, env=env)
