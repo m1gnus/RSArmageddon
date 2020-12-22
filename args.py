@@ -1,8 +1,9 @@
 import os
 import sys
 
+from textwrap import dedent
 from pathlib import Path
-from argparse import ArgumentParser, Action, Namespace, SUPPRESS
+from argparse import ArgumentParser, Action, Namespace, SUPPRESS, RawDescriptionHelpFormatter
 
 from certs import load_key
 from parsing import (
@@ -11,6 +12,43 @@ from parsing import (
         parse_list,
         parse_std_list,
         path_or_stdout)
+
+
+main_description = dedent("""\
+    PLACEHOLDER""")
+
+attack_description = dedent("""\
+    PLACEHOLDER""")
+
+pem_description = dedent("""\
+    PLACEHOLDER""")
+
+cipher_description = dedent("""\
+    PLACEHOLDER""")
+
+uncipher_description = dedent("""\
+    PLACEHOLDER""")
+
+factor_description = dedent("""\
+    PLACEHOLDER""")
+
+ecm_description = dedent("""\
+    PLACEHOLDER""")
+
+isprime_description = dedent("""\
+    PLACEHOLDER""")
+
+eulerphi_description = dedent("""\
+    PLACEHOLDER""")
+
+epilog = dedent("""\
+    Number format:
+        All numbers can be input in a variety of formats and bases.
+        RSArmageddon understands regular base 10 numbers and python literals
+        introduced by 0x for hex, 0o for octal or 0b for binary.
+        Other less common bases can be specified in the form number:base
+        where base is either an integer between 2 and 32, b64 for base64, or
+        b85 for base85""")
 
 
 class ReadKeyFile(Action):
@@ -22,13 +60,13 @@ class ReadKeyFile(Action):
 
 
 key_parser = ArgumentParser(add_help=False)
-key_parser.add_argument("--key", "-k", action=ReadKeyFile, type=Path,          help="Path to a key file")
-key_parser.add_argument("-n",          action="store",     type=parse_int_arg, help="RSA public modulus")
-key_parser.add_argument("-e",          action="store",     type=parse_int_arg, help="RSA public exponent")
-key_parser.add_argument("-d",          action="store",     type=parse_int_arg, help="RSA private exponent")
-key_parser.add_argument("-p",          action="store",     type=parse_int_arg, help="RSA first prime factor")
-key_parser.add_argument("-q",          action="store",     type=parse_int_arg, help="RSA second prime factor")
-key_parser.add_argument("--phi",       action="store",     type=parse_int_arg, help="Euler's phi of RSA public modulus")
+key_parser.add_argument("--key", "-k", action=ReadKeyFile, type=Path,          metavar="FILE",   help="Path to a key file")
+key_parser.add_argument("-n",          action="store",     type=parse_int_arg, metavar="NUMBER", help="RSA public modulus")
+key_parser.add_argument("-e",          action="store",     type=parse_int_arg, metavar="NUMBER", help="RSA public exponent")
+key_parser.add_argument("-d",          action="store",     type=parse_int_arg, metavar="NUMBER", help="RSA private exponent")
+key_parser.add_argument("-p",          action="store",     type=parse_int_arg, metavar="NUMBER", help="RSA first prime factor")
+key_parser.add_argument("-q",          action="store",     type=parse_int_arg, metavar="NUMBER", help="RSA second prime factor")
+key_parser.add_argument("--phi",       action="store",     type=parse_int_arg, metavar="NUMBER", help="Euler's phi of RSA public modulus")
 
 
 class Input(Action):
@@ -47,51 +85,52 @@ class Output(Action):
 
 
 text_parser_common = ArgumentParser(add_help=False)
-text_parser_common.add_argument("--output", "-o", action=Output, type=path_or_stdout, help="")
-text_parser_common.add_argument("--encryption-standard", "--std", action="store", type=parse_std_list, default=["pkcs"], help="")
+text_parser_common.add_argument("--encryption-standard", "--std", action="store", type=parse_std_list, default=["pkcs"], metavar="STD", help="Comma-separated list. Try to use these encryption standards when reading or writing ciphertext files (default: pkcs)")
 text_parser_common.set_defaults(inputs=[])
 
 plaintext_parser = ArgumentParser(add_help=False, parents=[text_parser_common])
-plaintext_parser.add_argument("--plaintext",      "--pt",  "--encrypt",      action=Input, type=parse_int_arg, help="")
-plaintext_parser.add_argument("--plaintext-raw",  "--ptr", "--encrypt-raw",  action=Input, type=os.fsencode,   help="")
-plaintext_parser.add_argument("--plaintext-file", "--ptf", "--encrypt-file", action=Input, type=Path,          help="")
+plaintext_parser.add_argument("--plaintext",      "--pt",  "--encrypt",      action=Input,  type=parse_int_arg,  metavar="NUMBER",        help="Use number as plaintext")
+plaintext_parser.add_argument("--plaintext-raw",  "--ptr", "--encrypt-raw",  action=Input,  type=os.fsencode,    metavar="BINARY_STRING", help="Use string as plaintext")
+plaintext_parser.add_argument("--plaintext-file", "--ptf", "--encrypt-file", action=Input,  type=Path,           metavar="FILE",          help="Use file as plaintext")
+plaintext_parser.add_argument("--output",         "-o",                      action=Output, type=path_or_stdout, metavar="FILE",          help="Output ciphertext to file or stdout (applies to previous input)")
 
 ciphertext_parser = ArgumentParser(add_help=False, parents=[text_parser_common])
-ciphertext_parser.add_argument("--ciphertext",      "--ct",  "--decrypt",      action=Input, type=parse_int_arg, help="")
-ciphertext_parser.add_argument("--ciphertext-raw",  "--ctr", "--decrypt-raw",  action=Input, type=os.fsencode,   help="")
-ciphertext_parser.add_argument("--ciphertext-file", "--ctf", "--decrypt-file", action=Input, type=Path,          help="")
 ciphertext_parser.add_argument("--encoding", action="store", help="")
+ciphertext_parser.add_argument("--ciphertext",      "--ct",  "--decrypt",      action=Input,  type=parse_int_arg,  metavar="NUMBER",        help="Use number as ciphertext")
+ciphertext_parser.add_argument("--ciphertext-raw",  "--ctr", "--decrypt-raw",  action=Input,  type=os.fsencode,    metavar="BINARY_STRING", help="Use string as ciphertext")
+ciphertext_parser.add_argument("--ciphertext-file", "--ctf", "--decrypt-file", action=Input,  type=Path,           metavar="FILE",          help="Use file as ciphertext")
+ciphertext_parser.add_argument("--output",          "-o",                      action=Output, type=path_or_stdout, metavar="FILE",          help="Output plaintext to file or stdout (applies to previous input)")
 
 commons_parser = ArgumentParser(argument_default=SUPPRESS, add_help=False)
-commons_parser.add_argument("--show-attacks",            action="store_const", const=True, help="Show implemented attacks")
-commons_parser.add_argument("--show-attacks-short",      action="store_const", const=True, help="Show implemented attacks")
-commons_parser.add_argument("--show-encodings",          action="store_const", const=True, help="Show encodings")
+commons_parser.add_argument("--show-attacks",            action="store_const", const=True, help="Show all available attacks")
+commons_parser.add_argument("--show-attacks-short",      action="store_const", const=True, help="Show all available attacks (short form)")
+commons_parser.add_argument("--show-encodings",          action="store_const", const=True, help="Show all available encodings")
 commons_parser.add_argument("--credits",                 action="store_const", const=True, help="Show credits")
 commons_parser.add_argument("--version",                 action="store_const", const=True, help="Show version")
-commons_parser.add_argument("--json",                    action="store_const", const=True, help="Show version")
+commons_parser.add_argument("--json",                    action="store_const", const=True, help="Turn on json output format")
 commons_parser.add_argument("--quiet", "--silent", "-s", action="store_const", const=True, help="Suppress informative output")
-commons_parser.add_argument("--color", choices=["auto", "always", "never"], help="Suppress informative output")
+commons_parser.add_argument("--color",                choices=["auto", "always", "never"], help="Set color output behavior")
 
-main_parser = ArgumentParser(parents=[commons_parser])
+main_parser = ArgumentParser(parents=[commons_parser], formatter_class=RawDescriptionHelpFormatter, description=main_description, epilog=epilog)
 
 scripts_parser = ArgumentParser(add_help=False)
-scripts_parser.add_argument("n", action="store", type=parse_int_arg, help="")
+scripts_parser.add_argument("n", action="store", type=parse_int_arg, metavar="NUMBER", help="Input number")
 
 command_subparsers = main_parser.add_subparsers(dest="command")
-attack_parser = command_subparsers.add_parser("attack", parents=[commons_parser, ciphertext_parser])
-pem_parser = command_subparsers.add_parser("pem", parents=[commons_parser, key_parser])
-cipher_parser = command_subparsers.add_parser("encrypt", parents=[commons_parser, key_parser, plaintext_parser])
-uncipher_parser = command_subparsers.add_parser("decrypt", parents=[commons_parser, key_parser, ciphertext_parser])
-command_subparsers.add_parser("factor",   parents=[commons_parser, scripts_parser])
-command_subparsers.add_parser("ecm",      parents=[commons_parser, scripts_parser])
-command_subparsers.add_parser("isprime",  parents=[commons_parser, scripts_parser])
-command_subparsers.add_parser("eulerphi", parents=[commons_parser, scripts_parser])
+attack_parser   = command_subparsers.add_parser("attack",  parents=[commons_parser, ciphertext_parser],             formatter_class=RawDescriptionHelpFormatter, description=attack_description,   epilog=epilog)
+pem_parser      = command_subparsers.add_parser("pem",     parents=[commons_parser, key_parser],                    formatter_class=RawDescriptionHelpFormatter, description=pem_description,      epilog=epilog)
+cipher_parser   = command_subparsers.add_parser("encrypt", parents=[commons_parser, key_parser, plaintext_parser],  formatter_class=RawDescriptionHelpFormatter, description=cipher_description,   epilog=epilog)
+uncipher_parser = command_subparsers.add_parser("decrypt", parents=[commons_parser, key_parser, ciphertext_parser], formatter_class=RawDescriptionHelpFormatter, description=uncipher_description, epilog=epilog)
+command_subparsers.add_parser("factor",                    parents=[commons_parser, scripts_parser],                formatter_class=RawDescriptionHelpFormatter, description=factor_description,   epilog=epilog)
+command_subparsers.add_parser("ecm",                       parents=[commons_parser, scripts_parser],                formatter_class=RawDescriptionHelpFormatter, description=ecm_description,      epilog=epilog)
+command_subparsers.add_parser("isprime",                   parents=[commons_parser, scripts_parser],                formatter_class=RawDescriptionHelpFormatter, description=isprime_description,  epilog=epilog)
+command_subparsers.add_parser("eulerphi",                  parents=[commons_parser, scripts_parser],                formatter_class=RawDescriptionHelpFormatter, description=eulerphi_description, epilog=epilog)
 
-pem_parser.add_argument("--generate", "-g",                      action="store_true", help="")
-pem_parser.add_argument("--dump-values", "--dumpvalues", "--dv", action="store_true", help="")
-pem_parser.add_argument("--create-public", "--cpu",              action="store", type=path_or_stdout, help="")
-pem_parser.add_argument("--create-private", "--cpr",             action="store", type=path_or_stdout, help="")
-pem_parser.add_argument("--file-format", "--ff", choices=["pem", "der", "openssh"], default="pem", help="")
+pem_parser.add_argument("--generate", "-g",                      action="store_true",                                 help="Generate a new 2048 bit key pair")
+pem_parser.add_argument("--dump-values", "--dumpvalues", "--dv", action="store_true",                                 help="Dump key values to standard output")
+pem_parser.add_argument("--create-public", "--cpu",              action="store", type=path_or_stdout, metavar="FILE", help="Output public key to file")
+pem_parser.add_argument("--create-private", "--cpr",             action="store", type=path_or_stdout, metavar="FILE", help="Output private key to file")
+pem_parser.add_argument("--file-format", "--ff",                 choices=["pem", "der", "openssh"], default="pem",    help="Set output key file format")
 
 
 class NewKey(Action):
@@ -109,17 +148,17 @@ class SetE(Action):
         keys[-1] = (n, e)
 
 
-attack_parser.add_argument("attacks", action="store", type=parse_list, help="")
-attack_parser.add_argument("-n", action=NewKey, type=parse_int_arg, help="")
-attack_parser.add_argument("-e", action=SetE, type=parse_int_arg, help="")
-attack_parser.add_argument("--n-e-file", "--nef", action="append", dest="n_e_files", type=Path, default=[], help="")
-attack_parser.add_argument("--timeout", "-t", action="store", type=parse_time, help="")
-attack_parser.add_argument("--exts", "-x", action="store", type=parse_list, default=["pem", "pub"], help="")
-attack_parser.add_argument("--output-key", "--ok", action="store_true", help="")
-attack_parser.add_argument("--output-key-file", "--okf", action="store", type=path_or_stdout, help="")
-attack_parser.add_argument("--output-key-dir", "--okd", action="store", type=Path, help="")
-attack_parser.add_argument("--key", "-k", action="append", dest="key_paths", type=Path, default=[], help="")
-attack_parser.add_argument("--recursive", "-r", action="store_true", help="")
+attack_parser.add_argument("attacks",                    action="store",                                type=parse_list,     metavar="ATTACKS_LIST", help="Comma-separated list of attacks to be executed")
+attack_parser.add_argument("-n",                         action=NewKey,                                 type=parse_int_arg,  metavar="NUMBER",       help="Target key RSA public modulus")
+attack_parser.add_argument("-e",                         action=SetE,                                   type=parse_int_arg,  metavar="NUMBER",       help="Target key RSA public exponent (applies to preceding -n)")
+attack_parser.add_argument("--n-e-file", "--nef",        action="append", dest="n_e_files", default=[], type=Path,           metavar="FILE",         help="Read target public keys from text FILE, one comma-separated n,e pair per line")
+attack_parser.add_argument("--key", "-k",                action="append", dest="key_paths", default=[], type=Path,           metavar="PATH",         help="Read target public keys from PATH. PATH can either be a single key file or a directory containing key files")
+attack_parser.add_argument("--exts", "-x",               action="store",  default=["pem", "pub"],       type=parse_list,     metavar="EXTENSIONS",   help="Comma-separated list of file extensions. Selects which files are picked up by -k when PATH is a directory")
+attack_parser.add_argument("--recursive", "-r",          action="store_true",                                                                        help="Descend recursively inside directories when looking for key files (-k only looks into the first level by default)")
+attack_parser.add_argument("--output-key", "--ok",       action="store_true",                                                                        help="Output first cracked key to standard output")
+attack_parser.add_argument("--output-key-file", "--okf", action="store",                                type=path_or_stdout, metavar="FILE",         help="Output first cracked key to FILE")
+attack_parser.add_argument("--output-key-dir", "--okd",  action="store",                                type=Path,           metavar="DIRECTORY",    help="Output all cracked keys to this directory")
+attack_parser.add_argument("--timeout", "-t",            action="store",                                type=parse_time,     metavar="TIME",         help="Set maximum run time allowed for each attack")
 attack_parser.set_defaults(keys=[])
 
 
