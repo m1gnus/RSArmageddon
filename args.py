@@ -111,7 +111,7 @@ commons_parser.add_argument("--json",                    action="store_const", c
 commons_parser.add_argument("--quiet", "--silent", "-s", action="store_const", const=True, help="Suppress informative output")
 commons_parser.add_argument("--color",                choices=["auto", "always", "never"], help="Set color output behavior")
 
-main_parser = ArgumentParser(parents=[commons_parser], formatter_class=RawDescriptionHelpFormatter, description=main_description, epilog=epilog)
+main_parser = ArgumentParser(parents=[commons_parser], formatter_class=RawDescriptionHelpFormatter, description=main_description)
 
 scripts_parser = ArgumentParser(add_help=False)
 scripts_parser.add_argument("n", action="store", type=parse_int_arg, metavar="NUMBER", help="Input number")
