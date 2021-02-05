@@ -2,6 +2,7 @@ import os
 import sys
 
 from textwrap import dedent
+from functools import partial
 from pathlib import Path
 from argparse import ArgumentParser, Action, Namespace, SUPPRESS, RawDescriptionHelpFormatter
 
@@ -14,41 +15,53 @@ from parsing import (
         path_or_stdout)
 
 
+help_formatter = partial(RawDescriptionHelpFormatter, max_help_position=30)
+
 main_description = dedent("""\
-    PLACEHOLDER""")
+        RSArmageddon: Smashing RSA for fun and profit
+
+        Commands:
+          attack                      execute attacks
+          pem                         manage keys and key files
+          encrypt                     encrypt data and files
+          decrypt                     decrypt data and files
+          factor                      factorize a number with PARI factorization
+          ecm                         factorize a number with ellyptic curve method
+          isprime                     primality test
+          eulerphi                    calculate euler phi of a number""")
 
 attack_description = dedent("""\
-    PLACEHOLDER""")
+        Attack weak public keys and recover private keys""")
 
 pem_description = dedent("""\
-    PLACEHOLDER""")
+        Manage keys and key files""")
 
 cipher_description = dedent("""\
-    PLACEHOLDER""")
+        Encrypt data and files using different encryption standards""")
 
 uncipher_description = dedent("""\
-    PLACEHOLDER""")
+        Decrypt data and files using different encryption standards""")
 
 factor_description = dedent("""\
-    PLACEHOLDER""")
+        Factorize a number using PARI factorization""")
 
 ecm_description = dedent("""\
-    PLACEHOLDER""")
+        Factorize a number using elliptic curve method""")
 
 isprime_description = dedent("""\
-    PLACEHOLDER""")
+        Primality test""")
 
 eulerphi_description = dedent("""\
-    PLACEHOLDER""")
+        Calculate Euler's phi function of a number""")
 
 epilog = dedent("""\
-    Number format:
-        All numbers can be input in a variety of formats and bases.
-        RSArmageddon understands regular base 10 numbers and python literals
-        introduced by 0x for hex, 0o for octal or 0b for binary.
-        Other less common bases can be specified in the form number:base
-        where base is either an integer between 2 and 32, b64 for base64, or
-        b85 for base85""")
+        Number format:
+            All numbers can be input in a variety of formats and bases.
+            RSArmageddon understands regular base 10 numbers and python literals
+            introduced by 0x for hex, 0o for octal or 0b for binary.
+            Other less common bases can be specified in the form number:base
+            where base is either an integer between 2 and 32, b64 for base64, or
+            b85 for base85""")
 
 
 class ReadKeyFile(Action):
@@ -111,20 +124,20 @@ commons_parser.add_argument("--json",                    action="store_const", c
 commons_parser.add_argument("--quiet", "--silent", "-s", action="store_const", const=True, help="Suppress informative output")
 commons_parser.add_argument("--color",                choices=["auto", "always", "never"], help="Set color output behavior")
 
-main_parser = ArgumentParser(parents=[commons_parser], formatter_class=RawDescriptionHelpFormatter, description=main_description)
+main_parser = ArgumentParser(parents=[commons_parser], formatter_class=help_formatter, description=main_description)
 
 scripts_parser = ArgumentParser(add_help=False)
 scripts_parser.add_argument("n", action="store", type=parse_int_arg, metavar="NUMBER", help="Input number")
 
 command_subparsers = main_parser.add_subparsers(dest="command")
-attack_parser   = command_subparsers.add_parser("attack",  parents=[commons_parser, ciphertext_parser],             formatter_class=RawDescriptionHelpFormatter, description=attack_description,   epilog=epilog)
-pem_parser      = command_subparsers.add_parser("pem",     parents=[commons_parser, key_parser],                    formatter_class=RawDescriptionHelpFormatter, description=pem_description,      epilog=epilog)
-cipher_parser   = command_subparsers.add_parser("encrypt", parents=[commons_parser, key_parser, plaintext_parser],  formatter_class=RawDescriptionHelpFormatter, description=cipher_description,   epilog=epilog)
-uncipher_parser = command_subparsers.add_parser("decrypt", parents=[commons_parser, key_parser, ciphertext_parser], formatter_class=RawDescriptionHelpFormatter, description=uncipher_description, epilog=epilog)
-command_subparsers.add_parser("factor",                    parents=[commons_parser, scripts_parser],                formatter_class=RawDescriptionHelpFormatter, description=factor_description,   epilog=epilog)
-command_subparsers.add_parser("ecm",                       parents=[commons_parser, scripts_parser],                formatter_class=RawDescriptionHelpFormatter, description=ecm_description,      epilog=epilog)
-command_subparsers.add_parser("isprime",                   parents=[commons_parser, scripts_parser],                formatter_class=RawDescriptionHelpFormatter, description=isprime_description,  epilog=epilog)
-command_subparsers.add_parser("eulerphi",                  parents=[commons_parser, scripts_parser],                formatter_class=RawDescriptionHelpFormatter, description=eulerphi_description, epilog=epilog)
+attack_parser   = command_subparsers.add_parser("attack",  parents=[commons_parser, ciphertext_parser],             formatter_class=help_formatter, description=attack_description,   epilog=epilog)
+pem_parser      = command_subparsers.add_parser("pem",     parents=[commons_parser, key_parser],                    formatter_class=help_formatter, description=pem_description,      epilog=epilog)
+cipher_parser   = command_subparsers.add_parser("encrypt", parents=[commons_parser, key_parser, plaintext_parser],  formatter_class=help_formatter, description=cipher_description,   epilog=epilog)
+uncipher_parser = command_subparsers.add_parser("decrypt", parents=[commons_parser, key_parser, ciphertext_parser], formatter_class=help_formatter, description=uncipher_description, epilog=epilog)
+command_subparsers.add_parser("factor",                    parents=[commons_parser, scripts_parser],                formatter_class=help_formatter, description=factor_description,   epilog=epilog)
+command_subparsers.add_parser("ecm",                       parents=[commons_parser, scripts_parser],                formatter_class=help_formatter, description=ecm_description,      epilog=epilog)
+command_subparsers.add_parser("isprime",                   parents=[commons_parser, scripts_parser],                formatter_class=help_formatter, description=isprime_description,  epilog=epilog)
+command_subparsers.add_parser("eulerphi",                  parents=[commons_parser, scripts_parser],                formatter_class=help_formatter, description=eulerphi_description, epilog=epilog)
 
 pem_parser.add_argument("--generate", "-g",                      action="store_true",                                 help="Generate a new 2048 bit key pair")
 pem_parser.add_argument("--dump-values", "--dumpvalues", "--dv", action="store_true",                                 help="Dump key values to standard output")
