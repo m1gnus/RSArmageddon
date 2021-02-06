@@ -106,6 +106,8 @@ def compute_pubkey(n, e, d, p, q, phi=None):
             if e is not None and tmp_e != e:
                 tmp_e = int(invert(d, phi//gcd(p-1,q-1)))
             pks.add((p*q, tmp_e))
+        if e is not None:
+            pks.add((p*q, e))
 
     if len(pks) != 1:
         raise ValueError(f"Inconsistent parameters {tup}")
