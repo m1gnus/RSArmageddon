@@ -89,7 +89,7 @@ def print_key(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=Non
 
 def print_key_json(n=None, e=None, d=None, p=None, q=None, dp=None, dq=None, pinv=None, qinv=None):
     d = {k: str(v) for k, v in locals().items()}
-    json.dump(d, indent=4)
+    json.dump(d, sys.stdout, indent=4)
     print()
 
 
