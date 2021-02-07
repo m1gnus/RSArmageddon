@@ -290,7 +290,7 @@ def output_text(label, text, filename, encoding=None, json_output=False):
     if filename is True:
         text_hex = f"0x{text_raw.hex()}"
         if json_output:
-            output = {
+            output_obj = {
                 "dec": str(text),
                 "hex": text_hex,
                 "raw": str(text_raw),
@@ -298,8 +298,8 @@ def output_text(label, text, filename, encoding=None, json_output=False):
                 "url": str(text_b64_url)
             }
             if text_str is not None:
-                output["str"] = text_str
-            json.dump(output, sys.stdout, indent=4)
+                output_obj["str"] = text_str
+            json.dump(output_obj, sys.stdout, indent=4)
         else:
             with redirect_stdout(sys.stderr):
                 output.primary(f"{label} (dec): {text}")
