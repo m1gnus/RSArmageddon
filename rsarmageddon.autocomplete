@@ -1,0 +1,27 @@
+(rsarmageddon
+  (default
+    (arg COMMAND) (files -0) (suggest command)
+    (desc "Command to execute"))
+  (multiple unargumented
+    ((options -h --help) (complete --help)
+     (desc "Show this help message and exit"))
+    ((options --show-attacks) (complete --show-attacks)
+     (desc "Show all available attacks"))
+    ((options --show-attacks-short) (complete --show-attacks-short)
+     (desc "Show all available attacks (short form)"))
+    ((options --show-encodings) (complete --show-encodings)
+     (desc "Show all available encodings"))
+    ((options --credits) (complete --credits)
+     (desc "Show credits"))
+    ((options --version) (complete --version)
+     (desc "Show version"))
+    ((options --json) (complete --json)
+     (desc "Turn on json output format"))
+    ((options --quiet --silent -s) (complete --quiet --silent)
+     (desc "Suppress informative output")))
+  (argumented
+    (options --color) (complete --color)
+    (arg WHEN) (files -0) (suggest color)
+    (desc "Set color output behavior"))
+  (suggestion command (verbatim attack pem encrypt decrypt factor ecm isprime eulerphi))
+  (suggestion color (verbatim auto always never)))
