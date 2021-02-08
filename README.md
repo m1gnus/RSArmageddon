@@ -166,7 +166,7 @@ shadow both system-wide and builtin ones.
 
 Attack files are Sage scripts written using RSArmageddon's attack API.
 The name of the attack will be equal to the attack file's name with the
-trailing .sage extension removed. To properly integrate with
+trailing `.sage` extension removed. To properly integrate with
 RSArmageddon, every attack should:
 
 * `import attack`
@@ -202,7 +202,9 @@ RSArmageddon, every attack should:
   outputs in the same way as for keys.
 * When the attack has done all it can to recover every possible key and
   cleartext, it should call `attack.success` or `attack.fail` to signal
-  the outcome and terminate the script.
+  the outcome and terminate the script. `attack.fail` takes an optional
+  message and a boolean keyword `bad_key` which signals RSArmageddon one
+  of the keys the attack was given is invalid.
 
 **Note:** Attacks may freely use any feature of the Python programming
 language version 3.7 and of SageMath 9 but they should **not** interact
