@@ -1,2 +1,5 @@
 __pycache__
 *.sage.py
+/build
+/dist
+*.egg-info
