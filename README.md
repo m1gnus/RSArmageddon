@@ -22,8 +22,8 @@ For Arch users, this software is easily installed from the [AUR][1]
 $ yaourt -S rsarmageddon
 ```
 
-Packages are provided for Ubuntu/Debian and Windows in the [releases][5]
-section of the GitHub page.
+Packages will be provided for Ubuntu/Debian and Windows in the
+[releases][5] section of the GitHub page.
 
 A python package is available on [PyPI][2] for installation through pip
 on unsupported systems (but Sage has to be installed manually, see
@@ -230,3 +230,4 @@ environment.
 [2]: https://pypi.org/
 [3]: https://doc.sagemath.org/pdf/en/installation/installation.pdf
 [4]: https://github.com/sagemath/sage-windows/releases
+[5]: https://github.com/m1gnus/RSArmageddon/releases
