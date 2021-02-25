@@ -26,8 +26,8 @@ from functools import partial
 from pathlib import Path
 from argparse import ArgumentParser, Action, Namespace, SUPPRESS, RawDescriptionHelpFormatter
 
-from certs import load_key
-from parsing import (
+from .certs import load_key
+from .parsing import (
         parse_int_arg,
         parse_time,
         parse_list,

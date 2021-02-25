@@ -28,7 +28,8 @@ from pathlib import Path, PurePosixPath
 from itertools import count, chain
 from subprocess import Popen, PIPE, TimeoutExpired
 from psutil import Process, wait_procs
-from utils import output
+
+from .utils import output
 
 
 if os.name == "nt":

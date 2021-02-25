@@ -23,10 +23,10 @@ import sys
 from pathlib import Path
 from functools import partial
 
-from args import args
-from utils import output
-from crypto import cipher, uncipher
-from utils import int_from_path, output_text, compute_d, compute_n, compute_pubkey, complete_privkey, DEFAULT_E
+from ..args import args
+from ..utils import output
+from ..crypto import cipher, uncipher
+from ..utils import int_from_path, output_text, compute_d, compute_n, compute_pubkey, complete_privkey, DEFAULT_E
 
 
 def run():

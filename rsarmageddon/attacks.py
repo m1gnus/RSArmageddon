@@ -24,7 +24,7 @@ from pathlib import Path
 from importlib import resources
 from importlib.resources import contents, is_resource
 
-import builtin_attacks
+from . import builtin_attacks
 
 
 if os.name == "posix":

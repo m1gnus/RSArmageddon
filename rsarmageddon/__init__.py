@@ -25,16 +25,16 @@ import sys
 
 from itertools import compress
 
-from utils import output
-from args import args
-from banner import (
+from .utils import output
+from .args import args
+from .banner import (
         print_banner,
         print_credits,
         print_attacks,
         print_attacks_short,
         print_encodings,
         version)
-from commands import pem, ciphertool, attack, misc
+from .commands import pem, ciphertool, attack, misc
 
 
 def main():

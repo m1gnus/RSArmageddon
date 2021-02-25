@@ -30,7 +30,8 @@ from contextlib import redirect_stdout
 from importlib import resources, import_module
 from base64 import b64encode, urlsafe_b64encode
 from gmpy2 import invert, isqrt, gcd
-from utils import output
+
+from . import output
 
 
 DEFAULT_E = 65537

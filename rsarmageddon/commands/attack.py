@@ -20,6 +20,7 @@
 
 import os
 import sys
+import colorama
 
 from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
@@ -27,16 +28,15 @@ from itertools import chain
 from contextlib import redirect_stdout
 from subprocess import TimeoutExpired
 
-import sage
-import utils
-import colorama
-import attack_lib
-from args import args
-from certs import encode_privkey, load_key, load_keys
-from crypto import uncipher
-from attacks import attack_path, builtin, installed
-from parsing import parse_n_e_file
-from utils import (
+from .. import sage
+from .. import utils
+from .. import attack_lib
+from ..args import args
+from ..certs import encode_privkey, load_key, load_keys
+from ..crypto import uncipher
+from ..attacks import attack_path, builtin, installed
+from ..parsing import parse_n_e_file
+from ..utils import (
         output, DEFAULT_E, to_bytes_auto, output_text,
         compute_d, complete_privkey, int_from_path,
         compute_d, copy_resource, copy_resource_tree)

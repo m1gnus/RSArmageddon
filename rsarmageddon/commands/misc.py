@@ -26,12 +26,12 @@ import colorama
 from importlib import resources
 from tempfile import TemporaryDirectory
 
-import sage
-import scripts
-import utils
+from .. import sage
+from .. import scripts
+from .. import utils
 
-from args import args
-from utils import copy_resource, copy_resource_tree
+from ..args import args
+from ..utils import copy_resource, copy_resource_tree
 
 
 def run():

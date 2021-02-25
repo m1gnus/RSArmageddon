@@ -19,11 +19,12 @@
 ##########################################################################
 
 import sys
-import attacks
 
-from utils import output
 from encodings.aliases import aliases
 from contextlib import redirect_stdout
+
+from . import attacks
+from .utils import output
 
 
 banner_text = r"""

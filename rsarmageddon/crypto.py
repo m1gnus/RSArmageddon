@@ -21,16 +21,13 @@
 import sys
 import binascii
 
-
+from pathlib import Path
+from functools import partial
 from gmpy2 import invert
-
 from Crypto.Cipher import PKCS1_OAEP, PKCS1_v1_5
 from Crypto.PublicKey import RSA
 
-from pathlib import Path
-from functools import partial
-
-from utils import to_bytes_auto, DEFAULT_E
+from .utils import to_bytes_auto, DEFAULT_E
 
 
 standards = {

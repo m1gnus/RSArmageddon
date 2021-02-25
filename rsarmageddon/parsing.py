@@ -26,8 +26,8 @@ import subprocess
 from base64 import b64decode, b85decode
 from pathlib import Path
 
-from crypto import standards
-from utils import DEFAULT_E
+from .crypto import standards
+from .utils import DEFAULT_E
 
 
 def parse_unsigned(s, base=None):

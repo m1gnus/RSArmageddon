@@ -27,7 +27,7 @@ from functools import wraps
 from itertools import count, islice
 from contextlib import redirect_stdout
 
-import output
+from . import output
 
 
 name = None
