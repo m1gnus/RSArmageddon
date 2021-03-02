@@ -37,7 +37,7 @@ from .banner import (
 from .commands import pem, ciphertool, attack, misc
 
 
-def main():
+def rsarmageddon():
     output.init(args.color)
 
     if args.quiet:
@@ -81,14 +81,18 @@ def main():
         output.error(e)
 
 
-if __name__ == "__main__":
+def main():
     try:
-        main()
+        rsarmageddon()
     except KeyboardInterrupt:
         output.error("Interrupted")
-    #except Exception as e:
-    #    output.error(f"Unhandled exception: {e}")
+    except Exception as e:
+        output.error(f"Unhandled exception: {e}")
     else:
         sys.exit(0)
 
     sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
