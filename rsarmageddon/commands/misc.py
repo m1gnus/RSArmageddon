@@ -31,7 +31,7 @@ from .. import scripts
 from .. import utils
 
 from ..args import args
-from ..utils import copy_resource, copy_resource_tree
+from ..utils import copy_resource_module, copy_resource_tree
 
 
 def run():
@@ -46,7 +46,7 @@ def run():
 
     with resources.path(scripts, script_name) as script, \
             TemporaryDirectory() as libs_dir:
-        copy_resource(utils, "output.py", libs_dir)
+        copy_resource_module(utils, "output", libs_dir)
         copy_resource_tree(colorama, libs_dir)
 
         _, cyg_runtime = sage.get_sage()

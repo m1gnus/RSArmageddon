@@ -39,7 +39,7 @@ from ..parsing import parse_n_e_file
 from ..utils import (
         output, DEFAULT_E, to_bytes_auto, output_text,
         compute_d, complete_privkey, int_from_path,
-        compute_d, copy_resource, copy_resource_tree)
+        compute_d, copy_resource_module, copy_resource_tree)
 
 
 def parse_output(s):
@@ -113,8 +113,8 @@ def run():
                 print(f"c:{text},{name if name is not True else ''}")
         input_file.flush()
 
-        copy_resource(attack_lib, "attack.py", attack_lib_dir)
-        copy_resource(utils, "output.py", attack_lib_dir)
+        copy_resource_module(attack_lib, "attack", attack_lib_dir)
+        copy_resource_module(utils, "output", attack_lib_dir)
         copy_resource_tree(colorama, attack_lib_dir)
 
         _, cyg_runtime = sage.get_sage()

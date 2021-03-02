@@ -22,6 +22,8 @@ import sys
 import json
 import random
 import hashlib
+import importlib
+import importlib.machinery
 
 from pathlib import Path
 from shutil import copyfileobj
@@ -355,6 +357,22 @@ def copy_resource(package, res, dest):
     with resources.open_binary(package, res) as src, \
             open(Path(dest)/res, "wb") as dst:
         copyfileobj(src, dst)
+
+
+def copy_resource_module(package, module, dest):
+    suffs = importlib.machinery.all_suffixes()
+    for res in resources.contents(package):
+        if not resources.is_resource(package, res):
+            continue
+        try:
+            name, ext = res.rsplit(".", maxsplit=1)
+        except ValueError:
+            continue
+        if name == module and f".{ext}" in suffs:
+            copy_resource(package, res, dest)
+            return
+    else:
+        raise ValueError(f"No such module {module!r} in package {package}")
 
 
 def copy_resource_tree(package, dest):

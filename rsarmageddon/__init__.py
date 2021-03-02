@@ -86,8 +86,6 @@ def main():
         rsarmageddon()
     except KeyboardInterrupt:
         output.error("Interrupted")
-    except Exception as e:
-        output.error(f"Unhandled exception: {e}")
     else:
         sys.exit(0)
 
