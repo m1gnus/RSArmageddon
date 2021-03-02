@@ -227,7 +227,7 @@ ensure signals are properly handled in the attack script's execution
 environment.
 
 [1]: https://aur.archlinux.org/
-[2]: https://pypi.org/
+[2]: https://pypi.org/project/rsarmageddon/
 [3]: https://doc.sagemath.org/pdf/en/installation/installation.pdf
 [4]: https://github.com/sagemath/sage-windows/releases
 [5]: https://github.com/m1gnus/RSArmageddon/releases
