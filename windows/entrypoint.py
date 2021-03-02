@@ -1,0 +1,2 @@
+import rsarmageddon
+rsarmageddon.main()
