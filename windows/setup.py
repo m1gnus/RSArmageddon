@@ -6,7 +6,8 @@ setup(
     description="RSA cryptography and cryptoanalysis toolkit",
     options={
         "build_exe": {
-            "excludes": ["tkinter", "test"]
+            "excludes": ["tkinter", "test"],
+            "packages": ["rsarmageddon", "colorama"]
         }
     },
     executables=[
