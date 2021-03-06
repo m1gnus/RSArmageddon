@@ -84,6 +84,8 @@ def rsarmageddon():
 def main():
     try:
         rsarmageddon()
+    except RuntimeError as e:
+        output.error(e)
     except KeyboardInterrupt:
         output.error("Interrupted")
     else:
