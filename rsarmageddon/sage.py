@@ -24,6 +24,7 @@ import re
 import shutil
 import subprocess
 
+from textwrap import dedent
 from pathlib import Path, PurePosixPath
 from itertools import count, chain
 from subprocess import Popen, PIPE, TimeoutExpired
@@ -36,10 +37,12 @@ if os.name == "nt":
     from winreg import HKEY_CURRENT_USER, OpenKey, EnumKey, QueryValueEx
 
 
-INSTALL_SAGE_POSIX = """We could not seem to find a functioning SageMath installation on your system.
-Please refer to these online instructions to fix this: <TODO: insert link to appropriate github readme paragraph>"""
-INSTALL_SAGE_NT = """We could not seem to find a functioning SageMath installation on your system.
-Please refer to these online instructions to fix this: <TODO: insert link to appropriate github readme paragraph>"""
+INSTALL_SAGE_POSIX = dedent("""\
+        We could not seem to be able to find a functioning SageMath installation on your system.
+        Please refer to these online instructions to fix this: https://github.com/m1gnus/RSArmageddon#installing-sage-manually-on-linux""")
+INSTALL_SAGE_NT = dedent("""\
+        We could not seem to be able to find a functioning SageMath installation on your system.
+        Please refer to these online instructions to fix this: https://github.com/m1gnus/RSArmageddon#installing-sage-manually-on-windows""")
 NO_JAVA = "This program will not run on Jython and other Java based execution environments"
 
 SUPPORTED_VMAJ = 9
