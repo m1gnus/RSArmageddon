@@ -109,7 +109,7 @@ def run():
                 if isinstance(text, Path):
                     text = int_from_path(text)
                 elif isinstance(text, bytes):
-                    text = int.from_bytes(text)
+                    text = int.from_bytes(text, "big")
                 print(f"c:{text},{name if name is not True else ''}")
         input_file.flush()
 
