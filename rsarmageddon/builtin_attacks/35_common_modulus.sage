@@ -42,7 +42,7 @@ if gcd(e1, e2) != 1:
 
 _, u, v = xgcd(e1, e2)
 
-m = pow(c1, u, n) * pow(c2, v, n)
+m = (pow(c1, u, n) * pow(c2, v, n)) % n
 
 attack.cleartexts((m, name))
 attack.success()
