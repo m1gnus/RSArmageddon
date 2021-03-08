@@ -99,5 +99,4 @@ def print_encodings():
 
 
 def version(version, codename):
-    version = ".".join(version.split(".")[:2])
     print(f"RSArmageddon v{version} --{codename}--")
