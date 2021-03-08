@@ -38,6 +38,7 @@ banner_text = r"""
                                            |___/
 
   Written by M1gnus && AquilaIrreale -- PGIATASTI
+
 """
 
 credits_text = """\
