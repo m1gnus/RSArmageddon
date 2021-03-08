@@ -1,8 +1,9 @@
 from cx_Freeze import setup, Executable
+import rsarmageddon
 
 setup(
     name="rsarmageddon",
-    version="2.0.2",
+    version=rsarmageddon.__version__,
     description="RSA cryptography and cryptoanalysis toolkit",
     options={
         "build_exe": {
