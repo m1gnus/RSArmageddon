@@ -98,5 +98,6 @@ def print_encodings():
         print(enc)
 
 
-def version():
-    print("RSArmageddon v2.0 --Ares--")
+def version(version, codename):
+    version = ".".join(version.split(".")[:2])
+    print(f"RSArmageddon v{version} --{codename}--")

@@ -20,9 +20,15 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>. #
 ##########################################################################
 
+
+__version__ = "2.0.2"
+__codename__ = "Ares"
+
+
 import os
 import sys
 
+from functools import partial
 from itertools import compress
 
 from .utils import output
@@ -48,7 +54,7 @@ def rsarmageddon():
         print_banner()
 
     banner_actions = compress(*zip(
-        (version, args.version),
+        (partial(version, __version__, __codename__), args.version),
         (print_credits, args.credits),
         (print_attacks, args.show_attacks),
         (print_attacks_short, args.show_attacks_short),
