@@ -44,6 +44,7 @@ from .commands import pem, ciphertool, attack, misc
 
 
 def rsarmageddon():
+    args.parse()
     output.init(args.color)
 
     if args.quiet:

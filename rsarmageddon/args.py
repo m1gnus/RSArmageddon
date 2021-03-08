@@ -104,17 +104,15 @@ key_parser.add_argument("--phi",       action="store",     type=parse_int_arg, m
 
 class Input(Action):
     def __call__(self, parser, namespace, input_, option_string=None):
-        inputs = getattr(namespace, "inputs")
-        inputs.append((input_, True))
+        namespace.inputs.append((input_, True))
 
 
 class Output(Action):
     def __call__(self, parser, namespace, dest, option_string=None):
-        inputs = getattr(namespace, "inputs", None)
-        if not inputs:
+        if not namespace.inputs:
             raise ValueError(f"{option_string} found but no inputs have been given yet") from e
-        cur_text, _ = inputs[-1]
-        inputs[-1] = (cur_text, dest)
+        cur_text, _ = namespace.inputs.pop()
+        namespace.inputs.append((cur_text, dest))
 
 
 text_parser_common = ArgumentParser(add_help=False)
@@ -168,17 +166,15 @@ pem_parser.add_argument("--file-format", "--ff",                 choices=["pem",
 
 class NewKey(Action):
     def __call__(self, parser, namespace, n, option_string=None):
-        keys = getattr(namespace, "keys")
-        keys.append((n, None))
+        namespace.keys.append((n, None))
 
 
 class SetE(Action):
     def __call__(self, parser, namespace, e, option_string=None):
-        keys = getattr(namespace, "keys", None)
-        if not keys:
+        if not namespace.keys:
             raise ValueError(f"-e found but no moduli (-n) have been given yet")
-        n, _ = keys[-1]
-        keys[-1] = (n, e)
+        n, _ = namespace.keys.pop()
+        namespace.keys.append((n, e))
 
 
 attack_parser.add_argument("attacks",                    action="store",                                type=parse_list,     metavar="ATTACKS_LIST", help="Comma-separated list of attacks to be executed")
@@ -195,20 +191,56 @@ attack_parser.add_argument("--timeout", "-t",            action="store",        
 attack_parser.set_defaults(keys=[])
 
 
-class CustomNamespace(Namespace):
+class RSArmageddonNamespace(Namespace):
     def __init__(self):
         super().__init__()
-        self.show_attacks=False
-        self.show_attacks_short=False
-        self.show_encodings=False
-        self.credits=False
-        self.version=False
-        self.json=False
-        self.quiet=False
-        self.color="auto"
+        self.key = []
+        self.n = None
+        self.e = None
+        self.d = None
+        self.p = None
+        self.q = None
+        self.phi = None
+        self.encryption_standard = ["pkcs"]
+        self.plaintext = None
+        self.plaintext_raw = None
+        self.plaintext_file = None
+        self.output = None
+        self.encoding = None
+        self.ciphertext = None
+        self.ciphertext_raw = None
+        self.ciphertext_file = None
+        self.show_attacks = False
+        self.show_attacks_short = False
+        self.show_encodings = False
+        self.credits = False
+        self.version = False
+        self.json = False
+        self.quiet = False
+        self.color = "auto"
+        self.generate = False
+        self.dump_values = False
+        self.create_public = None
+        self.create_private = None
+        self.file_format = "pem"
+        self.attacks = None
+        self.n_e_file = []
+        self.exts = ["pem", "pub"]
+        self.recursive = False
+        self.output_key = False
+        self.output_key_file = None
+        self.output_key_dir = None
+        self.timeout = None
+        self.inputs=[]
+        self.keys=[]
+
+    def parse(self):
+        main_parser.parse_args(namespace=self)
 
 
-args = main_parser.parse_args(namespace=CustomNamespace())
+args = RSArmageddonNamespace()
+
 
 if __name__ == "__main__":
+    parse()
     print(args)
