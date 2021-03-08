@@ -137,7 +137,7 @@ commons_parser.add_argument("--show-attacks",            action="store_const", c
 commons_parser.add_argument("--show-attacks-short",      action="store_const", const=True, help="Show all available attacks (short form)")
 commons_parser.add_argument("--show-encodings",          action="store_const", const=True, help="Show all available encodings")
 commons_parser.add_argument("--credits",                 action="store_const", const=True, help="Show credits")
-commons_parser.add_argument("--version",                 action="store_const", const=True, help="Show version")
+commons_parser.add_argument("--version", "-V",           action="store_const", const=True, help="Show version")
 commons_parser.add_argument("--json",                    action="store_const", const=True, help="Turn on json output format")
 commons_parser.add_argument("--quiet", "--silent", "-s", action="store_const", const=True, help="Suppress informative output")
 commons_parser.add_argument("--color",                choices=["auto", "always", "never"], help="Set color output behavior")
