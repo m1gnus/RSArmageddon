@@ -26,6 +26,7 @@ import subprocess
 
 from textwrap import dedent
 from pathlib import Path, PurePosixPath
+from tempfile import TemporaryDirectory
 from itertools import count, chain
 from subprocess import Popen, PIPE, TimeoutExpired
 from psutil import Process, wait_procs
@@ -38,10 +39,10 @@ if os.name == "nt":
 
 
 INSTALL_SAGE_POSIX = dedent("""\
-        We could not seem to be able to find a functioning SageMath installation on your system.
+        We could not be able to find a functioning SageMath installation on your system.
         Please refer to these online instructions to fix this: https://github.com/m1gnus/RSArmageddon#installing-sage-manually-on-linux""")
 INSTALL_SAGE_NT = dedent("""\
-        We could not seem to be able to find a functioning SageMath installation on your system.
+        We could to be able to find a functioning SageMath installation on your system.
         Please refer to these online instructions to fix this: https://github.com/m1gnus/RSArmageddon#installing-sage-manually-on-windows""")
 NO_JAVA = "This program will not run on Jython and other Java based execution environments"
 
@@ -169,18 +170,22 @@ def get_sage():
     return sage, cyg_runtime
 
 
-def run(script, *args, env=None, timeout=None):
+def run(script_path, *args, env=None, timeout=None):
+    script_path = Path(script_path).resolve()
     sage, cyg_runtime = get_sage()
-    p = Popen(
-            [*cyg_bash(cyg_runtime), str(sage), str(cyg_path(script, cyg_runtime)), *args],
-            stdout=PIPE, env=env, text=True)
-    try:
-        output, _ = p.communicate(timeout=timeout)
-    except TimeoutExpired as e:
-        pp = Process(p.pid)
-        subprocesses = [pp, *pp.children(recursive=True)]
-        for subp in subprocesses:
-            subp.terminate()
-        wait_procs(subprocesses)
-        raise e
+    with TemporaryDirectory() as writeable_dir:
+        new_path = Path(writeable_dir)/script_path.name
+        shutil.copy(script_path, new_path)
+        p = Popen(
+                [*cyg_bash(cyg_runtime), str(sage), str(cyg_path(new_path, cyg_runtime)), *args],
+                stdout=PIPE, env=env, text=True)
+        try:
+            output, _ = p.communicate(timeout=timeout)
+        except TimeoutExpired as e:
+            pp = Process(p.pid)
+            subprocesses = [pp, *pp.children(recursive=True)]
+            for subp in subprocesses:
+                subp.terminate()
+            wait_procs(subprocesses)
+            raise e
     return p, output
