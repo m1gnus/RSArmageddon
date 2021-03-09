@@ -42,7 +42,7 @@ INSTALL_SAGE_POSIX = dedent("""\
         We could not be able to find a functioning SageMath installation on your system.
         Please refer to these online instructions to fix this: https://github.com/m1gnus/RSArmageddon#installing-sage-manually-on-linux""")
 INSTALL_SAGE_NT = dedent("""\
-        We could to be able to find a functioning SageMath installation on your system.
+        We could not be able to find a functioning SageMath installation on your system.
         Please refer to these online instructions to fix this: https://github.com/m1gnus/RSArmageddon#installing-sage-manually-on-windows""")
 NO_JAVA = "This program will not run on Jython and other Java based execution environments"
 
