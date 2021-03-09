@@ -1,0 +1,127 @@
+#!/bin/bash
+
+# Loosely based on the APT autocompletion script
+# https://salsa.debian.org/apt-team/apt
+
+_rsarmageddon()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    local GENERIC_OPTIONS='
+        -h --help
+        --show-attacks
+        --show-attacks-short
+        --show-encodings
+        --credits
+        --version -V
+        --json
+        --quiet --silent -s
+        --color
+    '
+
+    local KEY_OPTIONS='
+        --key -k
+        -n
+        -e
+        -d
+        -p
+        -q
+        --phi
+    '
+
+    # see if the user selected a command already
+    local COMMANDS=(
+        'attack'
+        'pem'
+        'encrypt'
+        'decrypt'
+        'factor'
+        'ecm'
+        'isprime'
+        'eulerphi')
+
+    local command i
+    for (( i=0; i < ${#words[@]}-1; i++ )); do
+        if [[ ${COMMANDS[@]} =~ ${words[i]} ]]; then
+            command=${words[i]}
+            break
+        fi
+    done
+
+    # supported options per command
+    if [[ "$cur" == -* ]]; then
+        case $command in
+            attack)
+                COMPREPLY=( $( compgen -W '--encryption-standard --std
+                  --encoding
+                  --ciphertext --ct --decrypt
+                  --ciphertext-raw --ctr --decrypt-raw
+                  --ciphertext-file --ctf --decrypt-file
+                  --output -o
+                  -n
+                  -e
+                  --n-e-file --nef
+                  --key -k
+                  --exts -x
+                  --recursive -r
+                  --output-key --ok
+                  --output-key-file --okf
+                  --output-key-dir --okd
+                  --timeout -t'"$GENERIC_OPTIONS" -- "$cur" ) )
+                return 0
+                ;;
+            pem)
+                COMPREPLY=( $( compgen -W '--generate -g
+                  --dump-values --dumpvalues --dv
+                  --create-public --cpu
+                  --create-private --cpr
+                  --file-format --ff'"$KEY_OPTIONS""$GENERIC_OPTIONS" -- "$cur" ) )
+                return 0
+                ;;
+            encrypt)
+                COMPREPLY=( $( compgen -W '--encryption-standard --std
+                  --plaintext --pt --encrypt
+                  --plaintext-raw --ptr --encrypt-raw
+                  --plaintext-file --ptf --encrypt-file
+                  --output -o'"$KEY_OPTIONS""$GENERIC_OPTIONS" -- "$cur" ) )
+                return 0
+                ;;
+            decrypt)
+                COMPREPLY=( $( compgen -W '--encryption-standard --std
+                  --encoding
+                  --ciphertext --ct --decrypt
+                  --ciphertext-raw --ctr --decrypt-raw
+                  --ciphertext-file --ctf --decrypt-file
+                  --output -o'"$KEY_OPTIONS""$GENERIC_OPTIONS" -- "$cur" ) )
+                return 0
+                ;;
+        esac
+    fi
+
+    # specific command arguments
+    if [[ -n $command ]]; then
+        case $command in
+            attack)
+                local cur_attack="$(echo "$cur" | sed 's/.*,//')"
+                local prev_attacks="$(echo "$cur" | sed 's/[^,]*$//')"
+                local all_attacks="$(rsarmageddon --show-attacks-short) all"
+                local avail_attacks="
+                    $(comm -z13 \
+                        <(echo "$prev_attacks" | tr , '\0' | sort -zu) \
+                        <(echo "$all_attacks" | tr ' \n' '\0\0' | sort -zu) \
+                        | tr '\0' '\n')"
+                COMPREPLY=( $( compgen -P "$prev_attacks" -W "$avail_attacks" -- "$cur_attack") )
+                return 0
+                ;;
+        esac
+    fi
+
+    # no command yet, show what commands we have
+    if [ "$command" = "" ]; then
+        COMPREPLY=( $( compgen -W '${COMMANDS[@]}' -- "$cur" ) )
+    fi
+
+    return 0
+} &&
+complete -F _rsarmageddon rsarmageddon
