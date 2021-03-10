@@ -8,7 +8,7 @@ _rsarmageddon()
     local cur prev words cword
     _init_completion || return
 
-    local GENERIC_OPTIONS='
+    local GENERIC_OPTIONS="
         -h --help
         --show-attacks
         --show-attacks-short
@@ -18,9 +18,29 @@ _rsarmageddon()
         --json
         --quiet --silent -s
         --color
-    '
+    "
 
-    local KEY_OPTIONS='
+    local ATTACK_OPTIONS="
+        $GENERIC_OPTIONS
+        --encryption-standard --std
+        --encoding
+        --ciphertext --ct --decrypt
+        --ciphertext-raw --ctr --decrypt-raw
+        --ciphertext-file --ctf --decrypt-file
+        --output -o
+        -n
+        -e
+        --n-e-file --nef
+        --key -k
+        --exts -x
+        --recursive -r
+        --output-key --ok
+        --output-key-file --okf
+        --output-key-dir --okd
+        --timeout -t
+    "
+
+    local KEY_OPTIONS="
         --key -k
         -n
         -e
@@ -28,7 +48,7 @@ _rsarmageddon()
         -p
         -q
         --phi
-    '
+    "
 
     # see if the user selected a command already
     local COMMANDS=(
@@ -39,7 +59,8 @@ _rsarmageddon()
         'factor'
         'ecm'
         'isprime'
-        'eulerphi')
+        'eulerphi'
+    )
 
     local command i
     for (( i=0; i < ${#words[@]}-1; i++ )); do
@@ -106,20 +127,23 @@ _rsarmageddon()
                 local cur_attack="$(echo "$cur" | sed 's/.*,//')"
                 local prev_attacks="$(echo "$cur" | sed 's/[^,]*$//')"
                 local all_attacks="$(rsarmageddon --show-attacks-short) all"
-                local avail_attacks="
-                    $(comm -z13 \
+                if [[ -z $prev_attacks ]]; then
+                    COMPREPLY=( $(compgen -W "${all_attacks}${ATTACK_OPTIONS}" -- "$cur") )
+                    return 0
+                fi
+                local available_attacks="$(comm -z13 \
                         <(echo "$prev_attacks" | tr , '\0' | sort -zu) \
                         <(echo "$all_attacks" | tr ' \n' '\0\0' | sort -zu) \
                         | tr '\0' '\n')"
-                COMPREPLY=( $( compgen -P "$prev_attacks" -W "$avail_attacks" -- "$cur_attack") )
+                COMPREPLY=( $( compgen -P "$prev_attacks" -W "$available_attacks" -- "$cur_attack") )
                 return 0
                 ;;
         esac
     fi
 
-    # no command yet, show what commands we have
+    # no command yet, show what commands and generic options we have
     if [ "$command" = "" ]; then
-        COMPREPLY=( $( compgen -W '${COMMANDS[@]}' -- "$cur" ) )
+        COMPREPLY=( $( compgen -W '${COMMANDS[@]}'"$GENERIC_OPTIONS" -- "$cur" ) )
     fi
 
     return 0
