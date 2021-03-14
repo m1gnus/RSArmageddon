@@ -1,47 +1,57 @@
 #!/bin/bash
 
-# Loosely based on the APT autocompletion script
-# https://salsa.debian.org/apt-team/apt
-
 _rsarmageddon()
 {
+    local IFS=$' \t\n'
+
+    # Initialize bash-completions
     local cur prev words cword
     _init_completion || return
 
-    local GENERIC_OPTIONS="
+    # Declare arguments
+    local COMMANDS="attack pem encrypt decrypt factor ecm isprime eulerphi"
+
+    local GLOBAL_OPTIONS_NOARG="
         -h --help
         --show-attacks
         --show-attacks-short
         --show-encodings
         --credits
-        --version -V
+        -V --version
         --json
-        --quiet --silent -s
+        -s --quiet --silent
+    "
+
+    local GLOBAL_OPTIONS_ARG="
         --color
     "
 
-    local ATTACK_OPTIONS="
-        $GENERIC_OPTIONS
-        --encryption-standard --std
-        --encoding
-        --ciphertext --ct --decrypt
-        --ciphertext-raw --ctr --decrypt-raw
-        --ciphertext-file --ctf --decrypt-file
-        --output -o
-        -n
-        -e
-        --n-e-file --nef
-        --key -k
-        --exts -x
-        --recursive -r
-        --output-key --ok
-        --output-key-file --okf
-        --output-key-dir --okd
-        --timeout -t
+    local ATTACK_OPTIONS_NOARG="
+        $GLOBAL_OPTIONS_NOARG
+        -r --recursive
     "
 
-    local KEY_OPTIONS="
-        --key -k
+    local ATTACK_OPTIONS_ARG="
+        $GLOBAL_OPTIONS_ARG
+        --std --encryption-standard
+        --encoding
+        --ct --ciphertext --decrypt
+        --ctr --ciphertext-raw --decrypt-raw
+        --ctf --ciphertext-file --decrypt-file
+        -o --output
+        -n
+        -e
+        --nef --n-e-file
+        -k --key
+        -x --exts
+        --ok --output-key
+        --okf --output-key-file
+        --okd --output-key-dir
+        -t --timeout
+    "
+
+    local KEY_OPTIONS_ARG="
+        -k --key
         -n
         -e
         -d
@@ -50,101 +60,271 @@ _rsarmageddon()
         --phi
     "
 
-    # see if the user selected a command already
-    local COMMANDS=(
-        'attack'
-        'pem'
-        'encrypt'
-        'decrypt'
-        'factor'
-        'ecm'
-        'isprime'
-        'eulerphi'
-    )
+    local PEM_OPTIONS_NOARG="
+        -g --generate
+        --dv --dump-values --dumpvalues
+        $GLOBAL_OPTIONS_NOARG
+    "
 
-    local command i
-    for (( i=0; i < ${#words[@]}-1; i++ )); do
-        if [[ ${COMMANDS[@]} =~ ${words[i]} ]]; then
-            command=${words[i]}
-            break
-        fi
-    done
+    local PEM_OPTIONS_ARG="
+        --cpu --create-public
+        --cpr --create-private
+        --ff --file-format
+        $KEY_OPTIONS_ARG
+        $GLOBAL_OPTIONS_ARG
+    "
 
-    # supported options per command
-    if [[ "$cur" == -* ]]; then
-        case $command in
-            attack)
-                COMPREPLY=( $( compgen -W '--encryption-standard --std
-                  --encoding
-                  --ciphertext --ct --decrypt
-                  --ciphertext-raw --ctr --decrypt-raw
-                  --ciphertext-file --ctf --decrypt-file
-                  --output -o
-                  -n
-                  -e
-                  --n-e-file --nef
-                  --key -k
-                  --exts -x
-                  --recursive -r
-                  --output-key --ok
-                  --output-key-file --okf
-                  --output-key-dir --okd
-                  --timeout -t'"$GENERIC_OPTIONS" -- "$cur" ) )
-                return 0
-                ;;
-            pem)
-                COMPREPLY=( $( compgen -W '--generate -g
-                  --dump-values --dumpvalues --dv
-                  --create-public --cpu
-                  --create-private --cpr
-                  --file-format --ff'"$KEY_OPTIONS""$GENERIC_OPTIONS" -- "$cur" ) )
-                return 0
-                ;;
-            encrypt)
-                COMPREPLY=( $( compgen -W '--encryption-standard --std
-                  --plaintext --pt --encrypt
-                  --plaintext-raw --ptr --encrypt-raw
-                  --plaintext-file --ptf --encrypt-file
-                  --output -o'"$KEY_OPTIONS""$GENERIC_OPTIONS" -- "$cur" ) )
-                return 0
-                ;;
-            decrypt)
-                COMPREPLY=( $( compgen -W '--encryption-standard --std
-                  --encoding
-                  --ciphertext --ct --decrypt
-                  --ciphertext-raw --ctr --decrypt-raw
-                  --ciphertext-file --ctf --decrypt-file
-                  --output -o'"$KEY_OPTIONS""$GENERIC_OPTIONS" -- "$cur" ) )
-                return 0
-                ;;
-        esac
-    fi
+    local ENCRYPT_OPTIONS_NOARG="
+        $GLOBAL_OPTIONS_NOARG
+    "
 
-    # specific command arguments
-    if [[ -n $command ]]; then
-        case $command in
-            attack)
-                local cur_attack="$(echo "$cur" | sed 's/.*,//')"
-                local prev_attacks="$(echo "$cur" | sed 's/[^,]*$//')"
-                local all_attacks="$(rsarmageddon --show-attacks-short) all"
-                if [[ -z $prev_attacks ]]; then
-                    COMPREPLY=( $(compgen -W "${all_attacks}${ATTACK_OPTIONS}" -- "$cur") )
-                    return 0
+    local ENCRYPT_OPTIONS_ARG="
+        --std --encryption-standard
+        --pt --plaintext --encrypt
+        --ptr --plaintext-raw --encrypt-raw
+        --ptf --plaintext-file --encrypt-file
+        -o --output
+        $KEY_OPTIONS_ARG
+        $GLOBAL_OPTIONS_ARG
+    "
+
+    local DECRYPT_OPTIONS_NOARG="
+        $GLOBAL_OPTIONS_NOARG
+    "
+
+    local DECRYPT_OPTIONS_ARG="
+        --std --encryption-standard
+        --encoding
+        --ct --ciphertext --decrypt
+        --ctr --ciphertext-raw --decrypt-raw
+        --ctf --ciphertext-file --decrypt-file
+        -o --output
+        $KEY_OPTIONS_ARG
+        $GLOBAL_OPTIONS_ARG
+    "
+
+    local OPTIONS_NOARG="
+        $GLOBAL_OPTIONS_NOARG
+        $ATTACK_OPTIONS_NOARG
+        $PEM_OPTIONS_NOARG
+        $ENCRYPT_OPTIONS_NOARG
+        $DECRYPT_OPTIONS_NOARG
+    "
+
+    local OPTIONS_ARG="
+        $GLOBAL_OPTIONS_ARG
+        $ATTACK_OPTIONS_ARG
+        $PEM_OPTIONS_ARG
+        $ENCRYPT_OPTIONS_ARG
+        $DECRYPT_OPTIONS_ARG
+    "
+
+    COMPREPLY=( $(
+        _short_option_chars()
+        {
+            for word in $1; do
+                if [[ $word =~ ^-[^-]$ ]]; then
+                    printf "${word##-}"
                 fi
-                local available_attacks="$(comm -z13 \
-                        <(echo "$prev_attacks" | tr , '\0' | sort -zu) \
-                        <(echo "$all_attacks" | tr ' \n' '\0\0' | sort -zu) \
-                        | tr '\0' '\n')"
-                COMPREPLY=( $( compgen -P "$prev_attacks" -W "$available_attacks" -- "$cur_attack") )
-                return 0
-                ;;
-        esac
-    fi
+            done
+        }
 
-    # no command yet, show what commands and generic options we have
-    if [ "$command" = "" ]; then
-        COMPREPLY=( $( compgen -W '${COMMANDS[@]}'"$GENERIC_OPTIONS" -- "$cur" ) )
-    fi
+        _is_option()
+        {
+            for word in $2; do
+                [[ $word = $1 ]] && return 0
+            done
+            return 1
+        }
+
+        _normalize_option() {
+            local i words
+            echo "$2" | while read -a words; do
+                for (( i=0; i < ${#words[@]}; i++ )); do
+                    if [[ ${words[i]} = $1 ]]; then
+                        echo "${words[0]}"
+                        return 0
+                    fi
+                done
+            done
+            return 1
+        }
+
+        _parse_short_cluster()
+        {
+            # arguments
+            local word="$1"
+            local option_chars_arg="$2"
+
+            # return values
+            short_cluster_noarg_options=""
+            short_cluster_arg_option=""
+            short_cluster_arg=""
+
+            [[ $word =~ ^-[^-] ]] || return 1
+
+            if [[ -n $option_chars_arg ]]; then
+                short_cluster_noarg_options="${word%%[$option_chars_arg]*}"
+            else
+                short_cluster_noarg_options="$word"
+            fi
+            short_cluster_arg_option="${word:${#short_cluster_noarg_options}:1}"
+            short_cluster_arg="${word:$((${#short_cluster_noarg_options}+1))}"
+        }
+
+        _complete_list() {
+            local choices="$1"
+            local arg="$2"
+            local prefix="$3"
+
+            local cur="${arg##*,}"
+            prefix="${prefix}${arg:0:${#arg}-${#cur}}"
+
+            local choices_arr prefix_arr
+            read -r -a choices_arr <<< "$choices"
+            IFS=, read -r -a prefix_arr <<< "$prefix"
+
+            local choices_dedup=""
+            for choice in "${choices_arr[@]}"; do
+                for used in "${prefix_arr[@]}"; do
+                    if [[ "$choice" = "$used" ]]; then
+                        continue 2
+                    fi
+                done
+                choices_dedup="$choices_dedup $choice"
+            done
+
+            compgen -o nospace -P "$prefix" -W "$choices_dedup" -- "$cur"
+        }
+
+        # Parse command line
+        local options_noarg="$GLOBAL_OPTIONS_NOARG"
+        local options_arg="$GLOBAL_OPTIONS_ARG"
+        local option_chars_arg="$(_short_option_chars "$options_arg")"
+        local i command pos_arg option arg prefix
+        for (( i=1; i < ${#words[@]}-1; i++ )); do
+            local word="${words[i]}"
+            if [[ -n $options_noarg && $word == -* ]]; then
+                case "$word" in
+                    --) # disable options parsing
+                        options_noarg=""
+                        options_arg=""
+                        option_chars_arg=""
+                        ;;
+                    --*)
+                        if _is_option "$word" "$options_arg"; then
+                            (( i++ )) # long option wants argument, skip next word
+                            if (( i == ${#words[@]}-1 )); then
+                                option="$word"
+                                arg="$cur"
+                                prefix=""
+                            fi
+                        fi
+                        ;;
+                    -*)
+                        _parse_short_cluster "$word" "$option_chars_arg"
+                        if [[ -n "$short_cluster_arg_option" && -z "$short_cluster_arg" ]]; then
+                            (( i++ )) # short option wants argument not found in current word, skip next word
+                            if (( i == ${#words[@]}-1 )); then
+                                option="-$short_cluster_option"
+                                arg="$cur"
+                                prefix=""
+                            fi
+                        fi
+                        ;;
+                esac
+            elif [[ -z $command ]]; then
+                command="$word"
+                case "$command" in
+                    attack)
+                        options_noarg="$ATTACK_OPTIONS_NOARG"
+                        options_arg="$ATTACK_OPTIONS_ARG"
+                        ;;
+                    pem)
+                        options_noarg="$PEM_OPTIONS_NOARG"
+                        options_arg="$PEM_OPTIONS_ARG"
+                        ;;
+                    encrypt)
+                        options_noarg="$ENCRYPT_OPTIONS_NOARG"
+                        options_arg="$ENCRYPT_OPTIONS_ARG"
+                        ;;
+                    decrypt)
+                        options_noarg="$DECRYPT_OPTIONS_NOARG"
+                        options_arg="$DECRYPT_OPTIONS_ARG"
+                        ;;
+                esac
+                option_chars_arg="$(_short_option_chars "$options_arg")"
+            elif [[ -z $pos_arg ]]; then
+                pos_arg="$word"
+            else
+                return
+            fi
+        done
+
+        if [[ -z $option ]]  && _parse_short_cluster "$cur" "$option_chars_arg"; then
+            if [[ -n "$short_cluster_arg_option" ]]; then
+                option="-$short_cluster_option"
+                arg="$short_cluster_arg"
+                prefix="${short_cluster_noarg}${short_cluster_arg_option}"
+            else
+                # Suggest short options for cluster
+                local chars="$(
+                    _short_option_chars "${options_noarg}${options_arg}" | tr -d "$cur" | grep -o .)"
+                compgen -P "$cur" -W "$chars" -- "$cur"
+                return 0
+            fi
+        fi
+
+        if [[ -n $option ]]; then
+            # Complete option argument
+            if [[ $option != *:* && $command != *:* ]]; then
+                option="$(_normalize_option "$option" "$options_arg")"
+                case "$command:$option" in
+                    *:--color)
+                        compgen -P "$prefix" -W 'auto always never' -- "$arg"
+                        ;;
+                    attack:--std|encrypt:--std|decrypt:--std)
+                        _complete_list 'oaep pkcs raw all' "$arg" "$prefix"
+                        ;;
+                    attack:--encoding|decrypt:--encoding)
+                        compgen -P "$prefix" -W "$(rsarmageddon --show-encodings)" -- "$arg"
+                        ;;
+                    attack:--ctf|attack:-o|attack:--nef|attack:-k|attack:--okf|\
+                    pem:-k|pem:--cpu|pem:--cpr|\
+                    decrypt:--ctf|decrypt:-o|\
+                    decrypt:--ptf|encrypt:-o)
+                        compgen -P "$prefix" -o filenames -f -- "$arg"
+                        ;;
+                    attack:--okd)
+                        compgen -P "$prefix" -o filenames -d -- "$arg"
+                        ;;
+                    pem:--ff)
+                        compgen -P "$prefix" -W 'pem der openssh' -- "$arg"
+                        ;;
+                esac
+            fi
+            return 0
+        fi
+
+        if [[ -z $command ]]; then
+            # Complete command or option
+            compgen -W "${options_arg}${options_noarg}${COMMANDS}" -- "$cur"
+        elif [[ $command = attack && -z $pos_arg ]]; then
+            if [[ -z $cur ]]; then
+                # Complete attack or option
+                compgen -W "${options_arg}${options_noarg}$(rsarmageddon --show-attacks-short)" -- "$cur"
+            elif [[ $cur = -* ]]; then
+                # Complete option
+                compgen -W "${options_arg}${options_noarg}" -- "$cur"
+            else
+                # Complete attack list
+                _complete_list "$(rsarmageddon --show-attacks-short)" "$cur"
+            fi
+        else
+            # Complete option
+            compgen -W "${options_arg}${options_noarg}" -- "$cur"
+        fi
+    ) )
 
     return 0
 } &&
