@@ -87,7 +87,7 @@ def init(attack_name, default_key_name, *, min_keys=1, min_ciphertexts=0, dedupl
             fail("This attack needs at least {} keys".format(min_keys))
 
     if len(ciphertexts) < min_ciphertexts:
-        fail("This attack needs at least {} cihertexts".format(min_ciphertexts))
+        fail("This attack needs at least {} ciphertexts".format(min_ciphertexts))
 
     output.success("{} attack started".format(name))
     return ciphertexts, keys
