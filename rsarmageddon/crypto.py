@@ -53,7 +53,7 @@ def cipher(m, n, e=None, std="pkcs"):
         e_mess = str(m)
         if len(e_mess) > 10:
             e_mess = f"{e_mess[:10]} ..."
-        raise ValueError(f"Modulus to small for plaintext: {e_mess}")
+        raise ValueError(f"Modulus too small for plaintext: {e_mess}")
 
     if std == "raw":
         return pow(m, e, n)
