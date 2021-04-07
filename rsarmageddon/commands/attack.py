@@ -180,8 +180,8 @@ def run():
                             output.info(f"Decrypting 0x{text_bytes.hex()} with encryption standard {std}")
                             try:
                                 cleartext = uncipher(text, n, e, d, std)
-                            except ValueError as e:
-                                output.error(e)
+                            except ValueError as err:
+                                output.error(err)
                             else:
                                 output_text("plaintext", cleartext, filename, encoding=args.encoding, json_output=args.json)
                             if filename is True:
