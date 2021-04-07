@@ -162,11 +162,11 @@ def run():
                         args.output_key_file = True
 
                     if args.output_key_file is True:
-                        sys.stdout.buffer.write(encode_privkey(*key, "PEM"))
+                        sys.stdout.buffer.write(encode_privkey(*key, args.file_format))
                         print()
                     elif args.output_key_file:
                         with open(args.output_key_file, "wb") as f:
-                            f.write(encode_privkey(*key, "PEM"))
+                            f.write(encode_privkey(*key, args.file_format))
 
                     for text, filename in args.inputs:
                         if isinstance(text, Path):

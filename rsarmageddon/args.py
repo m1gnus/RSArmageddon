@@ -101,6 +101,9 @@ key_parser.add_argument("-p",          action="store",     type=parse_int_arg, m
 key_parser.add_argument("-q",          action="store",     type=parse_int_arg, metavar="NUMBER", help="RSA second prime factor")
 key_parser.add_argument("--phi",       action="store",     type=parse_int_arg, metavar="NUMBER", help="Euler's phi of RSA public modulus")
 
+format_parser = ArgumentParser(add_help=False)
+format_parser.add_argument("--file-format", "--ff", choices=["pem", "der", "openssh", "json"], default="pem", help="Set output key file format")
+
 
 class Input(Action):
     def __call__(self, parser, namespace, input_, option_string=None):
@@ -148,20 +151,19 @@ scripts_parser = ArgumentParser(add_help=False)
 scripts_parser.add_argument("n", action="store", type=parse_int_arg, metavar="NUMBER", help="Input number")
 
 command_subparsers = main_parser.add_subparsers(dest="command")
-attack_parser   = command_subparsers.add_parser("attack",  parents=[commons_parser, ciphertext_parser],             formatter_class=help_formatter, description=attack_description,   epilog=epilog)
-pem_parser      = command_subparsers.add_parser("pem",     parents=[commons_parser, key_parser],                    formatter_class=help_formatter, description=pem_description,      epilog=epilog)
-cipher_parser   = command_subparsers.add_parser("encrypt", parents=[commons_parser, key_parser, plaintext_parser],  formatter_class=help_formatter, description=cipher_description,   epilog=epilog)
-uncipher_parser = command_subparsers.add_parser("decrypt", parents=[commons_parser, key_parser, ciphertext_parser], formatter_class=help_formatter, description=uncipher_description, epilog=epilog)
-command_subparsers.add_parser("factor",                    parents=[commons_parser, scripts_parser],                formatter_class=help_formatter, description=factor_description,   epilog=epilog)
-command_subparsers.add_parser("ecm",                       parents=[commons_parser, scripts_parser],                formatter_class=help_formatter, description=ecm_description,      epilog=epilog)
-command_subparsers.add_parser("isprime",                   parents=[commons_parser, scripts_parser],                formatter_class=help_formatter, description=isprime_description,  epilog=epilog)
-command_subparsers.add_parser("eulerphi",                  parents=[commons_parser, scripts_parser],                formatter_class=help_formatter, description=eulerphi_description, epilog=epilog)
+attack_parser   = command_subparsers.add_parser("attack",  parents=[commons_parser, format_parser, ciphertext_parser], formatter_class=help_formatter, description=attack_description,   epilog=epilog)
+pem_parser      = command_subparsers.add_parser("pem",     parents=[commons_parser, format_parser, key_parser],        formatter_class=help_formatter, description=pem_description,      epilog=epilog)
+cipher_parser   = command_subparsers.add_parser("encrypt", parents=[commons_parser, key_parser, plaintext_parser],     formatter_class=help_formatter, description=cipher_description,   epilog=epilog)
+uncipher_parser = command_subparsers.add_parser("decrypt", parents=[commons_parser, key_parser, ciphertext_parser],    formatter_class=help_formatter, description=uncipher_description, epilog=epilog)
+command_subparsers.add_parser("factor",                    parents=[commons_parser, scripts_parser],                   formatter_class=help_formatter, description=factor_description,   epilog=epilog)
+command_subparsers.add_parser("ecm",                       parents=[commons_parser, scripts_parser],                   formatter_class=help_formatter, description=ecm_description,      epilog=epilog)
+command_subparsers.add_parser("isprime",                   parents=[commons_parser, scripts_parser],                   formatter_class=help_formatter, description=isprime_description,  epilog=epilog)
+command_subparsers.add_parser("eulerphi",                  parents=[commons_parser, scripts_parser],                   formatter_class=help_formatter, description=eulerphi_description, epilog=epilog)
 
-pem_parser.add_argument("--generate", "-g",                      action="store_true",                                 help="Generate a new 2048 bit key pair")
-pem_parser.add_argument("--dump-values", "--dumpvalues", "--dv", action="store_true",                                 help="Dump key values to standard output")
-pem_parser.add_argument("--create-public", "--cpu",              action="store", type=path_or_stdout, metavar="FILE", help="Output public key to file")
-pem_parser.add_argument("--create-private", "--cpr",             action="store", type=path_or_stdout, metavar="FILE", help="Output private key to file")
-pem_parser.add_argument("--file-format", "--ff",                 choices=["pem", "der", "openssh"], default="pem",    help="Set output key file format")
+pem_parser.add_argument("--generate", "-g",                      action="store_true",                                      help="Generate a new 2048 bit key pair")
+pem_parser.add_argument("--dump-values", "--dumpvalues", "--dv", action="store_true",                                      help="Dump key values to standard output")
+pem_parser.add_argument("--create-public", "--cpu",              action="store", type=path_or_stdout, metavar="FILE",      help="Output public key to file")
+pem_parser.add_argument("--create-private", "--cpr",             action="store", type=path_or_stdout, metavar="FILE",      help="Output private key to file")
 
 
 class NewKey(Action):

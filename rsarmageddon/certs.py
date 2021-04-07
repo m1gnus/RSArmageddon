@@ -159,7 +159,8 @@ def load_keys(path, exts=("pem", "pub"), recursive=False):
 file_formats = {
     "pem": "PEM",
     "der": "DER",
-    "openssh": "OpenSSH"
+    "openssh": "OpenSSH",
+    "json": "JSON"
 }
 
 
@@ -172,6 +173,12 @@ def encode_pubkey(n, e, file_format):
     file_format -- file format
     """
     file_format = file_formats[file_format.casefold()]
+    if file_format == "JSON":
+        data = {
+            "n": str(n),
+            "e": str(e)
+        }
+        return json.dumps(data, indent=4).encode("ascii")
     try:
         return RSA.construct((n, e)).exportKey(format=file_format)
     except NotImplementedError as e:
@@ -190,6 +197,15 @@ def encode_privkey(n, e, d, p, q, file_format):
     file_format -- file format
     """
     file_format = file_formats[file_format.casefold()]
+    if file_format == "JSON":
+        data = {
+            "n": str(n),
+            "e": str(e),
+            "d": str(d),
+            "p": str(p),
+            "q": str(q)
+        }
+        return json.dumps(data, indent=4).encode("ascii")
     try:
         return RSA.construct((n, e, d, p, q)).exportKey(format=file_format)
     except NotImplementedError as exc:
