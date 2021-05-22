@@ -52,7 +52,7 @@ credits_text = """\
       - Federico aka Heichou
       - Antonio aka CoffeeStraw
       - Giacomo aka Giaxo
-      - Andrei aka S0uND_0f_s1lence
+      - Alessandro aka ale100gs
       - Simone aka AquilaIrreale
 
   https://pgiatasti.it/ -- Visit our site to find out more about us
