@@ -34,13 +34,13 @@ B = isqrt(n)
 
 x = 1
 
-for k in primes(100000):
-    for _ in range(integer_floor(log(B, k))):
-        x *= k
-        p = gcd(power_mod(2, x, n)-1, n)
-        if p in range(2, n):
-            q = n//p
-            attack.keys((n, e, None, p, q))
-            attack.success()
+for k in primes(10000):
+    x *= k
+    attack.info(x)
+    p = gcd(power_mod(2, x, n)-1, n)
+    if 2 < p < n:
+        q = n//p
+        attack.keys((n, e, None, p, q))
+        attack.success()
 
 attack.fail()
