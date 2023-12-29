@@ -1,14 +1,15 @@
 from pathlib import Path
 from setuptools import setup
+import shlex
 
-def sh_escape(f):
-    f = str(f).replace("'", r"'\''")
-    return f"'{f}'"
+def clean_sage_files(directory: Path):
+    """Removes compiled Sage files from the specified directory."""
+    for file_path in directory.glob("**/*.sage.py"):
+        if file_path.is_file():
+            file_path.unlink(missing_ok=True)
+            print(f"Removed {shlex.quote(str(file_path))}")
 
-print("cleaning up compiled sage files")
-for f in Path("rsarmageddon").glob("**/*.sage.py"):
-    if not f.is_dir():
-        f.unlink(missing_ok=True)
-        print(f"removed {sh_escape(f)}")
+print("Cleaning up compiled Sage files...")
+clean_sage_files(Path("rsarmageddon"))
 
 setup()
