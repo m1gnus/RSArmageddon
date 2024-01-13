@@ -1,11 +1,17 @@
-FROM debian:bookworm-slim as build
+FROM sagemath/sagemath:10.2 as builder 
 
-WORKDIR /usr/src/app
+ENV WD "/home/sage/app" 
+ENV VENV "."
+ENV PATH "$VENV/bin:$PATH"
+WORKDIR "${WD}"
+USER root
+SHELL ["/bin/bash", "-c"]
+RUN apt update && apt install -y --no-install-recommends --no-install-suggests python3-build python3-setuptools python3-venv python3-pip \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    && chown -R sage:sage ${WD}
+USER sage
+COPY . ${WD}
+RUN python3 -m venv $VENV && source bin/activate && pip install .
 
-RUN apt update && apt install -y --no-install-recommends --no-install-suggests python3-setuptools git sagemath \
-    && git clone https://github.com/kaisersource/RSArmageddon.git \
-    && cd RSArmageddon && python3 setup.py install \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/src/app/RSArmageddon
-
-ENTRYPOINT ["/usr/local/bin/rsarmageddon"]
-# docker run -t --rm -v $PWD/examples:/data rsarmageddon attack all -k /data/examples/wiener.pub --timeout 1m
+ENTRYPOINT [ "./docker-entrypoint.sh" ]
+CMD [ "bin/rsarmageddon" ]
