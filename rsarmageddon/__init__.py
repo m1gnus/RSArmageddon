@@ -31,6 +31,7 @@ import sys
 from functools import partial
 from itertools import compress
 
+from . import attacks
 from .utils import output
 from .args import args
 from .banner import (
@@ -46,6 +47,7 @@ from .commands import pem, ciphertool, attack, misc
 def rsarmageddon():
     args.parse()
     output.init(args.color)
+    attacks.load_installed(args.no_user_attacks, args.no_system_attacks)
 
     if args.quiet:
         sys.stderr.close()

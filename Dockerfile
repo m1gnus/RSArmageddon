@@ -11,4 +11,4 @@ RUN apt-get update \
 COPY ./ /usr/local/src/rsarmageddon/
 RUN pip install --break-system-packages /usr/local/src/rsarmageddon/
 
-ENTRYPOINT ["/usr/local/bin/rsarmageddon"]
+ENTRYPOINT ["/usr/local/bin/rsarmageddon", "--no-user-attacks"]

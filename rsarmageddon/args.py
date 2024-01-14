@@ -144,6 +144,8 @@ commons_parser.add_argument("--version", "-V",           action="store_const", c
 commons_parser.add_argument("--json",                    action="store_const", const=True, help="Turn on json output format")
 commons_parser.add_argument("--quiet", "--silent", "-s", action="store_const", const=True, help="Suppress informative output")
 commons_parser.add_argument("--color",                choices=["auto", "always", "never"], help="Set color output behavior")
+commons_parser.add_argument("--no-user-attacks",         action="store_const", const=True, help="Do not attempt to load custom attacks from user's home directory")
+commons_parser.add_argument("--no-system-attacks",       action="store_const", const=True, help="Do not attempt to load custom attacks from /usr (Unix/Linux only)")
 
 main_parser = ArgumentParser(parents=[commons_parser], formatter_class=help_formatter, description=main_description)
 
@@ -220,6 +222,8 @@ class RSArmageddonNamespace(Namespace):
         self.json = False
         self.quiet = False
         self.color = "auto"
+        self.no_user_attacks = False
+        self.no_system_attacks = False
         self.generate = False
         self.dump_values = False
         self.create_public = None

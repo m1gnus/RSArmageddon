@@ -27,24 +27,6 @@ from importlib.resources import contents, is_resource
 from . import builtin_attacks
 
 
-if os.name == "posix":
-    try:
-        cfg_dir = Path(os.environ["XDG_CONFIG_HOME"])
-    except KeyError:
-        cfg_dir = Path.home()/".config"
-    user_atk_dir = cfg_dir/"rsarmageddon"/"attacks"
-    user_atk_dir.mkdir(parents=True, exist_ok=True)
-    sys_atk_dir = Path("/usr/share/rsarmageddon/attacks")
-    path = [user_atk_dir, sys_atk_dir]
-elif os.name == "nt":
-    app_data = Path(os.environ.get("LOCALAPPDATA", os.environ["APPDATA"]))
-    user_atk_dir = app_data/"RSArmageddon"/"attacks"
-    user_atk_dir.mkdir(parents=True, exist_ok=True)
-    path = [user_atk_dir]
-else:
-    path = []
-
-
 suffix_re = re.compile(r"\.sage$")
 prefix_re = re.compile(r"^\d{2}_")
 
@@ -64,13 +46,35 @@ builtin = {
         and res.endswith(".sage")
 }
 
+installed = {}
 
-installed = {
-    attack_name(f): f
-    for d in reversed(path)
-    for f in sorted(d.glob("*.sage"))
-    if f.is_file()
-}
+def load_installed(skip_user, skip_system):
+    path = []
+
+    if os.name == "posix":
+        if not skip_user:
+            try:
+                cfg_dir = Path(os.environ["XDG_CONFIG_HOME"])
+            except KeyError:
+                cfg_dir = Path.home()/".config"
+            user_atk_dir = cfg_dir/"rsarmageddon"/"attacks"
+            user_atk_dir.mkdir(parents=True, exist_ok=True)
+            path.append(user_atk_dir)
+        if not skip_system:
+            sys_atk_dir = Path("/usr/share/rsarmageddon/attacks")
+            path.append(sys_atk_dir)
+    elif os.name == "nt" and not skip_user:
+        app_data = Path(os.environ.get("LOCALAPPDATA", os.environ["APPDATA"]))
+        user_atk_dir = app_data/"RSArmageddon"/"attacks"
+        user_atk_dir.mkdir(parents=True, exist_ok=True)
+        path.append(user_atk_dir)
+
+    installed = {
+        attack_name(f): f
+        for d in reversed(path)
+        for f in sorted(d.glob("*.sage"))
+        if f.is_file()
+    }
 
 
 def attack_path(name):
