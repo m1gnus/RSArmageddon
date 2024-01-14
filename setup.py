@@ -10,11 +10,8 @@ def clean_sage_files(directory: Path):
     """Removes compiled Sage files from the specified directory."""
     for file_path in directory.glob("**/*.sage.py"):
         if file_path.is_file():
-            try:
-                file_path.unlink(missing_ok=True)
-                print(f"Removed {sh_escape(file_path)}")
-            except OSError as e:
-                print(f"Error removing {sh_escape(file_path)}: {e}")
+            file_path.unlink(missing_ok=True)
+            print(f"Removed {sh_escape(file_path)}")
 
 print("Cleaning up compiled Sage files...")
 clean_sage_files(Path("rsarmageddon"))
